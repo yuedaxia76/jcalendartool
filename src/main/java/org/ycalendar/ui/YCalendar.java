@@ -57,12 +57,12 @@ public class YCalendar {
 
         JMenuItem newEventme = new JMenuItem("新事件");
         JMenuItem newTaskMe = new JMenuItem("新建任务");
-        JMenuItem item3 = new JMenuItem("日历");
-        JMenuItem item4 = new JMenuItem("任务");
+        JMenuItem calMenu = new JMenuItem("日历");
+        JMenuItem taskMenu = new JMenuItem("任务");
         eventAndTask.add(newEventme);
         eventAndTask.add(newTaskMe);
-        eventAndTask.add(item3);
-        eventAndTask.add(item4);
+        eventAndTask.add(calMenu);
+        eventAndTask.add(taskMenu);
 
         // 这里是添加菜单
         f.setJMenuBar(jmb);
@@ -79,6 +79,20 @@ public class YCalendar {
             public void mousePressed(MouseEvent e) {// 只能检测到mousePressed事件
 
                 newTask();
+            }
+        });
+        calMenu.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {// 只能检测到mousePressed事件
+
+                areare.setSelectedIndex(0);
+            }
+        });
+        taskMenu.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {// 只能检测到mousePressed事件
+
+                areare.setSelectedIndex(1);
             }
         });
     }

@@ -38,7 +38,10 @@ import org.ycalendar.ui.jdatepicker.JDatePicker;
 import org.ycalendar.ui.jdatepicker.UtilDateModel;
 import org.ycalendar.util.Tuple2;
 import org.ycalendar.util.UtilValidate;
-
+/**
+ * 事件编辑界面
+ * @author lenovo
+ */
 public class EventUi extends JDialog {
 	public static final Logger log = Logger.getLogger(EventUi.class.getName());
 	private JToolBar myJToolBar;
