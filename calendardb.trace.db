@@ -1,0 +1,9 @@
+2018-08-23 14:00:51 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "EVENT_DATA" not found; SQL statement:
+delete from event_data where eventid=? [42102-197]
+2018-08-23 14:11:32 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "EVENT_DATA" not found; SQL statement:
+delete from event_data where eventid=? [42102-197]
+2018-08-23 14:12:51 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "TASK_DATA" not found; SQL statement:
+delete from task_data where taskid=? [42102-197]
