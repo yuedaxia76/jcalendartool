@@ -54,10 +54,6 @@ public class EventServiceTest   {
 	@Test
 	public void testInServ() {
 		
-		
-
- 
-		
 		EventData ed=new EventData();
 		
 		ed.setTitle("测试");

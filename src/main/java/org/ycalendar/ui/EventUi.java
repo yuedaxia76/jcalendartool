@@ -583,4 +583,6 @@ public class EventUi extends JDialog {
 		userClose=true;
 		//super.dispose();
 	}
+        
+        
 }

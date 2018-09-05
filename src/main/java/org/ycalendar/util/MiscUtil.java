@@ -3,8 +3,6 @@ package org.ycalendar.util;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.GraphicsEnvironment;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -131,39 +129,6 @@ public class MiscUtil {
         return locale;
     }
 
-    public static <T> List<T> toList(final T obj1) {
-        List<T> list = new ArrayList<T>(2);
-
-        list.add(obj1);
-        return list;
-    }
-
-    /**
-     * 建立两个数据的list
-     *
-     * @return The resulting List
-     */
-    public static <T> List<T> toList(final T obj1, final T obj2) {
-        List<T> list = new ArrayList<T>(4);
-
-        list.add(obj1);
-        list.add(obj2);
-        return list;
-    }
-
-    /**
-     * 建立一个list
-     *
-     * @return The resulting List
-     */
-    public static <T> List<T> toList(final T obj1, final T obj2, final T obj3) {
-        List<T> list = new ArrayList<T>(4);
-
-        list.add(obj1);
-        list.add(obj2);
-        list.add(obj3);
-        return list;
-    }
 
     public static JFrame getComJFrame(Component com) {
         Container result;

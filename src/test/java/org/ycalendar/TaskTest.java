@@ -1,6 +1,7 @@
 package org.ycalendar;
 
-import java.util.ArrayList;
+
+import java.util.Arrays;
 import java.util.List;
 
 import org.testng.annotations.AfterSuite;
@@ -109,9 +110,9 @@ public class TaskTest {
         }
         assert (found);
 
-        List<String> calendarids = MiscUtil.toList(conInfo.getDefaultCalId(), "test222");
+        List<String> calendarids = Arrays.asList(conInfo.getDefaultCalId(), "test222");
 
-        List<String> st = MiscUtil.toList(conInfo.getDefaultTaskStatus());
+        List<String> st = Arrays.asList(conInfo.getDefaultTaskStatus());
 
         sees = ts.queryTask(st, start, end, calendarids, "测试111111", -1);
 

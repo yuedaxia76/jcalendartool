@@ -1,6 +1,7 @@
 package org.ycalendar.dbp.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -112,7 +113,7 @@ public class TaskService extends GenalService {
      * @return 
      */
     public List<String> getNotcompleteStatus() {
-        return MiscUtil.toList(getConInfo().getDefaultTaskStatus(), "process", "unprocessed");
+        return Arrays.asList(getConInfo().getDefaultTaskStatus(), "process", "unprocessed");
     }
      
 

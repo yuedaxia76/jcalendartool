@@ -16,12 +16,12 @@ import org.ycalendar.util.UtilDateTime;
 
 public   class CalendarModel implements MainDateModel {
 	public static final Logger log = Logger.getLogger(CalendarModel.class.getName());
-	private Set<ChangeListener> changeListeners;
+	private final Set<ChangeListener> changeListeners;
 
 	private int x;
 	private int y;
 
-	private Calendar curDayInfo;
+	private final Calendar curDayInfo;
 
 	@Override
 	public int getCanType(Calendar todayCal) {
@@ -53,7 +53,7 @@ public   class CalendarModel implements MainDateModel {
 		initMonth(curDayInfo);
 		if(!setCurSelect(curDayInfo)) {
 			x=0;y=0;
-			log.warning("not set select day,date :"+UtilDateTime.longToString(curDayInfo.getTimeInMillis()));
+			log.log(Level.WARNING, "not set select day,date :{0}", UtilDateTime.longToString(curDayInfo.getTimeInMillis()));
 		}
 		
 	}
@@ -191,8 +191,8 @@ public   class CalendarModel implements MainDateModel {
 
 	@Override
 	public void addEvent(EventData e) {
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 7; j++) {
+		for (int i = 0; i < days.length; i++) {
+			for (int j = 0; j < days[i].length; j++) {
 				
 				Calendar tem=(Calendar)days[i][j].dateCan.clone();
 				UtilDateTime.setDayStart(tem);
