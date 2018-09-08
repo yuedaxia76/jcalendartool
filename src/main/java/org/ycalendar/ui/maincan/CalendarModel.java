@@ -15,7 +15,7 @@ import org.ycalendar.util.UtilDateTime;
 
 
 public   class CalendarModel implements MainDateModel {
-	public static final Logger log = Logger.getLogger(CalendarModel.class.getName());
+	protected static final Logger log = Logger.getLogger(CalendarModel.class.getName());
 	private final Set<ChangeListener> changeListeners;
 
 	private int x;

@@ -1,16 +1,12 @@
 package org.ycalendar.dbp.service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import javax.swing.event.ChangeEvent;
 
 import org.ycalendar.dbp.dao.BeanListHandler;
 import org.ycalendar.dbp.dao.ExecuDbopention;
 import org.ycalendar.dbp.dao.ExecueQuery;
 import org.ycalendar.domain.EventData;
-import org.ycalendar.ui.SourceChangeListener;
 import org.ycalendar.util.MiscUtil;
 import org.ycalendar.util.UtilValidate;
 
@@ -31,26 +27,8 @@ public class EventService extends GenalService {
     public void setConInfo(ConfigInfo conInfo) {
         this.conInfo = conInfo;
     }
-
-    private final Set<SourceChangeListener> dataChangeListeners = new HashSet<>();
-
-    public void addChangeListener(SourceChangeListener arg0) {
-        dataChangeListeners.add(arg0);
-    }
-
-    /**
-     *
-     */
-    public void removeChangeListener(SourceChangeListener arg0) {
-        dataChangeListeners.remove(arg0);
-    }
-
-    private void fireValueChanged() {
-        // Update year spinner
-        for (SourceChangeListener cl : dataChangeListeners) {
-            cl.stateChanged(new ChangeEvent(this));
-        }
-    }
+ 
+ 
 
     /**
      * 创建事件
@@ -72,7 +50,7 @@ public class EventService extends GenalService {
                 return null;
             }
         });
-        fireValueChanged();
+ 
     }
 
     public EventData saveOrUpdate(EventData ed) {
@@ -92,7 +70,7 @@ public class EventService extends GenalService {
                 return gdao.delete(hd.getCurCnection(), EventData.class, "eventid", evid);
             }
         });
-        fireValueChanged();
+ 
         return result;
     }
 
@@ -112,7 +90,7 @@ public class EventService extends GenalService {
 
             }
         });
-        this.fireValueChanged();
+    
         return result;
     }
 

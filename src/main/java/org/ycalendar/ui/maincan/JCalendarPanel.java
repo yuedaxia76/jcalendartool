@@ -199,7 +199,7 @@ public class JCalendarPanel extends JComponent {
         CellObject curObj = this.getModel().getCalendar(x, y);
         EventData ed = curObj.getSelectEvent();
         if (ed == null) {
-            log.log(Level.WARNING, "no event select cell Row:" + x + " Column:" + y);
+            log.log(Level.WARNING, "no event select cell Row:{0} Column:{1}", new Object[]{x, y});
             return false;
         }
 

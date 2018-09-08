@@ -128,8 +128,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.0</version>
                 <configuration>
-                    <!-- 不指定单元测试 -->
-                    <skipTests>true</skipTests>
+                    <!-- 不运行单元测试 -->
+                    <skipTests>false</skipTests>
                 </configuration>
             </plugin>
         </plugins>
