@@ -3,6 +3,7 @@ package org.ycalendar;
 
 import java.util.Arrays;
 import java.util.List;
+import org.testng.Assert;
 
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
@@ -159,7 +160,10 @@ public class TaskTest {
                 break;
             }
         }
-        assert (found);
+        Assert.assertEquals(found,true);
+        
+        ts.delTask(testTaskId + --count);
+        ts.delTask(testTaskId + --count);
 
     }
 

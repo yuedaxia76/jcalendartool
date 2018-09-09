@@ -52,7 +52,7 @@ import org.ycalendar.util.UtilValidate;
  */
 public class TaskUi {
 
-    public static final Logger log = Logger.getLogger(TaskUi.class.getName());
+    private static final Logger log = Logger.getLogger(TaskUi.class.getName());
 
     private final String[] columnHeaders = {"", "标题", "%完成", "状态", "开始日期", "结束日期"};
     JPanel left;

@@ -132,4 +132,9 @@ public interface MainDateModel  {
 
  
     public void addEvent(EventData e);
+    
+    /**
+     * 清除日历数据
+     */
+    public void clearEvent();
 }

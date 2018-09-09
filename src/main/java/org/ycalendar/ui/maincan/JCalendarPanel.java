@@ -56,6 +56,8 @@ import org.ycalendar.ui.jdatepicker.ComponentTextDefaults;
 import org.ycalendar.util.MiscUtil;
 import org.ycalendar.util.Tuple2;
 import org.ycalendar.util.UtilValidate;
+import org.ycalendar.util.msg.MemMsg;
+import org.ycalendar.util.msg.MessageFac;
 
 /**
  * 带有表格的日历，考虑支持周显示
@@ -126,7 +128,7 @@ public class JCalendarPanel extends JComponent {
 
         firstDayOfWeek = Calendar.getInstance().getFirstDayOfWeek();
 
-        loadEvent(model);
+        loadEvent(model,false);
         internalModel = new InternalCalendarModel(model);
 
         internalController = new InternalController();
@@ -134,6 +136,10 @@ public class JCalendarPanel extends JComponent {
 
         setLayout(new GridLayout(1, 1));
         add(internalView);
+        //右侧未来事件提示更新 
+        MessageFac.getMemoryMsg().subMsg("EPeventChange", (m) -> {
+            this.reload();
+        });
 
     }
     private Dictionary dicSer;
@@ -147,13 +153,17 @@ public class JCalendarPanel extends JComponent {
     }
     //装入事件数据
 
-    public void loadEvent(MainDateModel model) {
+    public void loadEvent(MainDateModel model, boolean clearOld) {
 
         Calendar s = model.getCalendar(0, 0).dateCan;
         Calendar e = model.getCalendar(5, 6).dateCan;
         e.set(Calendar.HOUR_OF_DAY, 23);
         e.set(Calendar.MINUTE, 59);
         e.set(Calendar.SECOND, 59);
+        if (clearOld) {
+            model.clearEvent();
+
+        }
         List<EventData> monthEvents = es.readEvent(s.getTimeInMillis(), e.getTimeInMillis(), calendarids, null);
         for (EventData et : monthEvents) {
             model.addEvent(et);
@@ -204,6 +214,11 @@ public class JCalendarPanel extends JComponent {
         }
 
         es.delEvent(ed.getEventid());
+
+        MemMsg m = new MemMsg("JPeventChange");
+        m.setProperty("event", ed);
+        m.setProperty("actionType", "del");
+        MessageFac.getMemoryMsg().sendMsg(m);
         curObj.setSelectEvent(null);
         Tuple2<EventData, Integer> dataResult = new Tuple2<>(ed, 2);
         refreshData(dataResult);
@@ -1208,7 +1223,7 @@ public class JCalendarPanel extends JComponent {
         @Override
         public void stateChanged(ChangeEvent e) {
             fireValueChanged();
-            loadEvent(internalModel.getModel());
+            loadEvent(internalModel.getModel(),true);
         }
 
     }

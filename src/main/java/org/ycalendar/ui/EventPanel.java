@@ -15,6 +15,8 @@ import java.awt.event.MouseEvent;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -28,6 +30,8 @@ import org.ycalendar.ui.jdatepicker.ComponentIconDefaults;
 import org.ycalendar.util.MiscUtil;
 import org.ycalendar.util.Tuple2;
 import org.ycalendar.util.UtilDateTime;
+import org.ycalendar.util.msg.MemMsg;
+import org.ycalendar.util.msg.MessageFac;
 
 /**
  * 界面右面的事件面板
@@ -36,16 +40,24 @@ import org.ycalendar.util.UtilDateTime;
  */
 public class EventPanel extends JPanel {
 
+    private static final Logger log = Logger.getLogger(EventPanel.class.getName());
     private final EventService es;
 
     public EventService getEs() {
         return es;
     }
- 
-    public EventPanel(EventService es, Dictionary dicSer ) {
+
+    public EventPanel(EventService es, Dictionary dicSer) {
         super(new BorderLayout());
         this.es = es;
         this.dicSer = dicSer;
+        MessageFac.getMemoryMsg().subMsg("EUeventChange", (m) -> {
+            this.reload();
+        });
+        
+        MessageFac.getMemoryMsg().subMsg("JPeventChange", (m) -> {
+            this.reload();
+        });        
     }
     private final Dictionary dicSer;
 
@@ -166,12 +178,24 @@ public class EventPanel extends JPanel {
             case 3:
                 //取消
                 break;
+            case 1:
+                //update
+                MemMsg m = new MemMsg("EPeventChange");
+                m.setProperty("eventid", ed.getEventid());
+                m.setProperty("actionType", "update");
+                MessageFac.getMemoryMsg().sendMsg(m);
+                break;
+            case 2:
+                //del
+                MemMsg md = new MemMsg("EPeventChange");
+                md.setProperty("eventid", ed.getEventid());
+                md.setProperty("actionType", "del");
+                MessageFac.getMemoryMsg().sendMsg(md);
+                break;
             default:
-
-                fireReloadEvent(curDate.getTime(), days);
+                log.log(Level.WARNING,"error type {0}", newData.e2);
 
         }
-
         evu.dispose();
     }
 
@@ -188,6 +212,15 @@ public class EventPanel extends JPanel {
         }
         eventJlist.setModel(listModel);
     }
+
+    private void delEvent(String id) {
+        es.delEvent(id);
+        MemMsg m = new MemMsg("EPeventChange");
+        m.setProperty("eventid", id);
+        m.setProperty("actionType", "del");
+        MessageFac.getMemoryMsg().sendMsg(m);
+        this.reload();
+    }
     private List<String> selectCan;
 
     public void setSelectCan(List<String> selectCan) {
@@ -195,7 +228,6 @@ public class EventPanel extends JPanel {
     }
 
     private List<String> getSelectCans() {
-
 
         return selectCan;
     }
