@@ -8,18 +8,21 @@ CREATE table IF NOT EXISTS dictionary_data  (
   dict_order NUMBER(18) default 10000,
 );
 CREATE  INDEX IF NOT EXISTS DICDATYINDEX ON dictionary_data (dict_type) ;
-//drop table event_data IF EXISTS;
+drop table event_data IF EXISTS;
 CREATE table IF NOT EXISTS event_data  (
   eventid varchar(35)   PRIMARY KEY ,
   all_day boolean default false,
-  category varchar(30)   ,
-  end_time NUMBER(18) NOT NULL,
-  start_time NUMBER(18) NOT NULL,
+  category varchar(30)   ,  
+  start_time BIGINT NOT NULL,
+  end_time BIGINT NOT NULL,
+  create_time BIGINT NOT NULL,
+ last_change_time BIGINT NOT NULL,
   title varchar(300) NOT NULL,
-  repeat NUMBER(10) default 0,
+  location varchar(100) ,
+  event_repeat NUMBER(10) default 0,
   repeat_end NUMBER(18),
   calendarid   varchar(25) NOT NULL default 'main',
-  remind   NUMBER(10) default -1,
+  remind   varchar(30) default '0M',
   event_desc clob
 );
 CREATE  INDEX IF NOT EXISTS EVENTTIMEINX ON event_data (start_time) ;

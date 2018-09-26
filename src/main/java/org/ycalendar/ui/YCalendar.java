@@ -62,7 +62,6 @@ import net.fortuna.ical4j.model.property.RRule;
 import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
-import net.fortuna.ical4j.util.UidGenerator;
 
 import org.ycalendar.dbp.service.Dictionary;
 import org.ycalendar.dbp.service.TaskService;
@@ -197,70 +196,71 @@ public class YCalendar {
     }
 
     private void importIcs(File ics) throws IOException, ParserException {
-        FileInputStream fis = new FileInputStream(ics);
-        CalendarBuilder build = new CalendarBuilder();
-        net.fortuna.ical4j.model.Calendar calendar = build.build(fis);
-        for (Iterator<CalendarComponent> i = calendar.getComponents(Component.VEVENT).iterator(); i.hasNext();) {
-            VEvent event = (VEvent) i.next();
-            // 开始时间
-            System.out.println("开始时间：" + event.getStartDate().getValue());
-            // 结束时间
-            System.out.println("结束时间：" + event.getEndDate().getValue());
-            if (null != event.getProperty("DTSTART")) {
-                ParameterList parameters = event.getProperty("DTSTART").getParameters();
-                if (null != parameters.getParameter("VALUE")) {
-                    System.out.println(parameters.getParameter("VALUE").getValue());
+        try (FileInputStream fis = new FileInputStream(ics);) {
+
+            CalendarBuilder build = new CalendarBuilder();
+            net.fortuna.ical4j.model.Calendar calendar = build.build(fis);
+            for (Iterator<CalendarComponent> i = calendar.getComponents(Component.VEVENT).iterator(); i.hasNext();) {
+                VEvent event = (VEvent) i.next();
+                EventData ev=new EventData();
+                // 开始时间
+                ev.setStartTime(event.getStartDate().getDate().getTime());
+        
+                // 结束时间
+                ev.setEndTime(event.getEndDate().getDate().getTime());
+
+
+                // 主题
+                ev.setTitle(event.getSummary().getValue());
+     
+                // 地点
+                  if (null != event.getLocation()) {
+                      ev.setLocation(event.getLocation().getValue());
+                  }
+                
+ 
+                // 描述
+                if (null != event.getDescription()) {
+                  ev.setEventDesc(event.getDescription().getValue());  
                 }
-            }
-            // 主题
-            System.out.println("主题：" + event.getSummary().getValue());
-            // 地点
-            if (null != event.getLocation()) {
-                System.out.println("地点：" + event.getLocation().getValue());
-            }
-            // 描述
-            if (null != event.getDescription()) {
-                System.out.println("描述：" + event.getDescription().getValue());
-            }
-            // 创建时间
-            if (null != event.getCreated()) {
-                System.out.println("创建时间：" + event.getCreated().getValue());
-            }
-            // 最后修改时间
-            if (null != event.getLastModified()) {
-                System.out.println("最后修改时间：" + event.getLastModified().getValue());
-            }
-            // 重复规则
-            if (null != event.getProperty("RRULE")) {
-                System.out.println("RRULE:" + event.getProperty("RRULE").getValue());
-            }
-            // 提前多久提醒
-            for (Iterator alrams = event.getAlarms().iterator(); alrams.hasNext();) {
-                VAlarm alarm = (VAlarm) alrams.next();
-                Pattern p = Pattern.compile("[^0-9]");
-                String aheadTime = alarm.getTrigger().getValue();
-                Matcher m = p.matcher(aheadTime);
-                int timeTemp = Integer.valueOf(m.replaceAll("").trim());
-                if (aheadTime.endsWith("W")) {
-                    System.out.println("提前多久：" + timeTemp + "周");
-                } else if (aheadTime.endsWith("D")) {
-                    System.out.println("提前多久：" + timeTemp + "天");
-                } else if (aheadTime.endsWith("H")) {
-                    System.out.println("提前多久：" + timeTemp + "小时");
-                } else if (aheadTime.endsWith("M")) {
-                    System.out.println("提前多久：" + timeTemp + "分钟");
-                } else if (aheadTime.endsWith("S")) {
-                    System.out.println("提前多久：" + timeTemp + "秒");
+                
+ 
+                // 创建时间
+                
+                if (null != event.getCreated()) {
+                    ev.setCreateTime(event.getCreated().getDate().getTime());
+            
                 }
+                // 最后修改时间
+                if (null != event.getLastModified()) {
+                    ev.setLastChangeTime(event.getLastModified().getDate().getTime());
+                   
+                }
+                // 重复规则
+                if (null != event.getProperty("RRULE")) {
+                    System.out.println("RRULE:" + event.getProperty("RRULE").getValue());
+                }
+                // 提前多久提醒
+                for (VAlarm alarm : event.getAlarms()) {
+                    Pattern p = Pattern.compile("[0-9]");
+                    String aheadTime = alarm.getTrigger().getValue();
+                    Matcher m = p.matcher(aheadTime);
+                    if(m.find()){
+                        String saveAl=aheadTime.substring(m.start());
+                        ev.setRemind(saveAl.trim());
+                    }else{
+                        ev.setRemind(aheadTime.trim());
+                    }
+                } // 邀请人
+//                if (null != event.getProperty("ATTENDEE")) {
+//                    ParameterList parameters = event.getProperty("ATTENDEE").getParameters();
+//                    System.out.println(event.getProperty("ATTENDEE").getValue().split(":")[1]);
+//                    System.out.println(parameters.getParameter("PARTSTAT").getValue());
+//                }
+
             }
-            // 邀请人
-            if (null != event.getProperty("ATTENDEE")) {
-                ParameterList parameters = event.getProperty("ATTENDEE").getParameters();
-                System.out.println(event.getProperty("ATTENDEE").getValue().split(":")[1]);
-                System.out.println(parameters.getParameter("PARTSTAT").getValue());
-            }
-            System.out.println("----------------------------");
         }
+
     }
 
     private void importCsv(File ics) throws FileNotFoundException, IOException, ParserException {

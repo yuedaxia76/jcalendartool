@@ -27,8 +27,6 @@ public class EventService extends GenalService {
     public void setConInfo(ConfigInfo conInfo) {
         this.conInfo = conInfo;
     }
- 
- 
 
     /**
      * 创建事件
@@ -46,11 +44,17 @@ public class EventService extends GenalService {
                 if (UtilValidate.isEmpty(ed.getCalendarid())) {
                     ed.setCalendarid(conInfo.getDefaultCalId());
                 }
+                if (Long.MIN_VALUE == ed.getLastChangeTime()) {
+                    long s = System.currentTimeMillis();
+                    ed.setCreateTime(s);
+                    ed.setLastChangeTime(s);
+                }
+
                 gdao.create(hd.getCurCnection(), EventData.class, ed);
                 return null;
             }
         });
- 
+
     }
 
     public EventData saveOrUpdate(EventData ed) {
@@ -70,7 +74,7 @@ public class EventService extends GenalService {
                 return gdao.delete(hd.getCurCnection(), EventData.class, "eventid", evid);
             }
         });
- 
+
         return result;
     }
 
@@ -86,11 +90,15 @@ public class EventService extends GenalService {
         }
         Integer result = hd.exeTran(new ExecuDbopention<Integer>() {
             public Integer exeDbAction() {
+                if (Long.MIN_VALUE == ed.getLastChangeTime()) {
+                    ed.setLastChangeTime(System.currentTimeMillis());
+                }
+
                 return gdao.update(hd.getCurCnection(), EventData.class, ed, "eventid", false);
 
             }
         });
-    
+
         return result;
     }
 

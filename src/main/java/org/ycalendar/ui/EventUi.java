@@ -70,7 +70,7 @@ public class EventUi extends JDialog {
     private DatePicker<Date> repeatEndPicker;
 
     // 提醒时间，单位分钟
-    private JComboBox<ItemData<Integer, String>> remindTime;
+    private JComboBox<ItemData<String, String>> remindTime;
 
     private JTextArea eventDesc;
 
@@ -338,7 +338,7 @@ public class EventUi extends JDialog {
             for (int i = 0; i < inte.size(); i++) {
                 DictionaryData dd = inte.get(i);
                 repeatModel.insertElementAt(new ItemData<Integer, String>(Integer.valueOf(dd.getCode()), dd.getDictdataValue()), i);
-                if (this.data != null && Integer.valueOf(dd.getCode()).equals(data.getRepeat())) {
+                if (this.data != null && Integer.valueOf(dd.getCode()).equals(data.getEventRepeat())) {
 
                     selectIndex = i;
 
@@ -406,25 +406,25 @@ public class EventUi extends JDialog {
         return repeatEndPicker;
     }
 
-    private JComboBox<ItemData<Integer, String>> getRemindTime() {
+    private JComboBox<ItemData<String, String>> getRemindTime() {
         if (remindTime == null) {
             List<DictionaryData> remDic = dicSer.getDictList("remind_time");
 
-            Vector<ItemData<Integer, String>> remindModel = new Vector<ItemData<Integer, String>>(remDic.size());
+            Vector<ItemData<String, String>> remindModel = new Vector<>(remDic.size());
 
             int selectIndex = 0;
 
             for (int i = 0; i < remDic.size(); i++) {
                 DictionaryData dd = remDic.get(i);
-                remindModel.insertElementAt(new ItemData<Integer, String>(Integer.valueOf(dd.getCode()), dd.getDictdataValue()), i);
-                if (this.data != null && Integer.valueOf(dd.getCode()).equals(data.getRemind())) {
+                remindModel.insertElementAt(new ItemData<>(dd.getCode(), dd.getDictdataValue()), i);
+                if (this.data != null && dd.getCode().equals(data.getRemind())) {
 
                     selectIndex = i;
 
                 }
             }
 
-            remindTime = new JComboBox<ItemData<Integer, String>>(remindModel);
+            remindTime = new JComboBox<>(remindModel);
 
             Dimension preferredSize = remindTime.getPreferredSize();
             preferredSize.setSize(166, preferredSize.getHeight());
@@ -576,9 +576,9 @@ public class EventUi extends JDialog {
         data.setEndTime(et.getTime());
 
         ItemData<Integer, String> rep = repeatCom.getItemAt(repeatCom.getSelectedIndex());
-        data.setRepeat(rep.e1);
+        data.setEventRepeat(rep.e1);
 
-        ItemData<Integer, String> remTi = remindTime.getItemAt(remindTime.getSelectedIndex());
+        ItemData<String, String> remTi = remindTime.getItemAt(remindTime.getSelectedIndex());
         data.setRemind(remTi.e1);
 
         data.setEventDesc(eventDesc.getText());
