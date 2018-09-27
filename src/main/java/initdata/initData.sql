@@ -28,13 +28,15 @@ insert into dictionary_data VALUES ('rep_int_6','repeat_interval','zh_CN','5','�
 
 
 //提醒时间
-insert into dictionary_data VALUES ('remind_time_1','remind_time','zh_CN','-1','不提醒',-1);
-insert into dictionary_data VALUES ('remind_time_2','remind_time','zh_CN','0','0分钟',0);
-insert into dictionary_data VALUES ('remind_time_3','remind_time','zh_CN','5','5分钟',5);
-insert into dictionary_data VALUES ('remind_time_4','remind_time','zh_CN','15','15分钟',15);
-insert into dictionary_data VALUES ('remind_time_5','remind_time','zh_CN','60','1小时',60);
-insert into dictionary_data VALUES ('remind_time_6','remind_time','zh_CN','120','2小时',120);
-insert into dictionary_data VALUES ('remind_time_7','remind_time','zh_CN','1440','1天',1440);
+insert into dictionary_data VALUES ('remind_time_1','remind_time','zh_CN','-1S','不提醒',-1);
+insert into dictionary_data VALUES ('remind_time_2','remind_time','zh_CN','0M','0分钟',0);
+insert into dictionary_data VALUES ('remind_time_3','remind_time','zh_CN','5M','5分钟',5);
+insert into dictionary_data VALUES ('remind_time_4','remind_time','zh_CN','15M','15分钟',15);
+insert into dictionary_data VALUES ('remind_time_5','remind_time','zh_CN','1H','1小时',60);
+insert into dictionary_data VALUES ('remind_time_6','remind_time','zh_CN','2H','2小时',120);
+insert into dictionary_data VALUES ('remind_time_7','remind_time','zh_CN','1D','1天',1440);
+insert into dictionary_data VALUES ('remind_time_8','remind_time','zh_CN','1W','1天',1450);
+
 
 
 //任务状态
