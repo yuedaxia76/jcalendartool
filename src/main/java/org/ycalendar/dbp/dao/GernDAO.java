@@ -15,377 +15,370 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
- 
-
 
 /**
  * 如果仅仅考虑h2，可以作为静态类
  */
 public class GernDAO {
-	public static final Logger log = Logger.getLogger(GernDAO.class.getName());
-	private final PreparedStatementHandler psh;
 
-	public GernDAO() {
+    public static final Logger log = Logger.getLogger(GernDAO.class.getName());
+    private final PreparedStatementHandler psh;
 
-		this.psh = PreparedStatementHandler.getInstance();
+    public GernDAO() {
 
-	}
+        this.psh = PreparedStatementHandler.getInstance();
 
-	public <T> T query(Connection conn, StringBuffer sql, ResultSetHandler<T> rsh, List<Object> params) {
-		return this.query(conn, sql.toString(), rsh, params == null ? new Object[] {} : params.toArray(new Object[] {}));
-	}
+    }
 
-	public <T> T query(Connection conn, String sql, ResultSetHandler<T> rsh, Object... params) {
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		T result = null;
-		try {
-			psh.adjustParams(  params);
-			stmt = conn.prepareStatement(sql);
-			this.fillStatement(stmt, params);
-			rs = stmt.executeQuery();
-			result = rsh.handle(rs);
-		} catch (SQLException e) {
-			psh.print(sql, params);
-			throw new RuntimeException(e);
-		} finally {
-			close(rs, stmt);
-		}
-		return result;
-	}
+    public <T> T query(Connection conn, StringBuffer sql, ResultSetHandler<T> rsh, List<Object> params) {
+        return this.query(conn, sql.toString(), rsh, params == null ? new Object[]{} : params.toArray(new Object[]{}));
+    }
 
-	public int update(Connection conn, StringBuffer sql, List<Object> params) {
-		return this.update(conn, sql.toString(), params.toArray(new Object[] {}));
-	}
+    public <T> T query(Connection conn, String sql, ResultSetHandler<T> rsh, Object... params) {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        T result = null;
+        try {
+            psh.adjustParams(params);
+            stmt = conn.prepareStatement(sql);
+            this.fillStatement(stmt, params);
+            rs = stmt.executeQuery();
+            result = rsh.handle(rs);
+        } catch (SQLException e) {
+            psh.print(sql, params);
+            throw new RuntimeException(e);
+        } finally {
+            close(rs, stmt);
+        }
+        return result;
+    }
 
-	public int update(Connection conn, String sql, Object... params) {
-		PreparedStatement stmt = null;
-		int rows = 0;
-		try {
-			psh.adjustParams(  params);
-			stmt = conn.prepareStatement(sql);
-			this.fillStatement(stmt, params);
-			rows = stmt.executeUpdate();
-		} catch (SQLException e) {
-			psh.print(sql, params);
-			throw new RuntimeException(e);
-		} finally {
-			close(stmt);
-		}
-		return rows;
-	}
+    public int update(Connection conn, StringBuffer sql, List<Object> params) {
+        return this.update(conn, sql.toString(), params.toArray(new Object[]{}));
+    }
 
-	public int[] batch(Connection conn, String sql, Object[][] params) {
-		PreparedStatement stmt = null;
-		int[] rows = null;
-		try {
-			conn.setAutoCommit(false);
-			psh.adjustParams( params[0]);
-			stmt = conn.prepareStatement(sql);
-			for (int i = 0; i < params.length; i++) {
-				psh.adjustParams(params[i]);
-				this.fillStatement(stmt, params[i]);
-				stmt.addBatch();
-			}
-			rows = stmt.executeBatch();
-			conn.commit();
-			conn.setAutoCommit(true);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			close(stmt);
-		}
-		return rows;
-	}
+    public int update(Connection conn, String sql, Object... params) {
+        PreparedStatement stmt = null;
+        int rows = 0;
+        try {
+            psh.adjustParams(params);
+            stmt = conn.prepareStatement(sql);
+            this.fillStatement(stmt, params);
+            rows = stmt.executeUpdate();
+        } catch (SQLException e) {
+            psh.print(sql, params);
+            throw new RuntimeException(e);
+        } finally {
+            close(stmt);
+        }
+        return rows;
+    }
 
-	public <T> int create(Connection conn, Class<T> cls, T bean) {
-		int rows = 0;
-		PreparedStatement stmt = null;
-		try {
-			BeanInfo beanInfo = Introspector.getBeanInfo(cls, Object.class);
-			PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
+    public int[] batch(Connection conn, String sql, Object[][] params) {
+        PreparedStatement stmt = null;
+        int[] rows = null;
+        try {
+            conn.setAutoCommit(false);
+            psh.adjustParams(params[0]);
+            stmt = conn.prepareStatement(sql);
+            for (int i = 0; i < params.length; i++) {
+                psh.adjustParams(params[i]);
+                this.fillStatement(stmt, params[i]);
+                stmt.addBatch();
+            }
+            rows = stmt.executeBatch();
+            conn.commit();
+            conn.setAutoCommit(true);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            close(stmt);
+        }
+        return rows;
+    }
 
-			String table = PreparedStatementHandler.camel2underscore(cls.getSimpleName());
-			String columns = "", questionMarks = "";
+    public <T> int create(Connection conn, Class<T> cls, T bean) {
+        int rows = 0;
+        PreparedStatement stmt = null;
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(cls, Object.class);
+            PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
 
-			Object[] params = new Object[pds.length];
+            String table = PreparedStatementHandler.camel2underscore(cls.getSimpleName());
+            StringBuilder columns = new StringBuilder(64), questionMarks = new StringBuilder(64);
 
-			int j = 0;
-			for (PropertyDescriptor pd : pds) {
-				Method getter = pd.getReadMethod();
-				String name = pd.getName();
-				Object value = getter.invoke(bean);
+            Object[] params = new Object[pds.length];
 
-				columns += PreparedStatementHandler.camel2underscore(name) + ",";
-				questionMarks += "?,";
-				params[j] = value;
-				j++;
+            int j = 0;
+            for (PropertyDescriptor pd : pds) {
+                Method getter = pd.getReadMethod();
+                String name = pd.getName();
+                Object value = getter.invoke(bean);
 
-			}
-			columns = columns.substring(0, columns.length() - 1);
-			questionMarks = questionMarks.substring(0, questionMarks.length() - 1);
-			String sql = String.format("insert into %s (%s) values (%s)", table, columns, questionMarks);
+                columns.append(PreparedStatementHandler.camel2underscore(name)).append(',');
+                questionMarks.append("?,");
+                params[j] = value;
+                j++;
 
-			psh.adjustParams( params);
+            }
+            columns.delete(columns.length() - 2, columns.length() - 1);
+            questionMarks.delete(questionMarks.length() - 2, questionMarks.length() - 1);
+            String sql = String.format("insert into %s (%s) values (%s)", table, columns.toString(), questionMarks.toString());
 
-			stmt = conn.prepareStatement(sql);
+            psh.adjustParams(params);
 
-			this.fillStatement(stmt, params);
-			try {
-				rows = stmt.executeUpdate();
-			} catch (SQLException e) {
-				psh.print(sql, params);
-				throw new RuntimeException(e);
-			}
+            stmt = conn.prepareStatement(sql);
 
-		} catch (IllegalArgumentException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} catch (IntrospectionException e) {
-			throw new RuntimeException(e);
-		} catch (InvocationTargetException e) {
-			throw new RuntimeException(e);
-		} finally {
-			close(stmt);
-		}
-		return rows;
-	}
+            this.fillStatement(stmt, params);
+            try {
+                rows = stmt.executeUpdate();
+            } catch (SQLException e) {
+                psh.print(sql, params);
+                throw new RuntimeException(e);
+            }
 
-	public <T> int[] create(Connection conn, Class<T> cls, List<T> beans) {
-		BeanInfo beanInfo = null;
-		try {
-			beanInfo = Introspector.getBeanInfo(cls, Object.class);
-		} catch (IntrospectionException e) {
-			throw new RuntimeException(e);
-		}
-		PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
+        } catch (IllegalArgumentException | IllegalAccessException | SQLException | IntrospectionException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } finally {
+            close(stmt);
+        }
+        return rows;
+    }
 
-		// build SQL
-		String table = PreparedStatementHandler.camel2underscore(cls.getSimpleName());
-		String columns = "", questionMarks = "";
+    public <T> int[] create(Connection conn, Class<T> cls, List<T> beans) {
+        BeanInfo beanInfo = null;
+        try {
+            beanInfo = Introspector.getBeanInfo(cls, Object.class);
+        } catch (IntrospectionException e) {
+            throw new RuntimeException(e);
+        }
+        PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
 
-		for (PropertyDescriptor pd : pds) {
-			String name = pd.getName();
+        // build SQL
+        String table = PreparedStatementHandler.camel2underscore(cls.getSimpleName());
+        String columns = "", questionMarks = "";
 
-			columns += PreparedStatementHandler.camel2underscore(name) + ",";
-			questionMarks += "?,";
+        for (PropertyDescriptor pd : pds) {
+            String name = pd.getName();
 
-		}
-		columns = columns.substring(0, columns.length() - 1);
-		questionMarks = questionMarks.substring(0, questionMarks.length() - 1);
-		String sql = String.format("insert into %s (%s) values (%s)", table, columns, questionMarks);
+            columns += PreparedStatementHandler.camel2underscore(name) + ",";
+            questionMarks += "?,";
 
-		// build parameters */
-		int rows = beans.size();
-		int cols = pds.length;
+        }
+        columns = columns.substring(0, columns.length() - 1);
+        questionMarks = questionMarks.substring(0, questionMarks.length() - 1);
+        String sql = String.format("insert into %s (%s) values (%s)", table, columns, questionMarks);
 
-		Object[][] params = new Object[rows][cols];
-		try {
-			for (int i = 0; i < rows; i++) {
-				int j = 0;
-				for (PropertyDescriptor pd : pds) {
-					Method getter = pd.getReadMethod();
+        // build parameters */
+        int rows = beans.size();
+        int cols = pds.length;
 
-					Object value = getter.invoke(beans.get(i));
+        Object[][] params = new Object[rows][cols];
+        try {
+            for (int i = 0; i < rows; i++) {
+                int j = 0;
+                for (PropertyDescriptor pd : pds) {
+                    Method getter = pd.getReadMethod();
 
-					params[i][j] = value;
-					j++;
-				}
-			}
-		} catch (IllegalArgumentException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		} catch (InvocationTargetException e) {
-			throw new RuntimeException(e);
-		}
-		// execute
-		return batch(conn, sql, params);
-	}
+                    Object value = getter.invoke(beans.get(i));
 
-	public <T> T read(Connection conn, Class<T> cls,String pkName, String id) {
-		String table = PreparedStatementHandler.camel2underscore(cls.getSimpleName());
-		
-		String sql=String.format("select * from %s where %s=?",table,pkName);
-		return (T) query(conn, sql, new BeanHandler<T>(cls), id);
-	}
+                    params[i][j] = value;
+                    j++;
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+        // execute
+        return batch(conn, sql, params);
+    }
 
-	public <T> int update(Connection conn, Class<T> cls, T bean, String primaryKey,final boolean setNull) {
-		try {
-			BeanInfo beanInfo = Introspector.getBeanInfo(cls, Object.class);
-			PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
+    public <T> T read(Connection conn, Class<T> cls, String pkName, String id) {
+        String table = PreparedStatementHandler.camel2underscore(cls.getSimpleName());
 
-			List<Object> params = new ArrayList<>(pds.length);
-			primaryKey = PreparedStatementHandler.underscore2camel(primaryKey);
-			Object id = 0;
-			String columnAndQuestionMarks = "";
-			
-			for (PropertyDescriptor pd : pds) {
-				Method getter = pd.getReadMethod();
-				String name = pd.getName();
-				Object value = getter.invoke(bean);
-				if (name.equals(primaryKey)) {
-					id = value;
-				} else {
-					if(setNull || value!=null) {
-						columnAndQuestionMarks += PreparedStatementHandler.camel2underscore(name) + "=?,";
-						params.add(value);						
-					}
+        String sql = String.format("select * from %s where %s=?", table, pkName);
+        return (T) query(conn, sql, new BeanHandler<T>(cls), id);
+    }
 
-					 
-				}
-			}
-			params.add(id);
-			String table = PreparedStatementHandler.camel2underscore(cls.getSimpleName());
-			columnAndQuestionMarks = columnAndQuestionMarks.substring(0, columnAndQuestionMarks.length() - 1);
-			String sql = String.format("update %s set %s where %s = ?", table, columnAndQuestionMarks, PreparedStatementHandler.camel2underscore(primaryKey));
-			return update(conn, sql, params.toArray(new Object[params.size()]));
-		} catch (IllegalArgumentException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		} catch (InvocationTargetException e) {
-			throw new RuntimeException(e);
-		} catch (IntrospectionException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public <T> int update(Connection conn, Class<T> cls, T bean, String primaryKey, final boolean setNull) {
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(cls, Object.class);
+            PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
 
-	public <T> int[] update(Connection conn, Class<T> cls, List<T> beans, String primaryKey) {
-		try {
-			BeanInfo beanInfo = Introspector.getBeanInfo(cls, Object.class);
-			PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
+            List<Object> params = new ArrayList<>(pds.length);
+            primaryKey = PreparedStatementHandler.underscore2camel(primaryKey);
+            Object id = 0;
+            String columnAndQuestionMarks = "";
 
-			primaryKey = PreparedStatementHandler.underscore2camel(primaryKey);
-			String columnAndQuestionMarks = "";
+            for (PropertyDescriptor pd : pds) {
+                Method getter = pd.getReadMethod();
+                String name = pd.getName();
+                Object value = getter.invoke(bean);
+                if (name.equals(primaryKey)) {
+                    id = value;
+                } else {
+                    if (setNull || value != null) {
+                        columnAndQuestionMarks += PreparedStatementHandler.camel2underscore(name) + "=?,";
+                        params.add(value);
+                    }
 
-			for (PropertyDescriptor pd : pds) {
-				String name = pd.getName();
-				if (name.equals(primaryKey)) {
-				} else {
-					columnAndQuestionMarks += PreparedStatementHandler.camel2underscore(name) + "=?,";
-				}
-			}
-			String table = PreparedStatementHandler.camel2underscore(cls.getSimpleName());
-			columnAndQuestionMarks = columnAndQuestionMarks.substring(0, columnAndQuestionMarks.length() - 1);
-			String sql = String.format("update %s set %s where %s = ?", table, columnAndQuestionMarks, PreparedStatementHandler.camel2underscore(primaryKey));
+                }
+            }
+            params.add(id);
+            String table = PreparedStatementHandler.camel2underscore(cls.getSimpleName());
+            columnAndQuestionMarks = columnAndQuestionMarks.substring(0, columnAndQuestionMarks.length() - 1);
+            String sql = String.format("update %s set %s where %s = ?", table, columnAndQuestionMarks, PreparedStatementHandler.camel2underscore(primaryKey));
+            return update(conn, sql, params.toArray(new Object[params.size()]));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (IntrospectionException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-			// build parameters
-			int rows = beans.size();
-			int cols = pds.length;
-			Object id = 0;
-			Object[][] params = new Object[rows][cols];
-			for (int i = 0; i < rows; i++) {
-				int j = 0;
-				for (PropertyDescriptor pd : pds) {
-					Method getter = pd.getReadMethod();
-					String name = pd.getName();
-					Object value = getter.invoke(beans.get(i));
-					if (name.equals(primaryKey)) {
-						id = value;
-					} else {
-						params[i][j] = value;
-						j++;
-					}
-				}
-				params[i][j] = id;
-			}
-			return batch(conn, sql, params);
-		} catch (IllegalArgumentException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		} catch (InvocationTargetException e) {
-			throw new RuntimeException(e);
-		} catch (IntrospectionException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public <T> int[] update(Connection conn, Class<T> cls, List<T> beans, String primaryKey) {
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(cls, Object.class);
+            PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
 
-	public <T> int delete(Connection conn, Class<T> cls, String pkName, String id) {
-		String sql = String.format("delete from %s where %s=?", PreparedStatementHandler.camel2underscore(cls.getSimpleName()),pkName);
-		return update(conn, sql, new Object[] { id });
-	}
+            primaryKey = PreparedStatementHandler.underscore2camel(primaryKey);
+            String columnAndQuestionMarks = "";
 
-	public void pager(StringBuffer sql, List<Object> params, int pageSize, int pageNo) {
-		psh.pager(sql, params, pageSize, pageNo);
-	}
+            for (PropertyDescriptor pd : pds) {
+                String name = pd.getName();
+                if (name.equals(primaryKey)) {
+                } else {
+                    columnAndQuestionMarks += PreparedStatementHandler.camel2underscore(name) + "=?,";
+                }
+            }
+            String table = PreparedStatementHandler.camel2underscore(cls.getSimpleName());
+            columnAndQuestionMarks = columnAndQuestionMarks.substring(0, columnAndQuestionMarks.length() - 1);
+            String sql = String.format("update %s set %s where %s = ?", table, columnAndQuestionMarks, PreparedStatementHandler.camel2underscore(primaryKey));
+
+            // build parameters
+            int rows = beans.size();
+            int cols = pds.length;
+            Object id = 0;
+            Object[][] params = new Object[rows][cols];
+            for (int i = 0; i < rows; i++) {
+                int j = 0;
+                for (PropertyDescriptor pd : pds) {
+                    Method getter = pd.getReadMethod();
+                    String name = pd.getName();
+                    Object value = getter.invoke(beans.get(i));
+                    if (name.equals(primaryKey)) {
+                        id = value;
+                    } else {
+                        params[i][j] = value;
+                        j++;
+                    }
+                }
+                params[i][j] = id;
+            }
+            return batch(conn, sql, params);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (IntrospectionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public <T> int delete(Connection conn, Class<T> cls, String pkName, String id) {
+        String sql = String.format("delete from %s where %s=?", PreparedStatementHandler.camel2underscore(cls.getSimpleName()), pkName);
+        return update(conn, sql, new Object[]{id});
+    }
+
+    public void pager(StringBuffer sql, List<Object> params, int pageSize, int pageNo) {
+        psh.pager(sql, params, pageSize, pageNo);
+    }
+
     /**
      * 拼带in条件sql
-     * @param sql 
+     *
+     * @param sql
      * @param params 参数
      * @param operator and /or /where
      * @param field 条件字段
-     * @param values  条件值
+     * @param values 条件值
      */
-	public <T> void in(StringBuffer sql, List<Object> params, String operator, String field, List<T> values) {
-		psh.in(sql, params, operator, field, values);
-	}
+    public <T> void in(StringBuffer sql, List<Object> params, String operator, String field, List<T> values) {
+        psh.in(sql, params, operator, field, values);
+    }
 
-	private void fillStatement(PreparedStatement stmt, Object... params) {
-		if (params == null)
-			return;
-		try {
-			for (int i = 0; i < params.length; i++) {
+    private void fillStatement(PreparedStatement stmt, Object... params) {
+        if (params == null) {
+            return;
+        }
+        try {
+            for (int i = 0; i < params.length; i++) {
 
-				if (params[i] == null) {
-					stmt.setNull(i + 1, Types.VARCHAR);
+                if (params[i] == null) {
+                    stmt.setNull(i + 1, Types.VARCHAR);
 
-				} else {
-					stmt.setObject(i + 1, params[i]);
-				}
-			}
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
+                } else {
+                    stmt.setObject(i + 1, params[i]);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public void execuSql(Connection conn, String sql) {
-		try (Statement st = conn.createStatement()) {
-			log.fine(sql);
-			st.execute(sql);
+    public void execuSql(Connection conn, String sql) {
+        try (Statement st = conn.createStatement()) {
+            log.fine(sql);
+            st.execute(sql);
 
-		} catch (IllegalArgumentException e) {
-			log.severe("execuSql error, sql :"+sql);
-			throw new RuntimeException(e);
-		} catch (SQLException e) {
-			log.severe("execuSql error, sql :"+sql);
-			throw new RuntimeException(e);
-		}
-	}
+        } catch (IllegalArgumentException e) {
+            log.severe("execuSql error, sql :" + sql);
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            log.severe("execuSql error, sql :" + sql);
+            throw new RuntimeException(e);
+        }
+    }
 
-	protected void close(ResultSet rs, Statement stmt) {
+    protected void close(ResultSet rs, Statement stmt) {
 
-		if (rs != null) {
-			try {
-				rs.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		if (stmt != null) {
-			try {
-				stmt.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (stmt != null) {
+            try {
+                stmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
-	}
+    }
 
-	protected void close(Statement stmt) {
+    protected void close(Statement stmt) {
 
-		if (stmt != null) {
-			try {
-				stmt.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+        if (stmt != null) {
+            try {
+                stmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
-	}
+    }
 
 }

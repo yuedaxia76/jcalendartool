@@ -176,17 +176,20 @@ public class YCalendar {
     private void importFile() {
         JFileChooser jfc = new JFileChooser();
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfc.removeChoosableFileFilter(jfc.getAcceptAllFileFilter());
         jfc.addChoosableFileFilter(new JAVAFileFilter("ics"));//导入可选择的文件的后缀名类型
         jfc.addChoosableFileFilter(new JAVAFileFilter("csv"));
         jfc.showDialog(new JLabel(), "选择");
         File file = jfc.getSelectedFile();
         if (file.isFile()) {
             try {
+                int importCount;
                 if (file.getName().toLowerCase().endsWith("ics")) {
-                    importIcs(file);
+                   importCount= importIcs(file,null);
                 } else {
-                    importCsv(file);
+                  importCount=  importCsv(file);
                 }
+                JOptionPane.showMessageDialog(f, "导入:" + importCount+"条数据", "导入成功", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException | ParserException e) {
                 JOptionPane.showMessageDialog(f, "错误:" + e.toString(), "错误", JOptionPane.ERROR_MESSAGE);
             }
@@ -195,14 +198,16 @@ public class YCalendar {
 
     }
 
-    private void importIcs(File ics) throws IOException, ParserException {
-        try (FileInputStream fis = new FileInputStream(ics);) {
+    private int importIcs(File ics,String calendarid) throws IOException, ParserException {
+        int result=0;
+        try (FileInputStream fis = new FileInputStream(ics)) {
 
             CalendarBuilder build = new CalendarBuilder();
             net.fortuna.ical4j.model.Calendar calendar = build.build(fis);
             for (Iterator<CalendarComponent> i = calendar.getComponents(Component.VEVENT).iterator(); i.hasNext();) {
                 VEvent event = (VEvent) i.next();
                 EventData ev=new EventData();
+                ev.setCalendarid(calendarid);
                 // 开始时间
                 ev.setStartTime(event.getStartDate().getDate().getTime());
         
@@ -251,7 +256,10 @@ public class YCalendar {
                     }else{
                         ev.setRemind(aheadTime.trim());
                     }
-                } // 邀请人
+                }
+                evSe.createEvent(ev);
+                result++;
+// 邀请人
 //                if (null != event.getProperty("ATTENDEE")) {
 //                    ParameterList parameters = event.getProperty("ATTENDEE").getParameters();
 //                    System.out.println(event.getProperty("ATTENDEE").getValue().split(":")[1]);
@@ -260,11 +268,13 @@ public class YCalendar {
 
             }
         }
+        return result;
 
     }
 
-    private void importCsv(File ics) throws FileNotFoundException, IOException, ParserException {
-
+    private int importCsv(File ics) throws FileNotFoundException, IOException, ParserException {
+    int result=0;
+    return result;
     }
 
     public void exportFile() {

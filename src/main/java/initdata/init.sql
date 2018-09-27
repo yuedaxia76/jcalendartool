@@ -8,7 +8,7 @@ CREATE table IF NOT EXISTS dictionary_data  (
   dict_order NUMBER(18) default 10000,
 );
 CREATE  INDEX IF NOT EXISTS DICDATYINDEX ON dictionary_data (dict_type) ;
-drop table event_data IF EXISTS;
+//drop table event_data IF EXISTS;
 CREATE table IF NOT EXISTS event_data  (
   eventid varchar(35)   PRIMARY KEY ,
   all_day boolean default false,
