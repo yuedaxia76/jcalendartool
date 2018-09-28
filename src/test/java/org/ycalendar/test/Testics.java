@@ -15,19 +15,20 @@ import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ParameterList;
+import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VAlarm;
 import net.fortuna.ical4j.model.component.VEvent;
- 
 
 /**
  *
  * @author lenovo
  */
 public class Testics {
+
     public static void main(String[] args) throws IOException, ParserException {
-        Testics t=new Testics();
-        File f=new File("C:\\temp\\test11.ics");
+        Testics t = new Testics();
+        File f = new File("C:\\temp\\test11.ics");
         t.importIcs(f);
     }
 
@@ -59,6 +60,8 @@ public class Testics {
                 }
                 // 主题
                 System.out.println("主题：" + event.getSummary().getValue());
+                
+                System.out.println("id：" + event.getUid().getValue());
                 // 地点
                 if (null != event.getLocation()) {
                     System.out.println("地点：" + event.getLocation().getValue());
@@ -75,6 +78,23 @@ public class Testics {
                 if (null != event.getLastModified()) {
                     System.out.println("最后修改时间：" + event.getLastModified().getValue());
                 }
+
+                // 状态
+                if (null != event.getStatus()) {
+                    System.out.println("状态：" + event.getStatus().getValue());
+                }
+                if (null != event.getDuration()) {
+                    System.out.println("持续：" + event.getDuration().getValue());
+                }
+                if (null != event.getClassification()) {
+                    System.out.println("分类：" + event.getClassification().getValue());
+                }
+                if (null != event.getProperty("CATEGORIES")) {
+                    Property pro = event.getProperty("CATEGORIES");
+
+                    System.out.println("分类:" + pro.getValue());
+
+                }
                 // 重复规则
                 if (null != event.getProperty("RRULE")) {
                     System.out.println("RRULE:" + event.getProperty("RRULE").getValue());
@@ -87,18 +107,16 @@ public class Testics {
                     System.out.println("提前:" + aheadTime);
                     Matcher m = p.matcher(aheadTime);
 
-
-                    
                     int timeTemp = Integer.valueOf(m.replaceAll("").trim());
-                    
+
                     p = Pattern.compile("[0-9]");
-                     m = p.matcher(aheadTime);
-                     if(m.find()){
-                         int s=m.start();
-                     System.out.println("开始:" + s);
-                      System.out.println("开始:" + aheadTime.substring(s));
-                     }
-                     
+                    m = p.matcher(aheadTime);
+                    if (m.find()) {
+                        int s = m.start();
+                        System.out.println("开始:" + s);
+                        System.out.println("开始:" + aheadTime.substring(s));
+                    }
+
                     if (aheadTime.endsWith("W")) {
                         System.out.println("提前多久：" + timeTemp + "周");
                     } else if (aheadTime.endsWith("D")) {

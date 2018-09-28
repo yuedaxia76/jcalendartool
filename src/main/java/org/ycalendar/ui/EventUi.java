@@ -214,7 +214,7 @@ public class EventUi extends JDialog {
             for (int i = 0; i < typeLi.size(); i++) {
                 DictionaryData dd = typeLi.get(i);
                 typeModel.insertElementAt(new ItemData<String, String>(dd.getCode(), dd.getDictdataValue()), i);
-                if (this.data != null && data.getCategory().equals(dd.getCode())) {
+                if (this.data != null && dd.getCode().equals(data.getCategory())) {
 
                     selectIndex = i;
 

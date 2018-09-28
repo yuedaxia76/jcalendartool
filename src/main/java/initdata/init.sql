@@ -1,6 +1,6 @@
 //drop table dictionary_data IF EXISTS;
 CREATE table IF NOT EXISTS dictionary_data  (
-  id varchar(35)   PRIMARY KEY ,
+  id varchar(36)   PRIMARY KEY ,
   dict_type varchar(35) NOT NULL ,
   local_str varchar(10) NOT NULL ,
   code varchar(30)  NOT NULL   ,
@@ -10,7 +10,7 @@ CREATE table IF NOT EXISTS dictionary_data  (
 CREATE  INDEX IF NOT EXISTS DICDATYINDEX ON dictionary_data (dict_type) ;
 //drop table event_data IF EXISTS;
 CREATE table IF NOT EXISTS event_data  (
-  eventid varchar(35)   PRIMARY KEY ,
+  eventid varchar(36)   PRIMARY KEY ,
   all_day boolean default false,
   category varchar(30)   ,  
   start_time BIGINT NOT NULL,
@@ -28,7 +28,7 @@ CREATE table IF NOT EXISTS event_data  (
 CREATE  INDEX IF NOT EXISTS EVENTTIMEINX ON event_data (start_time) ;
 //drop table task_data IF EXISTS;
 CREATE table IF NOT EXISTS task_data  (
-  taskid varchar(35)   PRIMARY KEY ,
+  taskid varchar(36)   PRIMARY KEY ,
   category varchar(30)   ,
   end_time BIGINT ,
   start_time BIGINT,

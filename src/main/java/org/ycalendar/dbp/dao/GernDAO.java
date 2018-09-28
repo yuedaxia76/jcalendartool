@@ -14,6 +14,7 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -121,8 +122,8 @@ public class GernDAO {
                 j++;
 
             }
-            columns.delete(columns.length() - 2, columns.length() - 1);
-            questionMarks.delete(questionMarks.length() - 2, questionMarks.length() - 1);
+            columns.delete(columns.length() - 1, columns.length() );
+            questionMarks.delete(questionMarks.length() - 1, questionMarks.length() );
             String sql = String.format("insert into %s (%s) values (%s)", table, columns.toString(), questionMarks.toString());
 
             psh.adjustParams(params);
@@ -156,18 +157,18 @@ public class GernDAO {
 
         // build SQL
         String table = PreparedStatementHandler.camel2underscore(cls.getSimpleName());
-        String columns = "", questionMarks = "";
+        StringBuilder columns = new StringBuilder(64), questionMarks = new StringBuilder(64);
 
         for (PropertyDescriptor pd : pds) {
             String name = pd.getName();
 
-            columns += PreparedStatementHandler.camel2underscore(name) + ",";
-            questionMarks += "?,";
+            columns.append(PreparedStatementHandler.camel2underscore(name)).append(',');
+            questionMarks.append( "?,");
 
         }
-        columns = columns.substring(0, columns.length() - 1);
-        questionMarks = questionMarks.substring(0, questionMarks.length() - 1);
-        String sql = String.format("insert into %s (%s) values (%s)", table, columns, questionMarks);
+         columns.delete( columns.length() - 1,columns.length());
+         questionMarks.substring( questionMarks.length() - 1,questionMarks.length());
+        String sql = String.format("insert into %s (%s) values (%s)", table, columns.toString(), questionMarks.toString());
 
         // build parameters */
         int rows = beans.size();
@@ -186,11 +187,7 @@ public class GernDAO {
                     j++;
                 }
             }
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
+        } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
         // execute
@@ -212,7 +209,7 @@ public class GernDAO {
             List<Object> params = new ArrayList<>(pds.length);
             primaryKey = PreparedStatementHandler.underscore2camel(primaryKey);
             Object id = 0;
-            String columnAndQuestionMarks = "";
+            StringBuilder columnAndQuestionMarks = new StringBuilder(64);
 
             for (PropertyDescriptor pd : pds) {
                 Method getter = pd.getReadMethod();
@@ -222,7 +219,7 @@ public class GernDAO {
                     id = value;
                 } else {
                     if (setNull || value != null) {
-                        columnAndQuestionMarks += PreparedStatementHandler.camel2underscore(name) + "=?,";
+                        columnAndQuestionMarks.append(PreparedStatementHandler.camel2underscore(name)).append( "=?,");
                         params.add(value);
                     }
 
@@ -230,16 +227,10 @@ public class GernDAO {
             }
             params.add(id);
             String table = PreparedStatementHandler.camel2underscore(cls.getSimpleName());
-            columnAndQuestionMarks = columnAndQuestionMarks.substring(0, columnAndQuestionMarks.length() - 1);
+             columnAndQuestionMarks.delete( columnAndQuestionMarks.length() - 1,columnAndQuestionMarks.length());
             String sql = String.format("update %s set %s where %s = ?", table, columnAndQuestionMarks, PreparedStatementHandler.camel2underscore(primaryKey));
             return update(conn, sql, params.toArray(new Object[params.size()]));
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (IntrospectionException e) {
+        } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException | IntrospectionException e) {
             throw new RuntimeException(e);
         }
     }
@@ -250,17 +241,17 @@ public class GernDAO {
             PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
 
             primaryKey = PreparedStatementHandler.underscore2camel(primaryKey);
-            String columnAndQuestionMarks = "";
+            StringBuilder columnAndQuestionMarks = new StringBuilder();
 
             for (PropertyDescriptor pd : pds) {
                 String name = pd.getName();
                 if (name.equals(primaryKey)) {
                 } else {
-                    columnAndQuestionMarks += PreparedStatementHandler.camel2underscore(name) + "=?,";
+                    columnAndQuestionMarks.append(PreparedStatementHandler.camel2underscore(name)).append( "=?,");
                 }
             }
             String table = PreparedStatementHandler.camel2underscore(cls.getSimpleName());
-            columnAndQuestionMarks = columnAndQuestionMarks.substring(0, columnAndQuestionMarks.length() - 1);
+            columnAndQuestionMarks.delete( columnAndQuestionMarks.length() - 1,columnAndQuestionMarks.length());
             String sql = String.format("update %s set %s where %s = ?", table, columnAndQuestionMarks, PreparedStatementHandler.camel2underscore(primaryKey));
 
             // build parameters
@@ -284,13 +275,7 @@ public class GernDAO {
                 params[i][j] = id;
             }
             return batch(conn, sql, params);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (IntrospectionException e) {
+        } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException | IntrospectionException e) {
             throw new RuntimeException(e);
         }
     }
@@ -341,13 +326,10 @@ public class GernDAO {
             log.fine(sql);
             st.execute(sql);
 
-        } catch (IllegalArgumentException e) {
-            log.severe("execuSql error, sql :" + sql);
+        } catch (IllegalArgumentException | SQLException e) {
+            log.log(Level.SEVERE, "execuSql error, sql :{0}", sql);
             throw new RuntimeException(e);
-        } catch (SQLException e) {
-            log.severe("execuSql error, sql :" + sql);
-            throw new RuntimeException(e);
-        }
+        }  
     }
 
     protected void close(ResultSet rs, Statement stmt) {
@@ -356,14 +338,14 @@ public class GernDAO {
             try {
                 rs.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.warning(e.toString());
             }
         }
         if (stmt != null) {
             try {
                 stmt.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.warning(e.toString());
             }
         }
 
@@ -375,7 +357,7 @@ public class GernDAO {
             try {
                 stmt.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.warning(e.toString());
             }
         }
 

@@ -62,7 +62,12 @@ public class EventService extends GenalService {
             createEvent(ed);
             return ed;
         } else {
-            updateEvent(ed);
+            if (readEvent(ed.getEventid()) != null) {
+                updateEvent(ed);
+            } else {
+                createEvent(ed);
+            }
+
             return ed;
         }
     }

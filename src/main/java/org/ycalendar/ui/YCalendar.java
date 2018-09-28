@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,12 +41,11 @@ import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Dur;
-import net.fortuna.ical4j.model.ParameterList;
+import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.Recur;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
-import net.fortuna.ical4j.util.UidGenerator;
 import net.fortuna.ical4j.model.WeekDay;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VAlarm;
@@ -70,6 +71,7 @@ import org.ycalendar.dbp.service.InitDataService;
 import org.ycalendar.domain.EventData;
 import org.ycalendar.domain.TaskData;
 import org.ycalendar.util.Tuple2;
+import org.ycalendar.util.UtilValidate;
 
 /**
  * 主界面
@@ -79,6 +81,7 @@ import org.ycalendar.util.Tuple2;
  */
 public class YCalendar {
 
+    public static final Logger log = Logger.getLogger(YCalendar.class.getName());
     final JFrame f = new JFrame("日历");
 
     private JMenuBar jmb;
@@ -185,12 +188,13 @@ public class YCalendar {
             try {
                 int importCount;
                 if (file.getName().toLowerCase().endsWith("ics")) {
-                   importCount= importIcs(file,null);
+                    importCount = importIcs(file, null);
                 } else {
-                  importCount=  importCsv(file);
+                    importCount = importCsv(file);
                 }
-                JOptionPane.showMessageDialog(f, "导入:" + importCount+"条数据", "导入成功", JOptionPane.INFORMATION_MESSAGE);
-            } catch (IOException | ParserException e) {
+                JOptionPane.showMessageDialog(f, "导入:" + importCount + "条数据", "导入成功", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                log.log(Level.SEVERE, "importFile {0} error{1}", new Object[]{file.getName(), e.toString()});
                 JOptionPane.showMessageDialog(f, "错误:" + e.toString(), "错误", JOptionPane.ERROR_MESSAGE);
             }
 
@@ -198,66 +202,84 @@ public class YCalendar {
 
     }
 
-    private int importIcs(File ics,String calendarid) throws IOException, ParserException {
-        int result=0;
+    private int importIcs(File ics, String calendarid) throws IOException, ParserException {
+        int result = 0;
         try (FileInputStream fis = new FileInputStream(ics)) {
 
             CalendarBuilder build = new CalendarBuilder();
             net.fortuna.ical4j.model.Calendar calendar = build.build(fis);
             for (Iterator<CalendarComponent> i = calendar.getComponents(Component.VEVENT).iterator(); i.hasNext();) {
                 VEvent event = (VEvent) i.next();
-                EventData ev=new EventData();
+                EventData ev = new EventData();
                 ev.setCalendarid(calendarid);
+                ev.setEventid(event.getUid().getValue());
                 // 开始时间
                 ev.setStartTime(event.getStartDate().getDate().getTime());
-        
+
                 // 结束时间
                 ev.setEndTime(event.getEndDate().getDate().getTime());
 
-
                 // 主题
                 ev.setTitle(event.getSummary().getValue());
-     
+
                 // 地点
-                  if (null != event.getLocation()) {
-                      ev.setLocation(event.getLocation().getValue());
-                  }
-                
- 
+                if (null != event.getLocation()) {
+                    ev.setLocation(event.getLocation().getValue());
+                }
+
                 // 描述
                 if (null != event.getDescription()) {
-                  ev.setEventDesc(event.getDescription().getValue());  
+                    ev.setEventDesc(event.getDescription().getValue());
                 }
-                
- 
+
                 // 创建时间
-                
                 if (null != event.getCreated()) {
                     ev.setCreateTime(event.getCreated().getDate().getTime());
-            
+
                 }
                 // 最后修改时间
                 if (null != event.getLastModified()) {
                     ev.setLastChangeTime(event.getLastModified().getDate().getTime());
-                   
+
+                }
+                //分类
+                if (null != event.getProperty("CATEGORIES")) {
+                    Property pro = event.getProperty("CATEGORIES");
+                    String catl = pro.getValue();
+                    if (UtilValidate.isNotEmpty(catl)) {
+                        String code = dicSer.getDictCode("event_cate", catl);
+                        if (code != null) {
+                            ev.setCategory(code);
+                        } else {
+                            log.log(Level.WARNING, "Category {0} no code", catl);
+                            ev.setCategory("-1");
+                        }
+
+                    } else {
+                        ev.setCategory("-1");
+                    }
+
+                } else {
+                    ev.setCategory("-1");
                 }
                 // 重复规则
-                if (null != event.getProperty("RRULE")) {
-                    System.out.println("RRULE:" + event.getProperty("RRULE").getValue());
-                }
+//                if (null != event.getProperty("RRULE")) {
+//                    System.out.println("RRULE:" + event.getProperty("RRULE").getValue());
+//                }
                 // 提前多久提醒
                 for (VAlarm alarm : event.getAlarms()) {
                     Pattern p = Pattern.compile("[0-9]");
                     String aheadTime = alarm.getTrigger().getValue();
                     Matcher m = p.matcher(aheadTime);
-                    if(m.find()){
-                        String saveAl=aheadTime.substring(m.start());
+                    if (m.find()) {
+                        String saveAl = aheadTime.substring(m.start());
                         ev.setRemind(saveAl.trim());
-                    }else{
+                    } else {
                         ev.setRemind(aheadTime.trim());
                     }
                 }
-                evSe.createEvent(ev);
+                //可以多次导入，不出错
+                evSe.saveOrUpdate(ev);
                 result++;
 // 邀请人
 //                if (null != event.getProperty("ATTENDEE")) {
@@ -273,8 +295,8 @@ public class YCalendar {
     }
 
     private int importCsv(File ics) throws FileNotFoundException, IOException, ParserException {
-    int result=0;
-    return result;
+        int result = 0;
+        return result;
     }
 
     public void exportFile() {
