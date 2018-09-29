@@ -52,7 +52,7 @@ public class PreparedStatementHandler {
 		if (n < 1)
 			return " in ()";
 		
-		StringBuilder buf = new StringBuilder(n<<1);
+		StringBuilder buf = new StringBuilder(n<<2);
 		buf.append(" in (");
 		for (int i = 0; i < n; i++) {
 			buf.append("?,");

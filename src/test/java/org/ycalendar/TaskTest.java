@@ -11,7 +11,6 @@ import org.testng.annotations.Test;
 import org.ycalendar.dbp.dao.GernDAO;
 import org.ycalendar.dbp.dao.H2Dao;
 import org.ycalendar.dbp.service.ConfigInfo;
-import org.ycalendar.dbp.service.GenalService;
 import org.ycalendar.dbp.service.TaskService;
 import org.ycalendar.domain.TaskData;
 
@@ -41,14 +40,17 @@ public class TaskTest {
 
     private void clear() {
         ts.delTask(testTaskId);
+        ts.delTask(testTaskId+"0");
+        ts.delTask(testTaskId+"1");
+        ts.delTask(testTaskId+"2");
     }
 
     @AfterSuite
     public void testEnd() {
 
-        GenalService gs = new GenalService();
-        gs.setGdao(dao);
-        gs.setHd(hd);
+//        GenalService gs = new GenalService();
+//        gs.setGdao(dao);
+//        gs.setHd(hd);
         clear();
 
     }
@@ -145,12 +147,12 @@ public class TaskTest {
         insert("unprocessed", count);
         count++;
         
-        insert("processed", count);
+        insert("process", count);
         count++;
         
         List<String> st = ts.getNotcompleteStatus();
         List<TaskData> sees = ts.queryTask(st, -1, -1, null, null, -1);
-
+        //System.out.print("not end task size:"+sees.size());
         assert (sees.size() >= 3);
 
         boolean found = false;
