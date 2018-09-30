@@ -87,7 +87,7 @@ public class Testics {
                     System.out.println("持续：" + event.getDuration().getValue());
                 }
                 if (null != event.getClassification()) {
-                    System.out.println("分类：" + event.getClassification().getValue());
+                    System.out.println("隐私分类：" + event.getClassification().getValue());
                 }
                 if (null != event.getProperty("CATEGORIES")) {
                     Property pro = event.getProperty("CATEGORIES");

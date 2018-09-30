@@ -242,6 +242,11 @@ public class YCalendar {
                     ev.setLastChangeTime(event.getLastModified().getDate().getTime());
 
                 }
+                //隐私分类
+                if (null != event.getClassification()) {
+                    ev.setEventType(event.getClassification().getValue());
+
+                }
                 //分类
                 if (null != event.getProperty("CATEGORIES")) {
                     Property pro = event.getProperty("CATEGORIES");

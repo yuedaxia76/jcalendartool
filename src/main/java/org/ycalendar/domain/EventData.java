@@ -83,8 +83,6 @@ public class EventData {
         this.eventRepeat = eventRepeat;
     }
 
- 
-
     //重复截至时间0永远，其他截至时间
     private long repeatEnd;
 
@@ -136,7 +134,7 @@ public class EventData {
         return eventid + "|" + title;
     }
 
-    private long createTime=Long.MIN_VALUE;
+    private long createTime = Long.MIN_VALUE;
 
     public long getCreateTime() {
         return createTime;
@@ -153,7 +151,7 @@ public class EventData {
     public void setLastChangeTime(long lastChangeTime) {
         this.lastChangeTime = lastChangeTime;
     }
-    private long lastChangeTime=Long.MIN_VALUE;
+    private long lastChangeTime = Long.MIN_VALUE;
     //地点
     private String location;
 
@@ -164,6 +162,14 @@ public class EventData {
     public void setLocation(String location) {
         this.location = location;
     }
+    private String eventType;
 
- 
+    public String getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
+
 }

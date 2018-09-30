@@ -13,7 +13,6 @@ insert into dictionary_data VALUES ('event_cate_6','event_cate','zh_CN','4','生
 insert into dictionary_data VALUES ('event_cate_7','event_cate','zh_CN','5','问题',5);
 insert into dictionary_data VALUES ('event_cate_8','event_cate','zh_CN','6','收藏',6);
 insert into dictionary_data VALUES ('event_cate_9','event_cate','zh_CN','7','知识',7);
-
 insert into dictionary_data VALUES ('event_cate_700','event_cate','zh_CN','700','其他',700);
 
 
@@ -24,6 +23,10 @@ insert into dictionary_data VALUES ('rep_int_3','repeat_interval','zh_CN','2','�
 insert into dictionary_data VALUES ('rep_int_4','repeat_interval','zh_CN','3','每周末',3);
 insert into dictionary_data VALUES ('rep_int_5','repeat_interval','zh_CN','4','每月',4);
 insert into dictionary_data VALUES ('rep_int_6','repeat_interval','zh_CN','5','每年',5);
+
+//事件类型
+insert into dictionary_data VALUES ('eve_t_1','e_type','zh_CN','PUBLIC','公开',0);
+insert into dictionary_data VALUES ('eve_t_2','e_type','zh_CN','PRIVATE','隐私',1);
 
 
 
@@ -38,10 +41,9 @@ insert into dictionary_data VALUES ('remind_time_7','remind_time','zh_CN','1D','
 insert into dictionary_data VALUES ('remind_time_8','remind_time','zh_CN','1W','1天',1450);
 
 
-
 //任务状态
 insert into dictionary_data VALUES ('ts1','task_status','zh_CN','notset','未指定',-1);
 insert into dictionary_data VALUES ('ts2','task_status','zh_CN','process','处理中',0);
-insert into dictionary_data VALUES ('ts3','task_status','zh_CN','notStart','未处理',1);
+insert into dictionary_data VALUES ('ts3','task_status','zh_CN','unprocessed','未处理',1);
 insert into dictionary_data VALUES ('ts4','task_status','zh_CN','complete','完成',2);
 insert into dictionary_data VALUES ('ts5','task_status','zh_CN','cancel','取消',3);

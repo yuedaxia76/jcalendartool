@@ -13,7 +13,6 @@ insert into dictionary_data VALUES ('event_cate_6','event_cate','zh_CN','4','生
 insert into dictionary_data VALUES ('event_cate_7','event_cate','zh_CN','5','问题',5);
 insert into dictionary_data VALUES ('event_cate_8','event_cate','zh_CN','6','收藏',6);
 insert into dictionary_data VALUES ('event_cate_9','event_cate','zh_CN','7','知识',7);
-
 insert into dictionary_data VALUES ('event_cate_700','event_cate','zh_CN','700','其他',700);
 
 
@@ -24,6 +23,10 @@ insert into dictionary_data VALUES ('rep_int_3','repeat_interval','zh_CN','2','�
 insert into dictionary_data VALUES ('rep_int_4','repeat_interval','zh_CN','3','每周末',3);
 insert into dictionary_data VALUES ('rep_int_5','repeat_interval','zh_CN','4','每月',4);
 insert into dictionary_data VALUES ('rep_int_6','repeat_interval','zh_CN','5','每年',5);
+
+//事件类型
+insert into dictionary_data VALUES ('eve_t_1','e_type','zh_CN','PUBLIC','公开',0);
+insert into dictionary_data VALUES ('eve_t_2','e_type','zh_CN','PRIVATE','隐私',1);
 
 
 
