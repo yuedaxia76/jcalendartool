@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -188,10 +189,14 @@ public class YCalendar {
             try {
                 int importCount;
                 if (file.getName().toLowerCase().endsWith("ics")) {
-                    importCount = importIcs(file, null);
+                    try (FileInputStream fis = new FileInputStream(file)) {
+                        importCount = importIcs(fis, null);
+                    }
+
                 } else {
                     importCount = importCsv(file);
                 }
+                //刷新显示
                 JOptionPane.showMessageDialog(f, "导入:" + importCount + "条数据", "导入成功", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception e) {
                 log.log(Level.SEVERE, "importFile {0} error{1}", new Object[]{file.getName(), e.toString()});
@@ -202,90 +207,89 @@ public class YCalendar {
 
     }
 
-    private int importIcs(File ics, String calendarid) throws IOException, ParserException {
+    protected int importIcs(InputStream in, String calendarid) throws IOException, ParserException {
         int result = 0;
-        try (FileInputStream fis = new FileInputStream(ics)) {
 
-            CalendarBuilder build = new CalendarBuilder();
-            net.fortuna.ical4j.model.Calendar calendar = build.build(fis);
-            for (Iterator<CalendarComponent> i = calendar.getComponents(Component.VEVENT).iterator(); i.hasNext();) {
-                VEvent event = (VEvent) i.next();
-                EventData ev = new EventData();
-                ev.setCalendarid(calendarid);
-                ev.setEventid(event.getUid().getValue());
-                // 开始时间
-                ev.setStartTime(event.getStartDate().getDate().getTime());
+        CalendarBuilder build = new CalendarBuilder();
+        net.fortuna.ical4j.model.Calendar calendar = build.build(in);
+        for (Iterator<CalendarComponent> i = calendar.getComponents(Component.VEVENT).iterator(); i.hasNext();) {
+            VEvent event = (VEvent) i.next();
+            EventData ev = new EventData();
+            ev.setCalendarid(calendarid);
+            ev.setEventid(event.getUid().getValue());
+            // 开始时间
+            ev.setStartTime(event.getStartDate().getDate().getTime());
 
-                // 结束时间
-                ev.setEndTime(event.getEndDate().getDate().getTime());
+            // 结束时间
+            ev.setEndTime(event.getEndDate().getDate().getTime());
 
-                // 主题
-                ev.setTitle(event.getSummary().getValue());
+            // 主题
+            ev.setTitle(event.getSummary().getValue());
 
-                // 地点
-                if (null != event.getLocation()) {
-                    ev.setLocation(event.getLocation().getValue());
-                }
+            // 地点
+            if (null != event.getLocation()) {
+                ev.setLocation(event.getLocation().getValue());
+            }
 
-                // 描述
-                if (null != event.getDescription()) {
-                    ev.setEventDesc(event.getDescription().getValue());
-                }
+            // 描述
+            if (null != event.getDescription()) {
+                ev.setEventDesc(event.getDescription().getValue());
+            }
 
-                // 创建时间
-                if (null != event.getCreated()) {
-                    ev.setCreateTime(event.getCreated().getDate().getTime());
+            // 创建时间
+            if (null != event.getCreated()) {
+                ev.setCreateTime(event.getCreated().getDate().getTime());
 
-                }
-                // 最后修改时间
-                if (null != event.getLastModified()) {
-                    ev.setLastChangeTime(event.getLastModified().getDate().getTime());
+            }
+            // 最后修改时间
+            if (null != event.getLastModified()) {
+                ev.setLastChangeTime(event.getLastModified().getDate().getTime());
 
-                }
-                //隐私分类
-                if (null != event.getClassification()) {
-                    ev.setEventType(event.getClassification().getValue());
+            }
+            //隐私分类
+            if (null != event.getClassification()) {
+                ev.setEventType(event.getClassification().getValue());
 
-                }
-                //分类
-                if (null != event.getProperty("CATEGORIES")) {
-                    Property pro = event.getProperty("CATEGORIES");
-                    String catl = pro.getValue();
-                    if (UtilValidate.isNotEmpty(catl)) {
-                        String code = dicSer.getDictCode("event_cate", catl);
-                        if (code != null) {
-                            ev.setCategory(code);
-                        } else {
-                            log.log(Level.WARNING, "Category {0} no code", catl);
-                            ev.setCategory("-1");
-                        }
-
+            }
+            //分类
+            if (null != event.getProperty("CATEGORIES")) {
+                Property pro = event.getProperty("CATEGORIES");
+                String catl = pro.getValue();
+                if (UtilValidate.isNotEmpty(catl)) {
+                    String code = dicSer.getDictCode("event_cate", catl);
+                    if (code != null) {
+                        ev.setCategory(code);
                     } else {
+                        log.log(Level.WARNING, "Category {0} no code", catl);
                         ev.setCategory("-1");
                     }
 
                 } else {
                     ev.setCategory("-1");
                 }
-                // 重复规则
+
+            } else {
+                ev.setCategory("-1");
+            }
+            // 重复规则
 //                if (null != event.getProperty("RRULE")) {
 //                    System.out.println("RRULE:" + event.getProperty("RRULE").getValue());
 //                }
-                // 提前多久提醒
-                for (VAlarm alarm : event.getAlarms()) {
-                    Pattern p = Pattern.compile("[0-9]");
-                    String aheadTime = alarm.getTrigger().getValue();
-                    Matcher m = p.matcher(aheadTime);
-                    if (m.find()) {
-                        String saveAl = aheadTime.substring(m.start());
-                        ev.setRemind(saveAl.trim());
-                    } else {
-                        ev.setRemind(aheadTime.trim());
-                    }
+            // 提前多久提醒
+            for (VAlarm alarm : event.getAlarms()) {
+                Pattern p = Pattern.compile("[0-9]");
+                String aheadTime = alarm.getTrigger().getValue();
+                Matcher m = p.matcher(aheadTime);
+                if (m.find()) {
+                    String saveAl = aheadTime.substring(m.start());
+                    ev.setRemind(saveAl.trim());
+                } else {
+                    ev.setRemind(aheadTime.trim());
                 }
-                //可以多次导入，不出错
-                evSe.saveOrUpdate(ev);
-                result++;
+            }
+            //可以多次导入，不出错
+            evSe.saveOrUpdate(ev);
+            result++;
 // 邀请人
 //                if (null != event.getProperty("ATTENDEE")) {
 //                    ParameterList parameters = event.getProperty("ATTENDEE").getParameters();
@@ -293,8 +297,8 @@ public class YCalendar {
 //                    System.out.println(parameters.getParameter("PARTSTAT").getValue());
 //                }
 
-            }
         }
+
         return result;
 
     }
