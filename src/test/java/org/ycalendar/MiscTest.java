@@ -1,5 +1,7 @@
 package org.ycalendar;
 
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -12,6 +14,7 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 import org.ycalendar.dbp.service.StringCinvert;
+import org.ycalendar.util.UtilDateTime;
 import org.ycalendar.util.msg.MemMsg;
 import org.ycalendar.util.msg.MemoryMsg;
 import org.ycalendar.util.msg.MemoryMsgImpli;
@@ -74,5 +77,13 @@ public class MiscTest {
 
         Assert.assertEquals(count.get(), 2, "应该=2");
         count.set(0);
+    }
+
+    @Test
+    public void testStrToDate()   {
+        String ds = "08/03/13 5:00:00 PM";
+        Date d = UtilDateTime.parseDate(ds, "MM/dd/yy hh:mm:ss aaa",Locale.ENGLISH);
+        System.out.println(d);
+
     }
 }

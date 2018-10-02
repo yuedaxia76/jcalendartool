@@ -177,4 +177,8 @@ public class CalendarUi {
     public void refresh(Tuple2<EventData, Integer> data) {
         jpce.refreshData(data);
     }
+
+    public void refresh() {
+        jpce.reload();
+    }
 }

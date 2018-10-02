@@ -113,6 +113,7 @@
                     <include>**/*.sql</include>
                     <include>**/*.xml</include>
                     <include>**/*.ics</include>
+                    <include>**/*.csv</include>
                 </includes>
             </testResource>
         </testResources>                

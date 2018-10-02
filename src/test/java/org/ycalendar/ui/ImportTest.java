@@ -69,4 +69,13 @@ public class ImportTest {
         }
 
     }
+    
+        @Test
+    public void testImpoCsv() throws IOException, ParserException {
+        try (InputStream in = ImportTest.class.getClassLoader().getResourceAsStream("resource/test1.csv")) {
+           int result= yc.importCsv(in, null, "UTF-8");
+           Assert.assertEquals(result, 2);
+        }
+
+    }
 }

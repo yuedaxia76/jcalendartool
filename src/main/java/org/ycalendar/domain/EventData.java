@@ -162,6 +162,7 @@ public class EventData {
     public void setLocation(String location) {
         this.location = location;
     }
+    //公开：隐私
     private String eventType;
 
     public String getEventType() {

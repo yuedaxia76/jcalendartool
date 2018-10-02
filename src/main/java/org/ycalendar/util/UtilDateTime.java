@@ -207,14 +207,14 @@ public class UtilDateTime {
     public static java.util.Date toDate(final String date) {
 
         if (date.indexOf(':') < 0) {
-            return parseDate(date, defaultDatePattern);
+            return parseDate(date, defaultDatePattern,Locale.getDefault(Locale.Category.FORMAT));
         } else {
             int timeColon1 = date.indexOf(':');
             int timeColon2 = date.lastIndexOf(':');
             if (timeColon1 == timeColon2) {
-                return parseDate(date + ":00", defaultDateTimePattern);
+                return parseDate(date + ":00", defaultDateTimePattern,Locale.getDefault(Locale.Category.FORMAT));
             } else {
-                return parseDate(date, defaultDateTimePattern);
+                return parseDate(date, defaultDateTimePattern,Locale.getDefault(Locale.Category.FORMAT));
             }
 
         }
@@ -224,14 +224,14 @@ public class UtilDateTime {
     public static long toLong(final String date) {
 
         if (date.indexOf(':') < 0) {
-            return parseDate(date, defaultDatePattern).getTime();
+            return parseDate(date, defaultDatePattern,Locale.getDefault(Locale.Category.FORMAT)).getTime();
         } else {
             int timeColon1 = date.indexOf(':');
             int timeColon2 = date.lastIndexOf(':');
             if (timeColon1 == timeColon2) {
-                return parseDate(date + ":00", defaultDateTimePattern).getTime();
+                return parseDate(date + ":00", defaultDateTimePattern,Locale.getDefault(Locale.Category.FORMAT)).getTime();
             } else {
-                return parseDate(date, defaultDateTimePattern).getTime();
+                return parseDate(date, defaultDateTimePattern,Locale.getDefault(Locale.Category.FORMAT)).getTime();
             }
 
         }
@@ -758,20 +758,21 @@ public class UtilDateTime {
      *
      * @param str
      * @param format 指定格式 比如yyyyMMdd hh:mm:ss
+     * @param locale 地区
      * @return
      */
-    public static Date parseDate(final String str, String format) {
+    public static Date parseDate(final String str, String format,Locale locale) {
         if (format == null) {
             format = defaultDatePattern;
         }
-        SimpleDateFormat df = new SimpleDateFormat(format);
+        SimpleDateFormat df = new SimpleDateFormat(format,locale);
         try {
             return df.parse(str);
         } catch (ParseException e) {
             throw new RuntimeException("Could not convert " + str + " to java.util.Date", e);
         }
     }
-
+ 
     public static Date getEarliestDate() {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
         cal.set(Calendar.YEAR, cal.getActualMinimum(Calendar.YEAR));

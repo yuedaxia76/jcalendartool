@@ -9,15 +9,20 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -64,6 +69,9 @@ import net.fortuna.ical4j.model.property.RRule;
 import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 
 import org.ycalendar.dbp.service.Dictionary;
 import org.ycalendar.dbp.service.TaskService;
@@ -72,6 +80,7 @@ import org.ycalendar.dbp.service.InitDataService;
 import org.ycalendar.domain.EventData;
 import org.ycalendar.domain.TaskData;
 import org.ycalendar.util.Tuple2;
+import org.ycalendar.util.UtilDateTime;
 import org.ycalendar.util.UtilValidate;
 
 /**
@@ -194,9 +203,14 @@ public class YCalendar {
                     }
 
                 } else {
-                    importCount = importCsv(file);
+                    try (FileInputStream fis = new FileInputStream(file)) {
+                        importCount = importCsv(fis, null, "UTF-8");
+                    }
+
                 }
                 //刷新显示
+                caui.refresh();
+
                 JOptionPane.showMessageDialog(f, "导入:" + importCount + "条数据", "导入成功", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception e) {
                 log.log(Level.SEVERE, "importFile {0} error{1}", new Object[]{file.getName(), e.toString()});
@@ -303,9 +317,67 @@ public class YCalendar {
 
     }
 
-    private int importCsv(File ics) throws FileNotFoundException, IOException, ParserException {
+    private final String[] csvFileHeaders = {"Subject", "Start Date", "Start Time", "End Date", "End Time", "All day event", "Reminder on/off", "Reminder Date", "Reminder Time", "Categories", "Description", "Location", "Private"};
+
+    protected int importCsv(InputStream in, String calendarid, String encode) throws IOException, ParserException {
         int result = 0;
-        return result;
+
+        CSVFormat csvFileFormat = CSVFormat.DEFAULT.withHeader(csvFileHeaders);
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(in, encode));
+                // 初始化 CSVParser object
+                CSVParser csvFileParser = new CSVParser(br, csvFileFormat);) {
+            // 初始化FileReader object
+
+            // CSV文件records
+            for (CSVRecord csvr : csvFileParser) {
+                if (result > 0) {
+                    EventData ev = new EventData();
+                    ev.setCalendarid(calendarid);
+                    ev.setTitle(csvr.get("Subject"));
+                    long events = UtilDateTime.parseDate(csvr.get("Start Date") + " " + csvr.get("Start Time"), "MM/dd/yy hh:mm:ss aaa", Locale.ENGLISH).getTime();
+                    ev.setStartTime(events);
+                    ev.setStartTime(UtilDateTime.parseDate(csvr.get("End Date") + " " + csvr.get("End Time"), "MM/dd/yy hh:mm:ss aaa", Locale.ENGLISH).getTime());
+                    ev.setAllDay("true".equalsIgnoreCase(csvr.get("All day event")));
+                    String Reminder = csvr.get("Reminder on/off");
+                    if ("TRUE".equalsIgnoreCase(Reminder)) {
+                        //提醒，这里只有提醒时间，与ics不匹配
+                        long eventr = UtilDateTime.parseDate(csvr.get("Reminder Date") + " " + csvr.get("Reminder Time"), "MM/dd/yy hh:mm:ss aaa", Locale.ENGLISH).getTime();
+                        long timeInterval = eventr - events;
+                        if (timeInterval <= 1000l * 60) {
+                            ev.setRemind("0M");
+                        } else if (timeInterval <= 1000l * 60 * 5) {
+                            ev.setRemind("5M");
+                        } else if (timeInterval <= 1000l * 60 * 15) {
+                            ev.setRemind("15M");
+                        } else if (timeInterval <= 1000l * 60 * 60) {
+                            ev.setRemind("1H");
+                        } else if (timeInterval <= 1000l * 60 * 60 * 2) {
+                            ev.setRemind("2H");
+                        } else if (timeInterval <= 1000l * 60 * 60 * 24) {
+                            ev.setRemind("1D");
+                        } else if (timeInterval <= 1000l * 60 * 60 * 24 * 2) {
+                            ev.setRemind("2D");
+                        } else {
+                            ev.setRemind("1W");
+                        }
+
+                    } else {
+                        ev.setRemind("-1S");
+                    }
+
+                    ev.setCategory(csvr.get("Categories"));
+                    ev.setEventDesc(csvr.get("Description"));
+                    ev.setLocation(csvr.get("Location"));
+                    ev.setEventType(("FALSE".equalsIgnoreCase(csvr.get("Private"))) ? "PUBLIC" : "PRIVATE");
+                    evSe.saveOrUpdate(ev);
+                }
+
+                result++;
+            }
+
+        }
+
+        return result-1;
     }
 
     public void exportFile() {

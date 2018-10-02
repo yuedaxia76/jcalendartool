@@ -23,7 +23,7 @@ CREATE table IF NOT EXISTS event_data  (
   repeat_end NUMBER(18),
   calendarid   varchar(25) NOT NULL default 'main',
   remind   varchar(30) default '-1S',
-  event_type varchar(30) default 'public',
+  event_type varchar(30) default 'PUBLIC',
   event_desc clob
 );
 CREATE  INDEX IF NOT EXISTS EVENTTIMEINX ON event_data (start_time) ;
