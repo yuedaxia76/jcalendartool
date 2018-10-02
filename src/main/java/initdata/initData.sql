@@ -36,9 +36,10 @@ insert into dictionary_data VALUES ('remind_time_2','remind_time','zh_CN','0M','
 insert into dictionary_data VALUES ('remind_time_3','remind_time','zh_CN','5M','5分钟',5);
 insert into dictionary_data VALUES ('remind_time_4','remind_time','zh_CN','15M','15分钟',15);
 insert into dictionary_data VALUES ('remind_time_5','remind_time','zh_CN','1H','1小时',60);
-insert into dictionary_data VALUES ('remind_time_6','remind_time','zh_CN','2H','2小时',120);
+insert into dictionary_data VALUES ('remind_time_6','remind_time','zh_CN','2H','2小时',61);
 insert into dictionary_data VALUES ('remind_time_7','remind_time','zh_CN','1D','1天',1440);
-insert into dictionary_data VALUES ('remind_time_8','remind_time','zh_CN','1W','1天',1450);
+insert into dictionary_data VALUES ('remind_time_8','remind_time','zh_CN','2D','2天',1441);
+insert into dictionary_data VALUES ('remind_time_9','remind_time','zh_CN','1W','1周',1450);
 
 
 //任务状态

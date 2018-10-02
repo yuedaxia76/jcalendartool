@@ -336,7 +336,7 @@ public class YCalendar {
                     ev.setTitle(csvr.get("Subject"));
                     long events = UtilDateTime.parseDate(csvr.get("Start Date") + " " + csvr.get("Start Time"), "MM/dd/yy hh:mm:ss aaa", Locale.ENGLISH).getTime();
                     ev.setStartTime(events);
-                    ev.setStartTime(UtilDateTime.parseDate(csvr.get("End Date") + " " + csvr.get("End Time"), "MM/dd/yy hh:mm:ss aaa", Locale.ENGLISH).getTime());
+                    ev.setEndTime(UtilDateTime.parseDate(csvr.get("End Date") + " " + csvr.get("End Time"), "MM/dd/yy hh:mm:ss aaa", Locale.ENGLISH).getTime());
                     ev.setAllDay("true".equalsIgnoreCase(csvr.get("All day event")));
                     String Reminder = csvr.get("Reminder on/off");
                     if ("TRUE".equalsIgnoreCase(Reminder)) {
