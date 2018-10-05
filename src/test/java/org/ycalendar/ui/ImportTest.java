@@ -65,7 +65,7 @@ public class ImportTest {
 
     @Test
     public void testImpo() throws IOException, ParserException {
-        try (InputStream in = ImportTest.class.getClassLoader().getResourceAsStream("resource/test11.ics")) {
+        try (InputStream in = ImportTest.class.getClassLoader().getResourceAsStream("resource/test1.ics")) {
             int result = yc.importIcs(in, null);
             Assert.assertEquals(result, 2);
         }

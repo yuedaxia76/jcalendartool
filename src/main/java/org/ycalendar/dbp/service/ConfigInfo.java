@@ -19,6 +19,9 @@ public class ConfigInfo {
 	}
 	
 	public String getDefaultTaskStatus() {
-		return "notset";
+		return "NOTSET";
 	}
+        
+        
+        
 }

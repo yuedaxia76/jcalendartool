@@ -59,7 +59,12 @@ public class TaskService extends GenalService {
             createTask(td);
             return td;
         } else {
-            updateTask(td);
+            if (this.readTask(td.getTaskid()) == null) {
+                createTask(td);
+            } else {
+                updateTask(td);
+            }
+
             return td;
         }
     }
@@ -108,14 +113,15 @@ public class TaskService extends GenalService {
         });
 
     }
+
     /**
      * 获取没有结束任务状态列表
-     * @return 
+     *
+     * @return
      */
     public List<String> getNotcompleteStatus() {
         return Arrays.asList(getConInfo().getDefaultTaskStatus(), "process", "unprocessed");
     }
-     
 
     public List<TaskData> queryTask(List<String> status, long start, long end, List<String> calendarids, String title, int percentage) {
 
@@ -141,7 +147,7 @@ public class TaskService extends GenalService {
                 }
                 if (UtilValidate.isNotEmpty(title)) {
                     condition.add(" (title like ?  or taskdesc like ?) ");
-                    String likeCon='%' + title + '%';
+                    String likeCon = '%' + title + '%';
                     params.add(likeCon);
                     params.add(likeCon);
                 }
@@ -153,7 +159,7 @@ public class TaskService extends GenalService {
                     condition.add(" end_time<=? ");
                     params.add(end);
                 }
-                if (percentage >-1) {
+                if (percentage > -1) {
                     condition.add(" percentage=? ");
                     params.add(percentage);
                 }

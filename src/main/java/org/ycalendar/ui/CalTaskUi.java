@@ -70,7 +70,7 @@ public class CalTaskUi extends JDialog {
     private JSpinner percentageSpinner;
 
     // 提醒时间，单位分钟
-    private JComboBox<ItemData<Integer, String>> remindTime;
+    private JComboBox<ItemData<String, String>> remindTime;
 
     private JTextArea taskDesc;
 
@@ -391,25 +391,25 @@ public class CalTaskUi extends JDialog {
         return endPicker;
     }
 
-    private JComboBox<ItemData<Integer, String>> getRemindTime() {
+    private JComboBox<ItemData<String, String>> getRemindTime() {
         if (remindTime == null) {
             List<DictionaryData> remDic = dicSer.getDictList("remind_time");
 
-            Vector<ItemData<Integer, String>> remindModel = new Vector<ItemData<Integer, String>>(remDic.size());
+            Vector<ItemData<String, String>> remindModel = new Vector<>(remDic.size());
 
             int selectIndex = 0;
 
             for (int i = 0; i < remDic.size(); i++) {
                 DictionaryData dd = remDic.get(i);
-                remindModel.insertElementAt(new ItemData<Integer, String>(Integer.valueOf(dd.getCode()), dd.getDictdataValue()), i);
-                if (this.data != null && Integer.valueOf(dd.getCode()).equals(data.getRemind())) {
+                remindModel.insertElementAt(new ItemData<String, String>(dd.getCode(), dd.getDictdataValue()), i);
+                if (this.data != null && dd.getCode().equals(data.getRemind())) {
 
                     selectIndex = i;
 
                 }
             }
 
-            remindTime = new JComboBox<ItemData<Integer, String>>(remindModel);
+            remindTime = new JComboBox<ItemData<String, String>>(remindModel);
 
             Dimension preferredSize = remindTime.getPreferredSize();
             preferredSize.setSize(190, preferredSize.getHeight());
@@ -554,7 +554,7 @@ public class CalTaskUi extends JDialog {
         Date et = (Date) endPicker.getModel().getValue();
         data.setEndTime(et.getTime());
 
-        ItemData<Integer, String> remTi = remindTime.getItemAt(remindTime.getSelectedIndex());
+        ItemData<String, String> remTi = remindTime.getItemAt(remindTime.getSelectedIndex());
         data.setRemind(remTi.e1);
 
         ItemData<String, String> ts = taskstatus.getItemAt(taskstatus.getSelectedIndex());

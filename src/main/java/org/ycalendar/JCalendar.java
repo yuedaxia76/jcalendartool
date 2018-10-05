@@ -51,7 +51,7 @@ public class JCalendar {
                     ts.setHd(hd);                    
                     ts.setConInfo(conInfo);                    
                     
-                    
+                    yc.setConInfo(conInfo);
                     yc.setEvSe(es);
                     yc.setDicSer(dic);
                     yc.setTsSe(ts);

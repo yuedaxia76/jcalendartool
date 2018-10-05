@@ -43,8 +43,8 @@ insert into dictionary_data VALUES ('remind_time_9','remind_time','zh_CN','1W','
 
 
 //任务状态
-insert into dictionary_data VALUES ('ts1','task_status','zh_CN','notset','未指定',-1);
-insert into dictionary_data VALUES ('ts2','task_status','zh_CN','process','处理中',0);
-insert into dictionary_data VALUES ('ts3','task_status','zh_CN','unprocessed','未处理',1);
-insert into dictionary_data VALUES ('ts4','task_status','zh_CN','complete','完成',2);
-insert into dictionary_data VALUES ('ts5','task_status','zh_CN','cancel','取消',3);
+insert into dictionary_data VALUES ('ts1','task_status','zh_CN','NOTSET','未指定',-1);
+insert into dictionary_data VALUES ('ts2','task_status','zh_CN','IN-PROCESS','处理中',0);
+insert into dictionary_data VALUES ('ts3','task_status','zh_CN','NEEDS-ACTION','将处理',1);
+insert into dictionary_data VALUES ('ts4','task_status','zh_CN','COMPLETED','完成',2);
+insert into dictionary_data VALUES ('ts5','task_status','zh_CN','CANCELLED','取消',3);

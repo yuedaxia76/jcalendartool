@@ -27,17 +27,22 @@ CREATE table IF NOT EXISTS event_data  (
   event_desc clob
 );
 CREATE  INDEX IF NOT EXISTS EVENTTIMEINX ON event_data (start_time) ;
-//drop table task_data IF EXISTS;
+drop table task_data IF EXISTS;
 CREATE table IF NOT EXISTS task_data  (
   taskid varchar(36)   PRIMARY KEY ,
   category varchar(30)   ,
   end_time BIGINT ,
   start_time BIGINT,
+  create_time BIGINT NOT NULL,
+  last_change_time BIGINT NOT NULL,
+  location varchar(100) ,
   title varchar(300) NOT NULL,
+  complete_time BIGINT,
   calendarid   varchar(25) NOT NULL default 'main',
-  tstatus varchar(30)  NOT NULL default 'notset',
-  percentage int,
-  remind   int default -1,
+  tstatus varchar(30)  NOT NULL default 'NOTSET',
+  percentage int default 0,
+  remind   varchar(30) default '-1S',
+  event_type varchar(30) default 'PUBLIC',
   taskdesc   clob
   
 );

@@ -94,7 +94,7 @@ public class EventData {
         this.repeatEnd = repeatEnd;
     }
 
-    //提醒时间<0不提醒 
+    //提醒时间-1S不提醒 
     private String remind;
 
     public String getRemind() {
