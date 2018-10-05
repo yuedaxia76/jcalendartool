@@ -144,10 +144,10 @@ public class TaskTest {
     public void testNotcomplete() {
         int count = 0;
 
-        insert("unprocessed", count);
+        insert("IN-PROCESS", count);
         count++;
         
-        insert("process", count);
+        insert("NEEDS-ACTION", count);
         count++;
         
         List<String> st = ts.getNotcompleteStatus();

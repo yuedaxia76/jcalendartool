@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.ycalendar.dbp.dao.BeanHandler;
@@ -40,7 +41,7 @@ public class DicService extends GenalService implements Dictionary {
 				
 				List<DictionaryData> tem=gdao.query(hd.getCurCnection(), sql, rsh, type,Locale.getDefault().toString());
 				if(UtilValidate.isEmpty(tem)) {
-					log.severe("error type "+type+" no data");
+					log.log(Level.SEVERE, "error dictionary type {0} no data", type);
 				}
 				return tem;
 				 
@@ -59,7 +60,7 @@ public class DicService extends GenalService implements Dictionary {
 				
 				DictionaryData tem=gdao.query(hd.getCurCnection(), sql, rsh, type,code,Locale.getDefault().toString());
 				if(tem==null) {
-					log.severe("error type "+type+ "code :"+code +" no data");
+					log.severe("error dic type "+type+ " dic code :"+code +" no data");
 				}
 				return tem;
 				 
@@ -77,7 +78,7 @@ public class DicService extends GenalService implements Dictionary {
 				
 				DictionaryData tem=gdao.query(hd.getCurCnection(), sql, rsh, type,value,Locale.getDefault().toString());
 				if(tem==null) {
-					log.severe("error type "+type+ "value :"+value +" no data");
+					log.severe("error dic type "+type+ " dic value :"+value +" no data");
 				}
 				return tem;
 				 

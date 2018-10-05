@@ -27,7 +27,7 @@ CREATE table IF NOT EXISTS event_data  (
   event_desc clob
 );
 CREATE  INDEX IF NOT EXISTS EVENTTIMEINX ON event_data (start_time) ;
-drop table task_data IF EXISTS;
+//drop table task_data IF EXISTS;
 CREATE table IF NOT EXISTS task_data  (
   taskid varchar(36)   PRIMARY KEY ,
   category varchar(30)   ,

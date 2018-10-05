@@ -369,7 +369,7 @@ public class YCalendar {
                     if (code != null) {
                         td.setCategory(code);
                     } else {
-                        log.log(Level.WARNING, "Category {0} no code", catl);
+                        log.log(Level.WARNING, "Category {0} no dic code", catl);
                         td.setCategory("-1");
                     }
                     
@@ -379,7 +379,8 @@ public class YCalendar {
                 
             } else {
                 td.setCategory("-1");
-            }            
+            }  
+            
             tsSe.saveOrUpdate(td);
         }
         

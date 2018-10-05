@@ -18,6 +18,7 @@ import org.ycalendar.dbp.dao.H2Dao;
 import org.ycalendar.dbp.service.ConfigInfo;
 import org.ycalendar.dbp.service.DicService;
 import org.ycalendar.dbp.service.EventService;
+import org.ycalendar.dbp.service.TaskService;
 import org.ycalendar.util.UtilDateTime;
 
 /**
@@ -47,13 +48,19 @@ public class ImportTest {
         es.setConInfo(conInfo);
 
         yc = new YCalendar();
-
+        yc.setConInfo(conInfo);
         yc.setEvSe(es);
 
         DicService dic = new DicService();
         dic.setGdao(dao);
         dic.setHd(hd);
 
+        TaskService ts = new TaskService();
+        ts.setGdao(dao);
+        ts.setHd(hd);
+        ts.setConInfo(conInfo);
+
+        yc.setTsSe(ts);
         yc.setDicSer(dic);
 
     }
@@ -66,6 +73,12 @@ public class ImportTest {
     @Test
     public void testImpo() throws IOException, ParserException {
         try (InputStream in = ImportTest.class.getClassLoader().getResourceAsStream("resource/test1.ics")) {
+            if (yc == null) {
+                System.out.println("yc is null...................");
+            }
+            if (in == null) {
+                System.out.println("in is null...................");
+            }
             int result = yc.importIcs(in, null);
             Assert.assertEquals(result, 2);
         }

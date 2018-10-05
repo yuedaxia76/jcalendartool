@@ -120,7 +120,7 @@ public class TaskService extends GenalService {
      * @return
      */
     public List<String> getNotcompleteStatus() {
-        return Arrays.asList(getConInfo().getDefaultTaskStatus(), "process", "unprocessed");
+        return Arrays.asList(getConInfo().getDefaultTaskStatus(), "IN-PROCESS", "NEEDS-ACTION");
     }
 
     public List<TaskData> queryTask(List<String> status, long start, long end, List<String> calendarids, String title, int percentage) {
