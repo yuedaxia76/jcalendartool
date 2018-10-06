@@ -60,7 +60,7 @@ public class DicService extends GenalService implements Dictionary {
 				
 				DictionaryData tem=gdao.query(hd.getCurCnection(), sql, rsh, type,code,Locale.getDefault().toString());
 				if(tem==null) {
-					log.severe("error dic type "+type+ " dic code :"+code +" no data");
+					log.log(Level.SEVERE, "error dic type {0} dic code :{1} no data", new Object[]{type, code});
 				}
 				return tem;
 				 
@@ -78,7 +78,7 @@ public class DicService extends GenalService implements Dictionary {
 				
 				DictionaryData tem=gdao.query(hd.getCurCnection(), sql, rsh, type,value,Locale.getDefault().toString());
 				if(tem==null) {
-					log.severe("error dic type "+type+ " dic value :"+value +" no data");
+					log.log(Level.SEVERE, "error dic type {0} dic value :{1} no data", new Object[]{type, value});
 				}
 				return tem;
 				 

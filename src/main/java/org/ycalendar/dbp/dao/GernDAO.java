@@ -40,13 +40,13 @@ public class GernDAO {
         ResultSet rs = null;
         T result = null;
         try {
-            psh.adjustParams(params);
+            psh.adjustParams(params.length,params);
             stmt = conn.prepareStatement(sql);
-            this.fillStatement(stmt, params);
+            this.fillStatement(stmt,params.length,params);
             rs = stmt.executeQuery();
             result = rsh.handle(rs);
         } catch (SQLException e) {
-            psh.print(sql, params);
+            psh.print(sql,params.length, params);
             throw new RuntimeException(e);
         } finally {
             close(rs, stmt);
@@ -62,12 +62,12 @@ public class GernDAO {
         PreparedStatement stmt = null;
         int rows = 0;
         try {
-            psh.adjustParams(params);
+            psh.adjustParams(params.length,params);
             stmt = conn.prepareStatement(sql);
-            this.fillStatement(stmt, params);
+            this.fillStatement(stmt,params.length, params);
             rows = stmt.executeUpdate();
         } catch (SQLException e) {
-            psh.print(sql, params);
+            psh.print(sql,params.length, params);
             throw new RuntimeException(e);
         } finally {
             close(stmt);
@@ -80,11 +80,11 @@ public class GernDAO {
         int[] rows = null;
         try {
             conn.setAutoCommit(false);
-            psh.adjustParams(params[0]);
+            //psh.adjustParams(params[0].length,params[0]);
             stmt = conn.prepareStatement(sql);
             for (int i = 0; i < params.length; i++) {
-                psh.adjustParams(params[i]);
-                this.fillStatement(stmt, params[i]);
+                psh.adjustParams(params[i].length, params[i]);
+                this.fillStatement(stmt,params[i].length, params[i]);
                 stmt.addBatch();
             }
             rows = stmt.executeBatch();
@@ -115,6 +115,9 @@ public class GernDAO {
                 Method getter = pd.getReadMethod();
                 String name = pd.getName();
                 Object value = getter.invoke(bean);
+                if (value == null) {
+                    continue;
+                }
 
                 columns.append(PreparedStatementHandler.camel2underscore(name)).append(',');
                 questionMarks.append("?,");
@@ -122,19 +125,19 @@ public class GernDAO {
                 j++;
 
             }
-            columns.delete(columns.length() - 1, columns.length() );
-            questionMarks.delete(questionMarks.length() - 1, questionMarks.length() );
+            columns.delete(columns.length() - 1, columns.length());
+            questionMarks.delete(questionMarks.length() - 1, questionMarks.length());
             String sql = String.format("insert into %s (%s) values (%s)", table, columns.toString(), questionMarks.toString());
 
-            psh.adjustParams(params);
+            psh.adjustParams(j,params);
 
             stmt = conn.prepareStatement(sql);
 
-            this.fillStatement(stmt, params);
+            this.fillStatement(stmt,j, params);
             try {
                 rows = stmt.executeUpdate();
             } catch (SQLException e) {
-                psh.print(sql, params);
+                psh.print(sql, j,params);
                 throw new RuntimeException(e);
             }
 
@@ -163,11 +166,11 @@ public class GernDAO {
             String name = pd.getName();
 
             columns.append(PreparedStatementHandler.camel2underscore(name)).append(',');
-            questionMarks.append( "?,");
+            questionMarks.append("?,");
 
         }
-         columns.delete( columns.length() - 1,columns.length());
-         questionMarks.substring( questionMarks.length() - 1,questionMarks.length());
+        columns.delete(columns.length() - 1, columns.length());
+        questionMarks.substring(questionMarks.length() - 1, questionMarks.length());
         String sql = String.format("insert into %s (%s) values (%s)", table, columns.toString(), questionMarks.toString());
 
         // build parameters */
@@ -219,7 +222,7 @@ public class GernDAO {
                     id = value;
                 } else {
                     if (setNull || value != null) {
-                        columnAndQuestionMarks.append(PreparedStatementHandler.camel2underscore(name)).append( "=?,");
+                        columnAndQuestionMarks.append(PreparedStatementHandler.camel2underscore(name)).append("=?,");
                         params.add(value);
                     }
 
@@ -227,7 +230,7 @@ public class GernDAO {
             }
             params.add(id);
             String table = PreparedStatementHandler.camel2underscore(cls.getSimpleName());
-             columnAndQuestionMarks.delete( columnAndQuestionMarks.length() - 1,columnAndQuestionMarks.length());
+            columnAndQuestionMarks.delete(columnAndQuestionMarks.length() - 1, columnAndQuestionMarks.length());
             String sql = String.format("update %s set %s where %s = ?", table, columnAndQuestionMarks, PreparedStatementHandler.camel2underscore(primaryKey));
             return update(conn, sql, params.toArray(new Object[params.size()]));
         } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException | IntrospectionException e) {
@@ -247,11 +250,11 @@ public class GernDAO {
                 String name = pd.getName();
                 if (name.equals(primaryKey)) {
                 } else {
-                    columnAndQuestionMarks.append(PreparedStatementHandler.camel2underscore(name)).append( "=?,");
+                    columnAndQuestionMarks.append(PreparedStatementHandler.camel2underscore(name)).append("=?,");
                 }
             }
             String table = PreparedStatementHandler.camel2underscore(cls.getSimpleName());
-            columnAndQuestionMarks.delete( columnAndQuestionMarks.length() - 1,columnAndQuestionMarks.length());
+            columnAndQuestionMarks.delete(columnAndQuestionMarks.length() - 1, columnAndQuestionMarks.length());
             String sql = String.format("update %s set %s where %s = ?", table, columnAndQuestionMarks, PreparedStatementHandler.camel2underscore(primaryKey));
 
             // build parameters
@@ -302,12 +305,12 @@ public class GernDAO {
         psh.in(sql, params, operator, field, values);
     }
 
-    private void fillStatement(PreparedStatement stmt, Object... params) {
+    private void fillStatement(PreparedStatement stmt,final int len, Object... params) {
         if (params == null) {
             return;
         }
         try {
-            for (int i = 0; i < params.length; i++) {
+            for (int i = 0; i < len; i++) {
 
                 if (params[i] == null) {
                     stmt.setNull(i + 1, Types.VARCHAR);
@@ -329,7 +332,7 @@ public class GernDAO {
         } catch (IllegalArgumentException | SQLException e) {
             log.log(Level.SEVERE, "execuSql error, sql :{0}", sql);
             throw new RuntimeException(e);
-        }  
+        }
     }
 
     protected void close(ResultSet rs, Statement stmt) {

@@ -244,11 +244,17 @@ public class TaskUi {
                     return dicSer.getDictValue("task_status", st);
 
                 case 4:
-                    long sdt = t.getStartTime();
+                    Long sdt = t.getStartTime();
+                    if(sdt==null){
+                     return "";
+                    }
                     return UtilDateTime.longToString(sdt, UtilDateTime.defaultDatePattern);
 
                 case 5:
-                    long edt = t.getEndTime();
+                    Long edt = t.getEndTime();
+                    if(edt==null){
+                     return "";
+                    }                    
                     return UtilDateTime.longToString(edt, UtilDateTime.defaultDatePattern);
 
             }

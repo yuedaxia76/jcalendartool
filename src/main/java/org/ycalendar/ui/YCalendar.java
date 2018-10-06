@@ -89,26 +89,26 @@ import org.ycalendar.util.UtilValidate;
  *
  */
 public class YCalendar {
-    
+
     public static final Logger log = Logger.getLogger(YCalendar.class.getName());
     final JFrame f = new JFrame("日历");
-    
+
     private JMenuBar jmb;
-    
+
     private JToolBar myJToolBar;
-    
+
     private CalendarUi caui;
     private TaskUi tasui;
-    
+
     private JTabbedPane areare;
-    
+
     private void initMenu() {
         jmb = new JMenuBar();
-        
+
         JMenu eventAndTask = new JMenu("事件与任务");
-        
+
         jmb.add(eventAndTask);
-        
+
         JMenuItem newEventme = new JMenuItem("新事件");
         JMenuItem newTaskMe = new JMenuItem("新建任务");
         JMenuItem calMenu = new JMenuItem("日历");
@@ -122,7 +122,7 @@ public class YCalendar {
 
         // 这里是添加菜单
         f.setJMenuBar(jmb);
-        
+
         newEventme.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {// 只能检测到mousePressed事件
@@ -157,13 +157,13 @@ public class YCalendar {
                 importFile();
             }
         });
-        
+
     }
-    
+
     class JAVAFileFilter extends FileFilter {
-        
+
         final String ext;
-        
+
         public JAVAFileFilter(String ext) {
             this.ext = '.' + ext;
         }
@@ -176,15 +176,15 @@ public class YCalendar {
             }
             String fileName = file.getName().toLowerCase();
             return fileName.endsWith(ext);
-            
+
         }
-        
+
         @Override
         public String getDescription() {
             return "只能选择" + ext + "文件";
         }
     }
-    
+
     private void importFile() {
         JFileChooser jfc = new JFileChooser();
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -195,42 +195,44 @@ public class YCalendar {
         File file = jfc.getSelectedFile();
         if (file.isFile()) {
             try {
-                Tuple2<Integer,Integer> importCount;
+                Tuple2<Integer, Integer> importCount;
                 if (file.getName().toLowerCase().endsWith("ics")) {
                     try (FileInputStream fis = new FileInputStream(file)) {
                         importCount = importIcs(fis, null);
                     }
-                    
+
                 } else {
                     try (FileInputStream fis = new FileInputStream(file)) {
                         importCount = importCsv(fis, null, "UTF-8");
                     }
-                    
+
                 }
                 //刷新显示
                 caui.refresh();
-                
-                JOptionPane.showMessageDialog(f, "导入:" + importCount.e1 + "条事件,"+importCount.e2+"条任务", "导入成功", JOptionPane.INFORMATION_MESSAGE);
+
+                JOptionPane.showMessageDialog(f, "导入:" + importCount.e1 + "条事件," + importCount.e2 + "条任务", "导入成功", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception e) {
                 log.log(Level.SEVERE, "importFile {0} error{1}", new Object[]{file.getName(), e.toString()});
                 JOptionPane.showMessageDialog(f, "错误:" + e.toString(), "错误", JOptionPane.ERROR_MESSAGE);
             }
-            
+
         }
-        
+
     }
+
     /**
      * 返回导入的数据条数
+     *
      * @param in
      * @param calendarid
      * @return 第一个导入的event ,第二个导入的任务
      * @throws IOException
-     * @throws ParserException 
+     * @throws ParserException
      */
-    protected Tuple2<Integer,Integer> importIcs(InputStream in, String calendarid) throws IOException, ParserException {
-        
+    protected Tuple2<Integer, Integer> importIcs(InputStream in, String calendarid) throws IOException, ParserException {
+
         int eventResult = 0;
-        
+
         CalendarBuilder build = new CalendarBuilder();
         net.fortuna.ical4j.model.Calendar calendar = build.build(in);
         for (Iterator<CalendarComponent> i = calendar.getComponents(Component.VEVENT).iterator(); i.hasNext();) {
@@ -260,17 +262,17 @@ public class YCalendar {
             // 创建时间
             if (null != event.getCreated()) {
                 ev.setCreateTime(event.getCreated().getDate().getTime());
-                
+
             }
             // 最后修改时间
             if (null != event.getLastModified()) {
                 ev.setLastChangeTime(event.getLastModified().getDate().getTime());
-                
+
             }
             //隐私分类
             if (null != event.getClassification()) {
                 ev.setEventType(event.getClassification().getValue());
-                
+
             }
             //分类
             if (null != event.getProperty("CATEGORIES")) {
@@ -284,11 +286,11 @@ public class YCalendar {
                         log.log(Level.WARNING, "Category {0} no code", catl);
                         ev.setCategory("-1");
                     }
-                    
+
                 } else {
                     ev.setCategory("-1");
                 }
-                
+
             } else {
                 ev.setCategory("-1");
             }
@@ -334,11 +336,15 @@ public class YCalendar {
             // 开始时间
             if (task.getStartDate() != null) {
                 td.setStartTime(task.getStartDate().getDate().getTime());
+            } else {
+                td.setStartTime(null);
             }
 
             // 结束时间
             if (task.getDue() != null) {
                 td.setEndTime(task.getDue().getDate().getTime());
+            } else {
+                td.setEndTime(null);
             }
 
             // 地点
@@ -354,23 +360,23 @@ public class YCalendar {
             // 创建时间
             if (null != task.getCreated()) {
                 td.setCreateTime(task.getCreated().getDate().getTime());
-                
+
             }
             // 最后修改时间
             if (null != task.getLastModified()) {
                 td.setLastChangeTime(task.getLastModified().getDate().getTime());
-                
+
             }
             //隐私分类
             if (null != task.getClassification()) {
                 td.setEventType(task.getClassification().getValue());
-                
+
             }
             //结束时间
             if (null != task.getDateCompleted()) {
                 td.setCompleteTime(task.getDateCompleted().getDate().getTime());
-                
-            }    
+
+            }
             //进度
             if (task.getPercentComplete() != null) {
                 td.setPercentage(task.getPercentComplete().getPercentage());
@@ -387,28 +393,28 @@ public class YCalendar {
                         log.log(Level.WARNING, "Category {0} no dic code", catl);
                         td.setCategory("-1");
                     }
-                    
+
                 } else {
                     td.setCategory("-1");
                 }
-                
+
             } else {
                 td.setCategory("-1");
-            }  
-            
+            }
+
             tsSe.saveOrUpdate(td);
             taskResult++;
         }
-        
-        return new Tuple2(eventResult,taskResult);
-        
+
+        return new Tuple2(eventResult, taskResult);
+
     }
-    
+
     private final String[] csvFileHeaders = {"Subject", "Start Date", "Start Time", "End Date", "End Time", "All day event", "Reminder on/off", "Reminder Date", "Reminder Time", "Categories", "Description", "Location", "Private"};
-    
-    protected Tuple2<Integer,Integer> importCsv(InputStream in, String calendarid, String encode) throws IOException, ParserException {
+
+    protected Tuple2<Integer, Integer> importCsv(InputStream in, String calendarid, String encode) throws IOException, ParserException {
         int result = 0;
-        
+
         CSVFormat csvFileFormat = CSVFormat.DEFAULT.withHeader(csvFileHeaders);
         try (BufferedReader br = new BufferedReader(new InputStreamReader(in, encode));
                 // 初始化 CSVParser object
@@ -447,26 +453,26 @@ public class YCalendar {
                         } else {
                             ev.setRemind("1W");
                         }
-                        
+
                     } else {
                         ev.setRemind("-1S");
                     }
-                    
+
                     ev.setCategory(csvr.get("Categories"));
                     ev.setEventDesc(csvr.get("Description"));
                     ev.setLocation(csvr.get("Location"));
                     ev.setEventType(("FALSE".equalsIgnoreCase(csvr.get("Private"))) ? "PUBLIC" : "PRIVATE");
                     evSe.saveOrUpdate(ev);
                 }
-                
+
                 result++;
             }
-            
+
         }
-        
-        return new Tuple2(result - 1,0);
+
+        return new Tuple2(result - 1, 0);
     }
-    
+
     public void exportFile() {
         try {
             // 创建一个时区（TimeZone）
@@ -531,27 +537,27 @@ public class YCalendar {
             e.printStackTrace();
         }
     }
-    
+
     private void newTask() {
         CalTaskUi evu = new CalTaskUi(f, true, 750, 850, null);
         evu.setTaskSe(tsSe);
         evu.setDicSer(dicSer);
-        
+
         evu.initTaskUi(Calendar.getInstance());
-        
+
         Tuple2<TaskData, Integer> newData = evu.getData();
-        
+
         if (!newData.e2.equals(3)) {
             tasui.reload();
         }
-        
+
         evu.dispose();
     }
-    
+
     private void newEvent() {
-        
+
         java.awt.EventQueue.invokeLater(new Runnable() {
-            
+
             @Override
             public void run() {
                 EventUi evu = new EventUi(f, true, 750, 850, null);
@@ -562,20 +568,20 @@ public class YCalendar {
                     JOptionPane.showMessageDialog(null, " 没有选择日期", "没有选择日期", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                
+
                 evu.initEventUi(curDay);
-                
+
                 Tuple2<EventData, Integer> newData = evu.getData();
-                
+
                 caui.refresh(newData);
-                
+
                 evu.dispose();
             }
-            
+
         });
-        
+
     }
-    
+
     private void editEvent() {
         EventData ed = caui.getSelectEventData();
         if (ed == null) {
@@ -585,30 +591,30 @@ public class YCalendar {
         EventUi evu = new EventUi(f, true, 750, 850, ed.getEventid());
         evu.setEvSe(evSe);
         evu.setDicSer(dicSer);
-        
+
         evu.initEventUi();
-        
+
         Tuple2<EventData, Integer> newData = evu.getData();
-        
+
         caui.refresh(newData);
-        
+
         evu.dispose();
-        
+
     }
-    
+
     private void intToolbar() {
-        
+
         myJToolBar = new JToolBar();
         f.add(myJToolBar, BorderLayout.NORTH);
 
         // myJToolBar.setBounds(29, 12, 320, 38);
         myJToolBar.setBackground(new java.awt.Color(255, 255, 255));
-        
+
         JButton jB_event;
         JButton jB_edit;
         JButton jB_del;
         JButton jB_task;
-        
+
         jB_event = new JButton();
         myJToolBar.add(jB_event);
         jB_event.setText("事件");
@@ -617,7 +623,7 @@ public class YCalendar {
         jB_event.setToolTipText("新建事件");
         // jB_event.setBackground(new java.awt.Color(255, 255, 128));
         jB_event.addActionListener((e) -> newEvent());
-        
+
         jB_task = new JButton();
         myJToolBar.add(jB_task);
         jB_task.setText("任务");
@@ -633,7 +639,7 @@ public class YCalendar {
         jB_edit.setFont(new java.awt.Font("楷体", 0, 14));
         // TODO:未来支持两种
         jB_edit.addActionListener((e) -> editEvent());
-        
+
         jB_del = new JButton();
         myJToolBar.add(jB_del);
         jB_del.setText("删除");
@@ -643,34 +649,34 @@ public class YCalendar {
         // TODO:未来支持两种
         jB_del.addActionListener((e) -> caui.deleteSelectEvent());
     }
-    
+
     private void initFistFuncArea(Rectangle scbounds, JPanel pare) {
-        
+
         caui = new CalendarUi(evSe, dicSer);
         caui.initUi(scbounds);
-        
+
         pare.add(caui.splitright, BorderLayout.CENTER);
     }
-    
+
     private void initSecondFuncArea(Rectangle scbounds, JPanel pare) {
         tasui = new TaskUi();
         tasui.setDicSer(dicSer);
         tasui.setTaskSer(tsSe);
         tasui.setEs(evSe);
-        
+
         tasui.initUi(scbounds);
-        
+
         pare.add(tasui.splitright, BorderLayout.CENTER);
     }
-    
+
     private void resetFuncArea(Rectangle scbounds) {
         caui.restArea(scbounds);
         tasui.restArea(scbounds);
     }
-    
+
     private void initMainform() {
         f.setLayout(new BorderLayout());
-        
+
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // 设置满屏
@@ -681,74 +687,74 @@ public class YCalendar {
         bounds.y += insets.top;
         bounds.width -= insets.left + insets.right;
         bounds.height -= insets.top + insets.bottom;
-        
+
         f.setBounds(bounds);
-        
+
     }
-    
+
     public YCalendar() {
         initMainform();
-        
+
     }
     private ConfigInfo conInfo;
-    
+
     public ConfigInfo getConInfo() {
         return conInfo;
     }
-    
+
     public void setConInfo(ConfigInfo conInfo) {
         this.conInfo = conInfo;
     }
-    
+
     public void initMainUi() {
         initMenu();
-        
+
         intToolbar();
         initTab();
-        
+
         initFistFuncArea(f.getBounds(), (JPanel) areare.getComponent(0));
-        
+
         initSecondFuncArea(f.getBounds(), (JPanel) areare.getComponent(1));
-        
+
         f.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 resetFuncArea(f.getBounds());
             }
         });
-        
+
         loadInitData();
-        
+
         f.setVisible(true);
     }
-    
+
     private InitDataService dataLoad;
-    
+
     public void setDataLoad(InitDataService dataLoad) {
         this.dataLoad = dataLoad;
     }
     private TaskService tsSe;
-    
+
     public void setTsSe(TaskService tsSe) {
         this.tsSe = tsSe;
     }
-    
+
     private EventService evSe;
-    
+
     public EventService getEvSe() {
         return evSe;
     }
-    
+
     public void setEvSe(EventService evSe) {
         this.evSe = evSe;
     }
-    
+
     private Dictionary dicSer;
-    
+
     public Dictionary getDicSer() {
         return dicSer;
     }
-    
+
     public void setDicSer(Dictionary dicSer) {
         this.dicSer = dicSer;
     }
@@ -757,7 +763,7 @@ public class YCalendar {
     private void loadInitData() {
         dataLoad.loadData();
     }
-    
+
     private void initTab() {
         areare = new JTabbedPane(JTabbedPane.BOTTOM);
 
@@ -768,12 +774,12 @@ public class YCalendar {
         // jpanelFirst.setBorder(BorderFactory.createLineBorder(Color.red, 3) );
 
         areare.addTab("日历", null, jpanelFirst, "日历");
-        
+
         JPanel jpanelSecond = new JPanel();
         jpanelSecond.setLayout(new BorderLayout());
         areare.addTab("任务", null, jpanelSecond, "任务");// 加入第一个页面
 
         f.add(areare, BorderLayout.CENTER);
     }
-    
+
 }

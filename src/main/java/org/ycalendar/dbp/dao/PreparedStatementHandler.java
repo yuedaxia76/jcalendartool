@@ -63,11 +63,11 @@ public class PreparedStatementHandler {
 	}
 
 	/* 调整参数 */
-	public void adjustParams(Object... params) {
+	public void adjustParams(final int len,Object... params) {
 		if(UtilValidate.isEmpty(params)) {
 			return ;
 		}
-		for (int i = 0, cols = params.length; i < cols; i++) {
+		for (int i = 0; i < len; i++) {
 			Object value = params[i];
 			if (value == null)
 				continue;
@@ -106,17 +106,17 @@ public class PreparedStatementHandler {
 	}
 
 	/* 语句和参数已经经过调整 */
-	public void print(final String sql, final Object[] params) {
-		if (!match(sql, params)) {
+	public void print(final String sql,final int len, final Object[] params) {
+		if (!match(sql, len)) {
 			log.severe(sql);
 			return;
 		}
 
-		int cols = params.length;
-		Object[] values = new Object[cols];
-		System.arraycopy(params, 0, values, 0, cols);
+		 
+		Object[] values = new Object[len];
+		System.arraycopy(params, 0, values, 0, len);
 
-		for (int i = 0; i < cols; i++) {
+		for (int i = 0; i < len; i++) {
 			Object value = values[i];
 			if (value instanceof String) {
 				values[i] = toQuote(value);
@@ -127,13 +127,13 @@ public class PreparedStatementHandler {
 	}
 
 	/* ?和参数的实际个数是否匹配 */
-	private boolean match(String sql, Object[] params) {
+	private boolean match(String sql, int len) {
 		Matcher m = Pattern.compile("(\\?)").matcher(sql);
 		int count = 0;
 		while (m.find()) {
 			count++;
 		}
-		return count == params.length;
+		return count == len;
 	}
 
 	private String toQuote(Object value) {

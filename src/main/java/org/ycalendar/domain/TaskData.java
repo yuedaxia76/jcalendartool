@@ -35,25 +35,25 @@ public class TaskData {
         this.category = category;
     }
 
-    public long getStartTime() {
+    public Long getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(long startTime) {
+    public void setStartTime(Long startTime) {
         this.startTime = startTime;
     }
 
-    public long getEndTime() {
+    public Long getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(long endTime) {
+    public void setEndTime(Long endTime) {
         this.endTime = endTime;
     }
 
     private String category;
-    private long startTime;
-    private long endTime;
+    private Long startTime;
+    private Long endTime;
     //结束时间
     private Long completeTime;
 
