@@ -210,7 +210,7 @@ public class YCalendar {
                 //刷新显示
                 caui.refresh();
                 
-                JOptionPane.showMessageDialog(f, "导入:" + importCount.e1 + "条事件,"+importCount.e1+"条任务", "导入成功", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(f, "导入:" + importCount.e1 + "条事件,"+importCount.e2+"条任务", "导入成功", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception e) {
                 log.log(Level.SEVERE, "importFile {0} error{1}", new Object[]{file.getName(), e.toString()});
                 JOptionPane.showMessageDialog(f, "错误:" + e.toString(), "错误", JOptionPane.ERROR_MESSAGE);
