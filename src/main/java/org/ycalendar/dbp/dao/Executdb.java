@@ -14,4 +14,10 @@ public interface Executdb {
 	
 	public int loadSql(String sqlFile);
 
+        public void begin();
+        
+        public void rollback();
+        
+        
+        public void commit();
 }

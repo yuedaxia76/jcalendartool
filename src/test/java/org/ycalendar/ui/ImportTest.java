@@ -19,6 +19,7 @@ import org.ycalendar.dbp.service.ConfigInfo;
 import org.ycalendar.dbp.service.DicService;
 import org.ycalendar.dbp.service.EventService;
 import org.ycalendar.dbp.service.TaskService;
+import org.ycalendar.util.Tuple2;
 import org.ycalendar.util.UtilDateTime;
 
 /**
@@ -73,14 +74,9 @@ public class ImportTest {
     @Test
     public void testImpo() throws IOException, ParserException {
         try (InputStream in = ImportTest.class.getClassLoader().getResourceAsStream("resource/test1.ics")) {
-            if (yc == null) {
-                System.out.println("yc is null...................");
-            }
-            if (in == null) {
-                System.out.println("in is null...................");
-            }
-            int result = yc.importIcs(in, null);
-            Assert.assertEquals(result, 2);
+            Tuple2<Integer,Integer> result = yc.importIcs(in, null);
+            Assert.assertEquals(result.e1.intValue(), 2);
+            Assert.assertEquals(result.e2.intValue(), 1);
         }
 
     }
@@ -88,8 +84,8 @@ public class ImportTest {
     @Test
     public void testImpoCsv() throws IOException, ParserException {
         try (InputStream in = ImportTest.class.getClassLoader().getResourceAsStream("resource/test1.csv")) {
-            int result = yc.importCsv(in, null, "UTF-8");
-            Assert.assertEquals(result, 2);
+            Tuple2<Integer,Integer> result = yc.importCsv(in, null, "UTF-8");
+            Assert.assertEquals(result.e1.intValue(), 2);
         }
 
     }

@@ -47,6 +47,11 @@ public class TaskService extends GenalService {
                 if (UtilValidate.isEmpty(td.getCalendarid())) {
                     td.setCalendarid(conInfo.getDefaultCalId());
                 }
+                if (Long.MIN_VALUE == td.getCreateTime()) {
+                    long s = System.currentTimeMillis();
+                    td.setCreateTime(s);
+                    td.setLastChangeTime(s);
+                }                
                 gdao.create(hd.getCurCnection(), TaskData.class, td);
                 return null;
             }
@@ -82,6 +87,7 @@ public class TaskService extends GenalService {
         return hd.exeTran(new ExecuDbopention<Integer>() {
             @Override
             public Integer exeDbAction() {
+                td.setLastChangeTime(System.currentTimeMillis());
                 return gdao.update(hd.getCurCnection(), TaskData.class, td, "taskid", false);
 
             }

@@ -54,6 +54,16 @@ public class TaskData {
     private String category;
     private long startTime;
     private long endTime;
+    //结束时间
+    private Long completeTime;
+
+    public Long getCompleteTime() {
+        return completeTime;
+    }
+
+    public void setCompleteTime(Long completeTime) {
+        this.completeTime = completeTime;
+    }
     private String calendarid;
 
     //提醒时间-1S不提醒 

@@ -195,7 +195,7 @@ public class YCalendar {
         File file = jfc.getSelectedFile();
         if (file.isFile()) {
             try {
-                int importCount;
+                Tuple2<Integer,Integer> importCount;
                 if (file.getName().toLowerCase().endsWith("ics")) {
                     try (FileInputStream fis = new FileInputStream(file)) {
                         importCount = importIcs(fis, null);
@@ -210,7 +210,7 @@ public class YCalendar {
                 //刷新显示
                 caui.refresh();
                 
-                JOptionPane.showMessageDialog(f, "导入:" + importCount + "条数据", "导入成功", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(f, "导入:" + importCount.e1 + "条事件,"+importCount.e1+"条任务", "导入成功", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception e) {
                 log.log(Level.SEVERE, "importFile {0} error{1}", new Object[]{file.getName(), e.toString()});
                 JOptionPane.showMessageDialog(f, "错误:" + e.toString(), "错误", JOptionPane.ERROR_MESSAGE);
@@ -219,9 +219,17 @@ public class YCalendar {
         }
         
     }
-    
-    protected int importIcs(InputStream in, String calendarid) throws IOException, ParserException {
-        int result = 0;
+    /**
+     * 返回导入的数据条数
+     * @param in
+     * @param calendarid
+     * @return 第一个导入的event ,第二个导入的任务
+     * @throws IOException
+     * @throws ParserException 
+     */
+    protected Tuple2<Integer,Integer> importIcs(InputStream in, String calendarid) throws IOException, ParserException {
+        
+        int eventResult = 0;
         
         CalendarBuilder build = new CalendarBuilder();
         net.fortuna.ical4j.model.Calendar calendar = build.build(in);
@@ -302,7 +310,7 @@ public class YCalendar {
             }
             //可以多次导入，不出错
             evSe.saveOrUpdate(ev);
-            result++;
+            eventResult++;
 // 邀请人
 //                if (null != event.getProperty("ATTENDEE")) {
 //                    ParameterList parameters = event.getProperty("ATTENDEE").getParameters();
@@ -311,6 +319,7 @@ public class YCalendar {
 //                }
 
         }
+        int taskResult = 0;
         for (Iterator<CalendarComponent> i = calendar.getComponents(Component.VTODO).iterator(); i.hasNext();) {
             VToDo task = (VToDo) i.next();
             TaskData td = new TaskData();
@@ -357,6 +366,12 @@ public class YCalendar {
                 td.setEventType(task.getClassification().getValue());
                 
             }
+            //结束时间
+            if (null != task.getDateCompleted()) {
+                td.setCompleteTime(task.getDateCompleted().getDate().getTime());
+                
+            }    
+            //进度
             if (task.getPercentComplete() != null) {
                 td.setPercentage(task.getPercentComplete().getPercentage());
             }
@@ -382,15 +397,16 @@ public class YCalendar {
             }  
             
             tsSe.saveOrUpdate(td);
+            taskResult++;
         }
         
-        return result;
+        return new Tuple2(eventResult,taskResult);
         
     }
     
     private final String[] csvFileHeaders = {"Subject", "Start Date", "Start Time", "End Date", "End Time", "All day event", "Reminder on/off", "Reminder Date", "Reminder Time", "Categories", "Description", "Location", "Private"};
     
-    protected int importCsv(InputStream in, String calendarid, String encode) throws IOException, ParserException {
+    protected Tuple2<Integer,Integer> importCsv(InputStream in, String calendarid, String encode) throws IOException, ParserException {
         int result = 0;
         
         CSVFormat csvFileFormat = CSVFormat.DEFAULT.withHeader(csvFileHeaders);
@@ -448,7 +464,7 @@ public class YCalendar {
             
         }
         
-        return result - 1;
+        return new Tuple2(result - 1,0);
     }
     
     public void exportFile() {

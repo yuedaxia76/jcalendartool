@@ -21,6 +21,23 @@ public class H2Dao implements Executdb {
 
     public static final Logger log = Logger.getLogger(H2Dao.class.getName());
 
+    @Override
+    public void begin() {
+        localTran.begin();
+    }
+
+    @Override
+    public void rollback() {
+       localTran.rollback();
+       localTran.release();
+    }
+
+    @Override
+    public void commit() {
+       localTran.commit();
+       localTran.release();
+    }
+
     static class H2daoRef {
 
         private static final H2Dao h2r = new H2Dao();
@@ -38,7 +55,7 @@ public class H2Dao implements Executdb {
         initSetUp();
     }
 
-    protected void initSetUp() {
+    private void initSetUp() {
         log.info("start init H2Dao");
         localTran = createJdbcDbTransaction(getMainUrl());
 

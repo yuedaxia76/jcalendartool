@@ -44,7 +44,7 @@ public class EventService extends GenalService {
                 if (UtilValidate.isEmpty(ed.getCalendarid())) {
                     ed.setCalendarid(conInfo.getDefaultCalId());
                 }
-                if (Long.MIN_VALUE == ed.getLastChangeTime()) {
+                if (Long.MIN_VALUE == ed.getCreateTime()) {
                     long s = System.currentTimeMillis();
                     ed.setCreateTime(s);
                     ed.setLastChangeTime(s);
@@ -95,9 +95,8 @@ public class EventService extends GenalService {
         }
         Integer result = hd.exeTran(new ExecuDbopention<Integer>() {
             public Integer exeDbAction() {
-                if (Long.MIN_VALUE == ed.getLastChangeTime()) {
-                    ed.setLastChangeTime(System.currentTimeMillis());
-                }
+
+                ed.setLastChangeTime(System.currentTimeMillis());
 
                 return gdao.update(hd.getCurCnection(), EventData.class, ed, "eventid", false);
 
