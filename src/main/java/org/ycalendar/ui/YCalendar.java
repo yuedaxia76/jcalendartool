@@ -539,6 +539,7 @@ public class YCalendar {
     }
 
     private void newTask() {
+        areare.setSelectedIndex(1);
         CalTaskUi evu = new CalTaskUi(f, true, 750, 850, null);
         evu.setTaskSe(tsSe);
         evu.setDicSer(dicSer);
@@ -555,7 +556,7 @@ public class YCalendar {
     }
 
     private void newEvent() {
-
+        areare.setSelectedIndex(0);
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             @Override
@@ -579,26 +580,6 @@ public class YCalendar {
             }
 
         });
-
-    }
-
-    private void editEvent() {
-        EventData ed = caui.getSelectEventData();
-        if (ed == null) {
-            JOptionPane.showMessageDialog(null, " 没有选择事件", "没有选择事件", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        EventUi evu = new EventUi(f, true, 750, 850, ed.getEventid());
-        evu.setEvSe(evSe);
-        evu.setDicSer(dicSer);
-
-        evu.initEventUi();
-
-        Tuple2<EventData, Integer> newData = evu.getData();
-
-        caui.refresh(newData);
-
-        evu.dispose();
 
     }
 
@@ -631,14 +612,15 @@ public class YCalendar {
         // jB_task.setBackground(new java.awt.Color(255, 255, 128));
         jB_task.setToolTipText("新建任务");
         // jB_task.setPreferredSize(new java.awt.Dimension(95, 34));
+        jB_task.addActionListener((e) -> newTask());
 
         jB_edit = new JButton();
         myJToolBar.add(jB_edit);
         jB_edit.setText("编辑");
         jB_edit.setToolTipText("编辑选择的任务或事件");
         jB_edit.setFont(new java.awt.Font("楷体", 0, 14));
-        // TODO:未来支持两种
-        jB_edit.addActionListener((e) -> editEvent());
+
+        jB_edit.addActionListener((e) -> edit());
 
         jB_del = new JButton();
         myJToolBar.add(jB_del);
@@ -646,8 +628,26 @@ public class YCalendar {
         jB_del.setFont(new java.awt.Font("楷体", 0, 14));
         // jB_del.setBackground(new java.awt.Color(255, 255, 128));
         jB_del.setToolTipText("删除选择的任务或事件");
-        // TODO:未来支持两种
-        jB_del.addActionListener((e) -> caui.deleteSelectEvent());
+
+        jB_del.addActionListener((e) -> delete());
+    }
+
+    //编辑事件或者任务
+    private void edit() {
+        if (areare.getSelectedIndex() == 0) {
+            caui.editSelectEvent();
+        } else {
+            tasui.editTask();
+        }
+    }
+
+    //删除事件或者任务
+    private void delete() {
+        if (areare.getSelectedIndex() == 0) {
+            caui.deleteSelectEvent();
+        } else {
+            tasui.delTask();
+        }
     }
 
     private void initFistFuncArea(Rectangle scbounds, JPanel pare) {

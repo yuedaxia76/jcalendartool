@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -245,16 +246,16 @@ public class TaskUi {
 
                 case 4:
                     Long sdt = t.getStartTime();
-                    if(sdt==null){
-                     return "";
+                    if (sdt == null) {
+                        return "";
                     }
                     return UtilDateTime.longToString(sdt, UtilDateTime.defaultDatePattern);
 
                 case 5:
                     Long edt = t.getEndTime();
-                    if(edt==null){
-                     return "";
-                    }                    
+                    if (edt == null) {
+                        return "";
+                    }
                     return UtilDateTime.longToString(edt, UtilDateTime.defaultDatePattern);
 
             }
@@ -420,8 +421,13 @@ public class TaskUi {
         return new JScrollPane(taskTable);
     }
 
-    private void editTask() {
+    public void editTask() {
         int row = taskTable.getSelectedRow();
+
+        if (row == -1) {
+            JOptionPane.showMessageDialog(null, " 没有选择任务", "没有选择任务", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         String preId = taskTable.getValueAt(row, 0).toString();  //得到所在行的第一个列的值，作为下面事件
         CalTaskUi evu = new CalTaskUi(MiscUtil.getComJFrame(center), true, 750, 850, preId);
         evu.setTaskSe(taskSer);
@@ -436,6 +442,21 @@ public class TaskUi {
         }
 
         evu.dispose();
+    }
+
+    public int delTask() {
+        int row = taskTable.getSelectedRow();
+
+        if (row == -1) {
+            JOptionPane.showMessageDialog(null, " 没有选择任务", "没有选择任务", JOptionPane.ERROR_MESSAGE);
+            return 0;
+        }
+        String taskid = taskTable.getValueAt(row, 0).toString();
+        int result = taskSer.delTask(taskid);
+        if (result == 1) {
+            reload();
+        }
+        return result;
     }
 
     public void restArea(Rectangle scbounds) {
