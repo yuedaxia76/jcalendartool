@@ -255,25 +255,27 @@ public class CalTaskUi extends JDialog {
 
             taskstatus.setSelectedIndex(selectIndex);
             taskstatus.addActionListener((ActionEvent e) -> {
-                int seIndex= taskstatus.getSelectedIndex();
-                if(seIndex==-1){
-                return;
-                        }
-                String newStatus=taskstatus.getItemAt(seIndex).e1;
-                switch (newStatus){
-                    case "process":
+                int seIndex = taskstatus.getSelectedIndex();
+                if (seIndex == -1) {
+                    return;
+                }
+                String newStatus = taskstatus.getItemAt(seIndex).e1;
+                switch (newStatus) {
+                    case "IN-PROCESS":
                         getTaskPercentage().setEnabled(true);
                         break;
-                       case "unprocessed":
-                           getTaskPercentage().setEnabled(false);
-                        break;    
-                       case "complete":
-                            getTaskPercentage().setEnabled(true);
-                            getTaskPercentage().setValue(100);
-                        break;  
-                       case "cancel":
-                           getTaskPercentage().setEnabled(false);
-                        break;                            
+                    case "NEEDS-ACTION":
+                        getTaskPercentage().setEnabled(false);
+                        break;
+                    case "COMPLETED":
+                        getTaskPercentage().setEnabled(true);
+                        getTaskPercentage().setValue(100);
+                        break;
+                    case "CANCELLED":
+                        getTaskPercentage().setEnabled(false);
+                        break;
+                    default:
+                        getTaskPercentage().setEnabled(false);
                 }
             });
 
@@ -281,6 +283,7 @@ public class CalTaskUi extends JDialog {
 
         return taskstatus;
     }
+
     private JSpinner getTaskPercentage() {
         if (percentageSpinner == null) {
             percentageSpinner = new javax.swing.JSpinner();
@@ -297,12 +300,13 @@ public class CalTaskUi extends JDialog {
             Dimension preferredSize = percentageSpinner.getPreferredSize();
             preferredSize.setSize(150, preferredSize.getHeight());
             percentageSpinner.setPreferredSize(preferredSize);
-            ItemData<String, String> tsu=getStatus().getItemAt(getStatus().getSelectedIndex());
-            percentageSpinner.setEnabled("process".equals(tsu.e1) || "complete".equals(tsu.e1));
- 
+            ItemData<String, String> tsu = getStatus().getItemAt(getStatus().getSelectedIndex());
+            percentageSpinner.setEnabled("IN-PROCESS".equals(tsu.e1) || "COMPLETED".equals(tsu.e1));
+
         }
         return percentageSpinner;
     }
+
     private JComboBox<ItemData<String, String>> getCalenList() {
         if (calJlist == null) {
             List<DictionaryData> calList = dicSer.getDictList("calendar");
@@ -563,7 +567,7 @@ public class CalTaskUi extends JDialog {
         if (getTaskPercentage().isEnabled()) {
             int p = (Integer) percentageSpinner.getValue();
             data.setPercentage(p);
-        }else{
+        } else {
             data.setPercentage(0);
         }
 
@@ -575,7 +579,5 @@ public class CalTaskUi extends JDialog {
         userClose = true;
         //super.dispose();
     }
-
-
 
 }
