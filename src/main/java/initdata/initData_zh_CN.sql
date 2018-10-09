@@ -48,3 +48,12 @@ insert into dictionary_data VALUES ('ts2','task_status','zh_CN','IN-PROCESS','�
 insert into dictionary_data VALUES ('ts3','task_status','zh_CN','NEEDS-ACTION','将处理',1);
 insert into dictionary_data VALUES ('ts4','task_status','zh_CN','COMPLETED','完成',2);
 insert into dictionary_data VALUES ('ts5','task_status','zh_CN','CANCELLED','取消',3);
+
+//查询条件
+insert into dictionary_data VALUES ('tcon1','task_cond','zh_CN','CANCELLED','今天任务',1);
+insert into dictionary_data VALUES ('tcon2','task_cond','zh_CN','CANCELLED','七天任务',2);
+insert into dictionary_data VALUES ('tcon3','task_cond','zh_CN','CANCELLED','未开始任务',3);
+insert into dictionary_data VALUES ('tcon4','task_cond','zh_CN','CANCELLED','过期任务',4);
+insert into dictionary_data VALUES ('tcon5','task_cond','zh_CN','CANCELLED','完成任务',5);
+insert into dictionary_data VALUES ('tcon6','task_cond','zh_CN','CANCELLED','未完成任务',6);
+insert into dictionary_data VALUES ('tcon7','task_cond','zh_CN','CANCELLED','所有任务',7);

@@ -15,12 +15,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ButtonGroup;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -93,8 +95,11 @@ public class TaskUi {
         JTabbedPane dispa = new JTabbedPane(JTabbedPane.TOP);
 
         JPanel jpanelFirst = new JPanel();
-        jpanelFirst.setLayout(new BorderLayout());
+        //jpanelFirst.setLayout(new BorderLayout());
+        jpanelFirst.setLayout(new FlowLayout());
+        
         // jpanelFirst.setBorder(BorderFactory.createLineBorder(Color.red, 3) );
+        setSelectCondition(jpanelFirst);
 
         dispa.addTab("显示", null, jpanelFirst, "选择当前显示的任务");
         left.add(dispa, BorderLayout.CENTER);
@@ -111,6 +116,20 @@ public class TaskUi {
 
         calenlistPa.addTab("日历", null, jpanelcall, "选择当前显示的日历");
         left.add(calenlistPa, BorderLayout.SOUTH);
+    }
+    private ButtonGroup conditions;
+
+    private void setSelectCondition(JPanel com) {
+        if (conditions == null) {
+            conditions = new ButtonGroup();
+            List<DictionaryData> calList = dicSer.getDictList("task_cond");
+            for (DictionaryData da : calList) {
+                ValueRadioButton conOne = new ValueRadioButton(da.getDictdataValue(), da.getCode());
+                com.add(conOne);
+                conditions.add(conOne);
+            }
+        }
+
     }
 
     private void createCenter() {
