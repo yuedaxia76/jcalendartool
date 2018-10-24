@@ -22,7 +22,6 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -96,7 +95,7 @@ public class TaskUi {
 
         JPanel jpanelFirst = new JPanel();
         //jpanelFirst.setLayout(new BorderLayout());
-        jpanelFirst.setLayout(new FlowLayout());
+        jpanelFirst.setLayout(new FlowLayout(FlowLayout.LEFT));
         
         // jpanelFirst.setBorder(BorderFactory.createLineBorder(Color.red, 3) );
         setSelectCondition(jpanelFirst);
@@ -125,6 +124,7 @@ public class TaskUi {
             List<DictionaryData> calList = dicSer.getDictList("task_cond");
             for (DictionaryData da : calList) {
                 ValueRadioButton conOne = new ValueRadioButton(da.getDictdataValue(), da.getCode());
+                conOne.setOpaque(false);
                 com.add(conOne);
                 conditions.add(conOne);
             }
