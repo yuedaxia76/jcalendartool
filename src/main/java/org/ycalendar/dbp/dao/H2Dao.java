@@ -28,14 +28,14 @@ public class H2Dao implements Executdb {
 
     @Override
     public void rollback() {
-       localTran.rollback();
-       localTran.release();
+        localTran.rollback();
+        localTran.release();
     }
 
     @Override
     public void commit() {
-       localTran.commit();
-       localTran.release();
+        localTran.commit();
+        localTran.release();
     }
 
     static class H2daoRef {
@@ -59,6 +59,15 @@ public class H2Dao implements Executdb {
         log.info("start init H2Dao");
         localTran = createJdbcDbTransaction(getMainUrl());
 
+    }
+    private String delimiter = "#";
+
+    public String getDelimiter() {
+        return delimiter;
+    }
+
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
     }
 
     @Override
@@ -86,9 +95,9 @@ public class H2Dao implements Executdb {
                     // 多个行组成一个sql，以分隔符分开
                     one.append(' ').append(line);
 
-                    if (one.indexOf(";", one.length() - 1) > -1) {
+                    if (one.indexOf(delimiter, one.length() - delimiter.length()) > -1) {
                         // 到分隔符了，一个完整的sql
-                        one.deleteCharAt(one.length() - 1);
+                        one.delete(one.length() - delimiter.length(), one.length());
 
                         multSql.add(one.toString());
                         one.setLength(0);

@@ -14,6 +14,7 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 import org.ycalendar.dbp.service.StringCinvert;
+import org.ycalendar.util.MiscUtil;
 import org.ycalendar.util.UtilDateTime;
 import org.ycalendar.util.msg.MemMsg;
 import org.ycalendar.util.msg.MemoryMsg;
@@ -80,10 +81,25 @@ public class MiscTest {
     }
 
     @Test
-    public void testStrToDate()   {
+    public void testStrToDate() {
         String ds = "08/03/13 5:00:00 PM";
-        Date d = UtilDateTime.parseDate(ds, "MM/dd/yy hh:mm:ss aaa",Locale.ENGLISH);
+        Date d = UtilDateTime.parseDate(ds, "MM/dd/yy hh:mm:ss aaa", Locale.ENGLISH);
         System.out.println(d);
 
+    }
+
+    @Test
+    public void testJsStr() {
+        String ds = "js:var comd='tstatus in (\\'NOTSET\\',\\'IN-PROCESS\\', \\'NEEDS-ACTION\\') (start_time is null or start_time>=';\n"
+                + "var dt = Java.type('org.ycalendar.util.UtilDateTime');\n"
+                + "var date = Java.type('java.util.Date');\n"
+                + "var t1=dt.getDayStart(new date());\n"
+                + "var t2=dt.getDayEnd(new date());\n"
+                + "comd=comd+t1+') and (end_time is null or end_time<='+t2+'))';";
+        String s = MiscUtil.evaluateExpr(ds);
+        System.out.println(s);
+        ds = "aaa";
+        s = MiscUtil.evaluateExpr(ds);
+        Assert.assertEquals(s, ds);
     }
 }

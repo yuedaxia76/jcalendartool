@@ -129,7 +129,6 @@ public class MiscUtil {
         return locale;
     }
 
-
     public static JFrame getComJFrame(Component com) {
         Container result;
         while (com != null) {
@@ -142,13 +141,12 @@ public class MiscUtil {
         }
         return null;
     }
-    
-    
-    
-     /**
+
+    /**
      * 隐藏指定JTable的指定列
-     * @param table    指定JTable
-     * @param column   指定列
+     *
+     * @param table 指定JTable
+     * @param column 指定列
      */
     public static void HiddenColumn(JTable table, int column) {
         TableColumn tc = table.getTableHeader().getColumnModel().getColumn(column);
@@ -162,9 +160,10 @@ public class MiscUtil {
 
     /**
      * 显示指定JTable的指定列
-     * @param table    指定JTable
-     * @param column   指定列
-     * @param width    指定列显示宽度
+     *
+     * @param table 指定JTable
+     * @param column 指定列
+     * @param width 指定列显示宽度
      */
     public static void showColumn(JTable table, int column, int width) {
         TableColumn tc = table.getColumnModel().getColumn(column);
@@ -174,5 +173,19 @@ public class MiscUtil {
         tc.setMinWidth(width);
         table.getTableHeader().getColumnModel().getColumn(column).setMaxWidth(width);
         table.getTableHeader().getColumnModel().getColumn(column).setMinWidth(width);
+    }
+
+    public static String evaluateExpr(String str) {
+
+        if (str.startsWith("js:")) {
+            try {
+                return RunJs.evaluate(str.substring(3), null).toString();
+            } catch (Exception ex) {
+                log.log(Level.SEVERE, null, ex);
+                throw new RuntimeException(ex);
+            }
+        } else {
+            return str;
+        }
     }
 }
