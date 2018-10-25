@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -10,7 +11,7 @@
 
     <name>jcalendartool</name>
     <description>
-        Ä£·Âmozilla ÈÕÀú£¬¿ª·¢µÄjava°æ±¾µÄÈÕÀú£¬µ«ÊÇÃ»ÓĞ¶àÈËĞ­Í¬¹¦ÄÜ£¬Ö÷ÒªÊÇ¸öÈËÊ¹ÓÃ¡£
+        æ¨¡ä»¿mozilla lightningæ—¥å†ï¼Œå¼€å‘çš„javaç‰ˆæœ¬çš„æ—¥å†ï¼Œä½†æ˜¯æ²¡æœ‰å¤šäººååŒåŠŸèƒ½ï¼Œä¸»è¦æ˜¯ä¸ªäººä½¿ç”¨ã€‚
     </description>    
     <url>https://github.com/yuedaxia76/jcalendartool</url>
 
@@ -188,7 +189,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.0</version>
                 <configuration>
-                    <!-- ²»ÔËĞĞµ¥Ôª²âÊÔ -->
+                    <!-- ä¸è¿è¡Œå•å…ƒæµ‹è¯• -->
                     <skipTests>false</skipTests>
                 </configuration>
             </plugin>
@@ -200,5 +201,5 @@
 
     </build>
 
-    <description>javaÊµÏÖµÄÈÕÀú³ÌĞò£¬²Î¿¼mozilla lightning</description>
+
 </project>
