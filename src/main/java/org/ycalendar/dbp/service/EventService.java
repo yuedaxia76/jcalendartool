@@ -150,7 +150,7 @@ public class EventService extends GenalService {
                     }
 
                 } else {
-                    StringBuffer sql = new StringBuffer(256);
+                    StringBuilder sql = new StringBuilder(256);
 
                     sql.append("select * from event_data where ((start_time>=? and start_time<?) or (end_time>? and end_time<=?  ))  ");
                     List<Object> params = new ArrayList<>();
@@ -166,7 +166,7 @@ public class EventService extends GenalService {
                     }
                     sql.append("  order by start_time");
 
-                    return gdao.query(hd.getCurCnection(), sql, rsh, params);
+                    return gdao.query(hd.getCurCnection(), sql.toString(), rsh, params);
                 }
 
             }

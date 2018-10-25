@@ -31,8 +31,8 @@ public class GernDAO {
 
     }
 
-    public <T> T query(Connection conn, StringBuffer sql, ResultSetHandler<T> rsh, List<Object> params) {
-        return this.query(conn, sql.toString(), rsh, params == null ? new Object[]{} : params.toArray(new Object[]{}));
+    public <T> T query(Connection conn, String sql, ResultSetHandler<T> rsh, List<Object> params) {
+        return this.query(conn, sql, rsh, params == null ? new Object[0] : params.toArray(new Object[params.size()]));
     }
 
     public <T> T query(Connection conn, String sql, ResultSetHandler<T> rsh, Object... params) {
@@ -301,7 +301,7 @@ public class GernDAO {
      * @param field 条件字段
      * @param values 条件值
      */
-    public <T> void in(StringBuffer sql, List<Object> params, String operator, String field, List<T> values) {
+    public <T> void in(StringBuilder sql, List<Object> params, String operator, String field, List<T> values) {
         psh.in(sql, params, operator, field, values);
     }
 

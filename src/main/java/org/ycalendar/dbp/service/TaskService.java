@@ -51,7 +51,7 @@ public class TaskService extends GenalService {
                     long s = System.currentTimeMillis();
                     td.setCreateTime(s);
                     td.setLastChangeTime(s);
-                }                
+                }
                 gdao.create(hd.getCurCnection(), TaskData.class, td);
                 return null;
             }
@@ -129,6 +129,48 @@ public class TaskService extends GenalService {
         return Arrays.asList(getConInfo().getDefaultTaskStatus(), "IN-PROCESS", "NEEDS-ACTION");
     }
 
+    /**
+     *
+     * @param condition 条件
+     * @param calendarids 日历
+     * @return 查询数据
+     */
+    public List<TaskData> queryTask(String sqlCon, List<String> calendarids, String title) {
+        return hd.exeQuery(new ExecueQuery<List<TaskData>>() {
+            @Override
+            public List<TaskData> exeDbAction() {
+                BeanListHandler<TaskData> rsh = new BeanListHandler<>(TaskData.class);
+                List<String> condition = new ArrayList<>(6);
+                List<Object> params = new ArrayList<>(6);
+                if (UtilValidate.isEmpty(calendarids) || calendarids.size() == 1) {
+                    condition.add(" calendarid=? ");
+                    params.add(UtilValidate.isEmpty(calendarids) ? conInfo.getDefaultCalId() : calendarids.get(0));
+                } else {
+                    condition.add(" calendarid " + PreparedStatementHandler.generateQuestionMarks(calendarids.size()));
+                    params.addAll(calendarids);
+                }
+                if (UtilValidate.isNotEmpty(title)) {
+                    condition.add(" (title like ?  or taskdesc like ?) ");
+                    String likeCon = '%' + title + '%';
+                    params.add(likeCon);
+                    params.add(likeCon);
+                }
+                StringBuilder sql = new StringBuilder("select * from task_data where ");
+                sql.append(sqlCon);
+
+                for (Iterator<String> it = condition.iterator(); it.hasNext();) {
+                    sql.append(" and ");
+                    sql.append(it.next());
+
+                }
+
+                sql.append("  order by create_time");
+                return gdao.query(hd.getCurCnection(), sql.toString(), rsh, params);
+
+            }
+        });
+    }
+
     public List<TaskData> queryTask(List<String> status, long start, long end, List<String> calendarids, String title, int percentage) {
 
         return hd.exeQuery(new ExecueQuery<List<TaskData>>() {
@@ -169,7 +211,7 @@ public class TaskService extends GenalService {
                     condition.add(" percentage=? ");
                     params.add(percentage);
                 }
-                StringBuffer sql = new StringBuffer("select * from task_data ");
+                StringBuilder sql = new StringBuilder("select * from task_data ");
                 if (condition.size() > 0) {
                     sql.append(" where ");
                 }
@@ -182,7 +224,7 @@ public class TaskService extends GenalService {
 
                 }
                 sql.append("  order by create_time");
-                return gdao.query(hd.getCurCnection(), sql, rsh, params);
+                return gdao.query(hd.getCurCnection(), sql.toString(), rsh, params);
 
             }
         });

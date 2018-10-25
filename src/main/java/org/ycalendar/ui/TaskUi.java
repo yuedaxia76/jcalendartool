@@ -96,7 +96,7 @@ public class TaskUi {
         JPanel jpanelFirst = new JPanel();
         //jpanelFirst.setLayout(new BorderLayout());
         jpanelFirst.setLayout(new FlowLayout(FlowLayout.LEFT));
-        
+
         // jpanelFirst.setBorder(BorderFactory.createLineBorder(Color.red, 3) );
         setSelectCondition(jpanelFirst);
 
@@ -123,13 +123,24 @@ public class TaskUi {
             conditions = new ButtonGroup();
             List<DictionaryData> calList = dicSer.getDictList("task_cond");
             for (DictionaryData da : calList) {
-                ValueRadioButton conOne = new ValueRadioButton(da.getDictdataValue(), da.getCode());
+                ValueRadioButton<String> conOne = new ValueRadioButton<>(da.getDictdataValue(), da.getCode());
                 conOne.setOpaque(false);
+                conOne.addActionListener((e) -> selectTask(e));
                 com.add(conOne);
                 conditions.add(conOne);
             }
         }
 
+    }
+
+    private void selectTask(ActionEvent e) {
+        ValueRadioButton<String> vb = (ValueRadioButton<String>) e.getSource();
+        String cond = MiscUtil.evaluateExpr(vb.getValue());
+        String word = taskCondi.getText();
+        log.log(Level.INFO, cond);
+        List<TaskData> tasks = this.taskSer.queryTask(cond, getSelectCans(), word);
+
+        taskDataModel.setDatas(tasks);
     }
 
     private void createCenter() {

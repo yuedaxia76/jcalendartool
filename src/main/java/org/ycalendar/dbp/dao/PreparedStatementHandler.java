@@ -29,7 +29,7 @@ public class PreparedStatementHandler {
 	/**
 	 * operator: and/or/where
 	 */
-	public <T> void in(StringBuffer sql, List<Object> params, String operator, String field, List<T> values) {
+	public <T> void in(StringBuilder sql, List<Object> params, String operator, String field, List<T> values) {
 		if (UtilValidate.isEmpty(values)) {
 			throw new NullPointerException(); // 抛空指针异常，避免执行非预期的动作
 		}

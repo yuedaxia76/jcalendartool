@@ -4,7 +4,7 @@ import org.ycalendar.dbp.dao.ExecuDbopention;
 import org.ycalendar.dbp.dao.Executdb;
 import org.ycalendar.dbp.dao.GernDAO;
 
-public class GenalService {
+public class GenalService{ 
 	protected GernDAO gdao;
 	
 	public GernDAO getGdao() {
