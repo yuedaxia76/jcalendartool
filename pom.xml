@@ -9,7 +9,10 @@
     <packaging>jar</packaging>
 
     <name>jcalendartool</name>
-    <url>http://maven.apache.org</url>
+    <description>
+        Ä£·Âmozilla ÈÕÀú£¬¿ª·¢µÄjava°æ±¾µÄÈÕÀú£¬µ«ÊÇÃ»ÓĞ¶àÈËĞ­Í¬¹¦ÄÜ£¬Ö÷ÒªÊÇ¸öÈËÊ¹ÓÃ¡£
+    </description>    
+    <url>https://github.com/yuedaxia76/jcalendartool</url>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -185,7 +188,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.0</version>
                 <configuration>
-                    <!-- ä¸è¿è¡Œå•å…ƒæµ‹è¯• -->
+                    <!-- ²»ÔËĞĞµ¥Ôª²âÊÔ -->
                     <skipTests>false</skipTests>
                 </configuration>
             </plugin>
@@ -197,5 +200,5 @@
 
     </build>
 
-    <description>javaå®ç°çš„æ—¥å†ç¨‹åºï¼Œå‚è€ƒmozilla lightning</description>
+    <description>javaÊµÏÖµÄÈÕÀú³ÌĞò£¬²Î¿¼mozilla lightning</description>
 </project>
