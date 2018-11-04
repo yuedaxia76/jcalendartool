@@ -83,7 +83,7 @@ public class ImportTest {
 
     @Test(dependsOnMethods = {"testImpo"})
     public void testExport() throws IOException, ParserException {
-        yc.exportIcsFile("main", "testexpIcs");
+        yc.exportIcsFile("main", "testexpIcs.ics");
 
     }
 
