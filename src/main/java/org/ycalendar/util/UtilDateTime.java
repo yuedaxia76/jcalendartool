@@ -204,34 +204,34 @@ public class UtilDateTime {
      * @param dateTime 日期时间格式的字符串 例如："2003-10-12 15:20:30"
      * @return 转换后的java.util.Date
      */
-    public static java.util.Date toDate(final String date) {
+    public static java.util.Date toDate(final String date,String dateFormat) {
 
         if (date.indexOf(':') < 0) {
-            return parseDate(date, defaultDatePattern,Locale.getDefault(Locale.Category.FORMAT));
+            return parseDate(date, UtilValidate.isEmpty(dateFormat)?defaultDatePattern:dateFormat,Locale.getDefault(Locale.Category.FORMAT));
         } else {
             int timeColon1 = date.indexOf(':');
             int timeColon2 = date.lastIndexOf(':');
             if (timeColon1 == timeColon2) {
-                return parseDate(date + ":00", defaultDateTimePattern,Locale.getDefault(Locale.Category.FORMAT));
+                return parseDate(date + ":00", UtilValidate.isEmpty(dateFormat)?defaultDateTimePattern:dateFormat,Locale.getDefault(Locale.Category.FORMAT));
             } else {
-                return parseDate(date, defaultDateTimePattern,Locale.getDefault(Locale.Category.FORMAT));
+                return parseDate(date, UtilValidate.isEmpty(dateFormat)?defaultDateTimePattern:dateFormat,Locale.getDefault(Locale.Category.FORMAT));
             }
 
         }
 
     }
 
-    public static long toLong(final String date) {
+    public static long toLong(final String date,String dateFormat) {
 
         if (date.indexOf(':') < 0) {
-            return parseDate(date, defaultDatePattern,Locale.getDefault(Locale.Category.FORMAT)).getTime();
+            return parseDate(date, UtilValidate.isEmpty(dateFormat)?defaultDatePattern:dateFormat,Locale.getDefault(Locale.Category.FORMAT)).getTime();
         } else {
             int timeColon1 = date.indexOf(':');
             int timeColon2 = date.lastIndexOf(':');
             if (timeColon1 == timeColon2) {
-                return parseDate(date + ":00", defaultDateTimePattern,Locale.getDefault(Locale.Category.FORMAT)).getTime();
+                return parseDate(date + ":00", UtilValidate.isEmpty(dateFormat)?defaultDateTimePattern:dateFormat ,Locale.getDefault(Locale.Category.FORMAT)).getTime();
             } else {
-                return parseDate(date, defaultDateTimePattern,Locale.getDefault(Locale.Category.FORMAT)).getTime();
+                return parseDate(date, UtilValidate.isEmpty(dateFormat)?defaultDateTimePattern:dateFormat ,Locale.getDefault(Locale.Category.FORMAT)).getTime();
             }
 
         }
@@ -249,21 +249,7 @@ public class UtilDateTime {
         return df;
     }
 
-    /**
-     * 将日期、时间字符串转换为java.util.Date类型
-     *
-     * @param date 日期字符串 格式：YYYY-MM-DD
-     * @param time 时间字符串 格式： HH:MM or HH:MM:SS
-     * @return 转换后的java.util.Date
-     */
-    public static java.util.Date toDate(final String date, final String time) {
-        if (date == null || time == null) {
-            return null;
-        }
-
-        return toDate(date + " " + time);
-
-    }
+ 
 
     /**
      * 将日期、时间字符串转换为java.util.Date类型
@@ -733,7 +719,7 @@ public class UtilDateTime {
      * @return 字符串1，2，3，4，5，6，7
      */
     public static int getWeek(String date) {
-        return getWeek(toDate(date));
+        return getWeek(toDate(date,null));
     }
 
     /**

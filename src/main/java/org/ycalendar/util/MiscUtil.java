@@ -3,7 +3,12 @@ package org.ycalendar.util;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.GraphicsEnvironment;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -187,5 +192,71 @@ public class MiscUtil {
         } else {
             return str;
         }
+    }
+
+    public static Map<String, String> strToMap(String str, boolean trim, String splite) {
+
+        if (UtilValidate.isEmpty(str)) {
+            return new HashMap<String, String>();
+        }
+        Map<String, String> decodedMap = new HashMap<String, String>();
+        List<String> elements = split(str, splite);
+        setToMap(decodedMap, elements, trim);
+        return decodedMap;
+
+    }
+
+    /**
+     * 分割字符串
+     *
+     * @param str 被分割字符串
+     * @param delim 分割符号
+     * @return
+     */
+    public static List<String> split(String str, String delim) {
+        List<String> splitList = null;
+        StringTokenizer st = null;
+
+        if (str == null) {
+            return splitList;
+        }
+
+        if (delim != null) {
+            st = new StringTokenizer(str, delim);
+        } else {
+            st = new StringTokenizer(str);
+        }
+
+        splitList = new ArrayList<String>();
+
+        while (st.hasMoreTokens()) {
+            splitList.add(st.nextToken());
+        }
+
+        return splitList;
+    }
+
+    public static void setToMap(Map<String, String> decodedMap, Iterable<String> source, boolean trim) {
+        for (String s : source) {
+
+            List<String> e = split(s, "=");
+
+            if (e.size() != 2) {
+                continue;
+            }
+            String name = (String) e.get(0);
+            String value = (String) e.get(1);
+            if (trim) {
+                if (name != null) {
+                    name = name.trim();
+                }
+                if (value != null) {
+                    value = value.trim();
+                }
+            }
+
+            decodedMap.put(name, value);
+        }
+
     }
 }

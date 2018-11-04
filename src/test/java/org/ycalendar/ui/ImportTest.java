@@ -74,17 +74,23 @@ public class ImportTest {
     @Test
     public void testImpo() throws IOException, ParserException {
         try (InputStream in = ImportTest.class.getClassLoader().getResourceAsStream("resource/test1.ics")) {
-            Tuple2<Integer,Integer> result = yc.importIcs(in, null);
+            Tuple2<Integer, Integer> result = yc.importIcs(in, null);
             Assert.assertEquals(result.e1.intValue(), 2);
             Assert.assertEquals(result.e2.intValue(), 1);
         }
 
     }
 
+    @Test(dependsOnMethods = {"testImpo"})
+    public void testExport() throws IOException, ParserException {
+        yc.exportIcsFile("main", "testexpIcs");
+
+    }
+
     @Test
     public void testImpoCsv() throws IOException, ParserException {
         try (InputStream in = ImportTest.class.getClassLoader().getResourceAsStream("resource/test1.csv")) {
-            Tuple2<Integer,Integer> result = yc.importCsv(in, null, "UTF-8");
+            Tuple2<Integer, Integer> result = yc.importCsv(in, null, "UTF-8");
             Assert.assertEquals(result.e1.intValue(), 2);
         }
 

@@ -72,14 +72,14 @@ public class EventData {
     public void setCalendarid(String calendarid) {
         this.calendarid = calendarid;
     }
-    //重复周期，0不重复，1每天，2每周
-    private int eventRepeat;
+    //重复周期，NONE不重复， 
+    private String eventRepeat;
 
-    public int getEventRepeat() {
+    public String getEventRepeat() {
         return eventRepeat;
     }
 
-    public void setEventRepeat(int eventRepeat) {
+    public void setEventRepeat(String eventRepeat) {
         this.eventRepeat = eventRepeat;
     }
 

@@ -132,42 +132,45 @@ public class EventService extends GenalService {
      * @param end
      * @return
      */
-    public List<EventData> readEvent(long start, long end, List<String> calendarids, String title) {
+    public List<EventData> readEvent(Long start, Long end, List<String> calendarids, String title) {
 
         return hd.exeQuery(new ExecueQuery<List<EventData>>() {
             public List<EventData> exeDbAction() {
                 BeanListHandler<EventData> rsh = new BeanListHandler<>(EventData.class);
 
+                StringBuilder sql = new StringBuilder("select * from event_data where  ");
+                List<Object> params = new ArrayList<>();
+
                 if (UtilValidate.isEmpty(calendarids) || calendarids.size() == 1) {
-                    //(start_time>=开始 and start_time<结束) or (end_time>开始 and end_time<=结束 
-                    StringBuffer sql = new StringBuffer("select * from event_data where ((start_time>=? and start_time<?) or (end_time>? and end_time<=?  )) and calendarid=?");
-                    if (UtilValidate.isNotEmpty(title)) {
-                        sql.append(" and (title like ?) order by start_time");
-                        return gdao.query(hd.getCurCnection(), sql.toString(), rsh, start, end, start, end, UtilValidate.isEmpty(calendarids) ? conInfo.getDefaultCalId() : calendarids.get(0), '%' + title + '%');
-                    } else {
-                        sql.append("  order by start_time");
-                        return gdao.query(hd.getCurCnection(), sql.toString(), rsh, start, end, start, end, UtilValidate.isEmpty(calendarids) ? conInfo.getDefaultCalId() : calendarids.get(0));
-                    }
+
+                    sql.append("  calendarid=? ");
+
+                    params.add(UtilValidate.isEmpty(calendarids) ? conInfo.getDefaultCalId() : calendarids.get(0));
 
                 } else {
-                    StringBuilder sql = new StringBuilder(256);
 
-                    sql.append("select * from event_data where ((start_time>=? and start_time<?) or (end_time>? and end_time<=?  ))  ");
-                    List<Object> params = new ArrayList<>();
-                    params.add(start);
-                    params.add(end);
-                    params.add(start);
-                    params.add(end);
+                    gdao.in(sql, params, "", "calendarid", calendarids);
 
-                    gdao.in(sql, params, "and", "calendarid", calendarids);
-                    if (UtilValidate.isNotEmpty(title)) {
-                        sql.append(" and (title like ?)");
-                        params.add('%' + title + '%');
-                    }
-                    sql.append("  order by start_time");
-
-                    return gdao.query(hd.getCurCnection(), sql.toString(), rsh, params);
                 }
+
+                if (start == null && end == null) {
+
+                } else {
+                    sql.append(" and ((start_time>=? and start_time<?) or (end_time>? and end_time<=?  ))  ");
+                    params.add(start);
+                    params.add(end);
+                    params.add(start);
+                    params.add(end);
+
+                }
+
+                if (UtilValidate.isNotEmpty(title)) {
+                    sql.append(" and (title like ?)");
+                    params.add('%' + title + '%');
+                }
+                sql.append("  order by start_time");
+
+                return gdao.query(hd.getCurCnection(), sql.toString(), rsh, params);
 
             }
         });

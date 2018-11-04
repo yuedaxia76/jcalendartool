@@ -19,7 +19,7 @@ CREATE table IF NOT EXISTS event_data  (
  last_change_time BIGINT NOT NULL,
   title varchar(300) NOT NULL,
   location varchar(100) ,
-  event_repeat NUMBER(10) default 0,
+  event_repeat varchar(30) default 'NONE',
   repeat_end NUMBER(18),
   calendarid   varchar(25) NOT NULL default 'main',
   remind   varchar(30) default '-1S',

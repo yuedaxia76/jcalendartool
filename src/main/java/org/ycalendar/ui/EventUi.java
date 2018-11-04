@@ -63,7 +63,7 @@ public class EventUi extends JDialog {
 
     private DatePicker<Date> endPicker;
 
-    private JComboBox<ItemData<Integer, String>> repeatCom;
+    private JComboBox<ItemData<String, String>> repeatCom;
 
     private ButtonGroup forever;
 
@@ -328,16 +328,16 @@ public class EventUi extends JDialog {
         return endPicker;
     }
 
-    private JComboBox<ItemData<Integer, String>> getRepeat() {
+    private JComboBox<ItemData<String, String>> getRepeat() {
         if (repeatCom == null) {
             List<DictionaryData> inte = dicSer.getDictList("repeat_interval");
 
-            Vector<ItemData<Integer, String>> repeatModel = new Vector<ItemData<Integer, String>>(inte.size());
+            Vector<ItemData<String, String>> repeatModel = new Vector<ItemData<String, String>>(inte.size());
             int selectIndex = 0;
 
             for (int i = 0; i < inte.size(); i++) {
                 DictionaryData dd = inte.get(i);
-                repeatModel.insertElementAt(new ItemData<Integer, String>(Integer.valueOf(dd.getCode()), dd.getDictdataValue()), i);
+                repeatModel.insertElementAt(new ItemData<String, String>(dd.getCode(), dd.getDictdataValue()), i);
                 if (this.data != null && Integer.valueOf(dd.getCode()).equals(data.getEventRepeat())) {
 
                     selectIndex = i;
@@ -345,7 +345,7 @@ public class EventUi extends JDialog {
                 }
             }
 
-            repeatCom = new JComboBox<ItemData<Integer, String>>(repeatModel);
+            repeatCom = new JComboBox<ItemData<String, String>>(repeatModel);
 
             Dimension preferredSize = repeatCom.getPreferredSize();
             preferredSize.setSize(150, preferredSize.getHeight());
@@ -575,7 +575,7 @@ public class EventUi extends JDialog {
         Date et = (Date) endPicker.getModel().getValue();
         data.setEndTime(et.getTime());
 
-        ItemData<Integer, String> rep = repeatCom.getItemAt(repeatCom.getSelectedIndex());
+        ItemData<String, String> rep = repeatCom.getItemAt(repeatCom.getSelectedIndex());
         data.setEventRepeat(rep.e1);
 
         ItemData<String, String> remTi = remindTime.getItemAt(remindTime.getSelectedIndex());
