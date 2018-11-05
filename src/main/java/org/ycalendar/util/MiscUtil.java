@@ -194,12 +194,12 @@ public class MiscUtil {
         }
     }
 
-    public static Map<String, String> strToMap(String str, boolean trim, String splite) {
+    public static Map<String, String> strToMap(final String str,final  boolean trim,final  String splite) {
 
         if (UtilValidate.isEmpty(str)) {
-            return new HashMap<String, String>();
+            return new HashMap<>();
         }
-        Map<String, String> decodedMap = new HashMap<String, String>();
+        Map<String, String> decodedMap = new HashMap<>();
         List<String> elements = split(str, splite);
         setToMap(decodedMap, elements, trim);
         return decodedMap;
@@ -213,9 +213,9 @@ public class MiscUtil {
      * @param delim 分割符号
      * @return
      */
-    public static List<String> split(String str, String delim) {
+    public static List<String> split(final String str,final  String delim) {
         List<String> splitList = null;
-        StringTokenizer st = null;
+        StringTokenizer st ;
 
         if (str == null) {
             return splitList;
@@ -227,7 +227,7 @@ public class MiscUtil {
             st = new StringTokenizer(str);
         }
 
-        splitList = new ArrayList<String>();
+        splitList = new ArrayList<>();
 
         while (st.hasMoreTokens()) {
             splitList.add(st.nextToken());
@@ -236,7 +236,7 @@ public class MiscUtil {
         return splitList;
     }
 
-    public static void setToMap(Map<String, String> decodedMap, Iterable<String> source, boolean trim) {
+    public static void setToMap(Map<String, String> decodedMap, Iterable<String> source,final  boolean trim) {
         for (String s : source) {
 
             List<String> e = split(s, "=");
