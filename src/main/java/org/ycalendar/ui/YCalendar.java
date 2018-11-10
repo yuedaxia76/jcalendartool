@@ -196,7 +196,7 @@ public class YCalendar {
                     if (file.getName().toLowerCase().endsWith("ics")) {
                         exportIcsFile(calid, file);
                     } else {
-                        
+
                     }
 
                 } catch (IOException ex) {
@@ -234,16 +234,26 @@ public class YCalendar {
     private void importFile(File file) {
 
         if (file.isFile()) {
+
+            CalSelectUi cui = new CalSelectUi(f, true, 350, 550);
+            cui.setDicSer(dicSer);
+            cui.initCalSelectUi("请选择导入日历");
+            String calid = cui.getSelectCans();
+            cui.dispose();
+            if (UtilValidate.isEmpty(calid)) {
+                log.log(Level.INFO, "没有选择");
+                return;
+            }
             try {
                 Tuple2<Integer, Integer> importCount;
                 if (file.getName().toLowerCase().endsWith("ics")) {
                     try (FileInputStream fis = new FileInputStream(file)) {
-                        importCount = importIcs(fis, null);
+                        importCount = importIcs(fis, calid);
                     }
 
                 } else {
                     try (FileInputStream fis = new FileInputStream(file)) {
-                        importCount = importCsv(fis, null, "UTF-8");
+                        importCount = importCsv(fis, calid, "UTF-8");
                     }
 
                 }
