@@ -5,6 +5,7 @@
  */
 package org.ycalendar.ui;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
@@ -83,7 +84,7 @@ public class ImportTest {
 
     @Test(dependsOnMethods = {"testImpo"})
     public void testExport() throws IOException, ParserException {
-        yc.exportIcsFile("main", "testexpIcs.ics");
+        yc.exportIcsFile("main", new File("testexpIcs.ics"));
 
     }
 
