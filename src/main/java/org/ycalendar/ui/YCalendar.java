@@ -194,13 +194,16 @@ public class YCalendar {
             File file = jfc.getSelectedFile();
 
             if (file.getName().toLowerCase().endsWith("ics")) {
-                exportIcsFile(calid, file);
+              Tuple2<Integer, Integer> importCount= exportIcsFile(calid, file);
+                
+                JOptionPane.showMessageDialog(f, "导出:" + importCount.e1 + "条事件," + importCount.e2 + "条任务", "导出成功", JOptionPane.INFORMATION_MESSAGE);
             } else {
 
             }
 
         } catch (Exception ex) {
             log.log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(f, "错误:" + ex.toString(), "错误", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -569,7 +572,7 @@ public class YCalendar {
         return icaltime;
     }
 
-    public void exportIcsFile(String calendarid, File toSave) throws FileNotFoundException, IOException, ParseException {
+    public Tuple2<Integer, Integer> exportIcsFile(String calendarid, File toSave) throws FileNotFoundException, IOException, ParseException {
 
         // 创建一个时区（TimeZone）
         TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
@@ -588,10 +591,10 @@ public class YCalendar {
             String summary = ed.getTitle();
             // 开始时间
             DateTime start = longToDateTime(ed.getStartTime());
- 
+
             // 结束时间
             DateTime end = longToDateTime(ed.getEndTime());
- 
+
             // 新建普通事件
             // VEvent event = new VEvent(icaltime, end, summary);
             // 定义全天事件（注意默认是UTC时间）
@@ -673,13 +676,11 @@ public class YCalendar {
             // 时间主题
             String summary = td.getTitle();
             // 开始时间
-            DateTime start = new DateTime(td.getStartTime());
-            // 开始时间转换为UTC时间（UTC ＋ 时区差 ＝ 本地时间 ）
-            start.setUtc(false);
+            DateTime start = longToDateTime(td.getStartTime());
+ 
             // 结束时间
-            DateTime end = new DateTime(td.getEndTime());
-            // 结束时间设置成UTC时间（UTC ＋ 时区差 ＝ 本地时间 ）
-            end.setUtc(false);
+            DateTime end = longToDateTime(td.getEndTime());
+ 
             // 新建普通事件
             // VEvent event = new VEvent(icaltime, end, summary);
             // 定义全天事件（注意默认是UTC时间）
@@ -740,8 +741,9 @@ public class YCalendar {
                 // 将VAlarm加入VEvent
                 todo.getAlarms().add(valarm);
                 // 添加事件
-                calendar.getComponents().add(todo);
+                
             }
+            calendar.getComponents().add(todo);
         }
         // 验证
         calendar.validate();
@@ -752,7 +754,7 @@ public class YCalendar {
             CalendarOutputter outputter = new CalendarOutputter();
             outputter.output(calendar, fout);
         }
-
+        return new Tuple2<Integer, Integer>(allEv.size(), tasks.size());
     }
 
     private void newTask() {
