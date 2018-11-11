@@ -131,8 +131,9 @@ public class TaskService extends GenalService {
 
     /**
      *
-     * @param condition 条件
+     * @param sqlCon 条件
      * @param calendarids 日历
+     * @param title 标题
      * @return 查询数据
      */
     public List<TaskData> queryTask(String sqlCon, List<String> calendarids, String title) {

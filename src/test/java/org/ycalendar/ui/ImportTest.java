@@ -6,8 +6,10 @@
 package org.ycalendar.ui;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.Locale;
 import net.fortuna.ical4j.data.ParserException;
 import org.testng.Assert;
@@ -83,7 +85,7 @@ public class ImportTest {
     }
 
     @Test(dependsOnMethods = {"testImpo"})
-    public void testExport() throws IOException, ParserException {
+    public void testExport() throws IOException, ParserException, FileNotFoundException, ParseException {
         yc.exportIcsFile("main", new File("testexpIcs.ics"));
 
     }

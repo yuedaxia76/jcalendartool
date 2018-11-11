@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -59,10 +60,15 @@ import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.component.VToDo;
 import net.fortuna.ical4j.model.property.Action;
 import net.fortuna.ical4j.model.property.CalScale;
+import net.fortuna.ical4j.model.property.Categories;
+import net.fortuna.ical4j.model.property.Clazz;
+import net.fortuna.ical4j.model.property.Created;
 import net.fortuna.ical4j.model.property.Description;
+import net.fortuna.ical4j.model.property.LastModified;
 import net.fortuna.ical4j.model.property.Location;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.RRule;
+import net.fortuna.ical4j.model.property.Status;
 import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
@@ -156,54 +162,46 @@ public class YCalendar {
             @Override
             public void mousePressed(MouseEvent e) {// 只能检测到mousePressed事件
 
-                JFileChooser jfc = new JFileChooser();
-                jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                jfc.removeChoosableFileFilter(jfc.getAcceptAllFileFilter());
-                jfc.addChoosableFileFilter(new JAVAFileFilter("ics"));//导入可选择的文件的后缀名类型
-                jfc.addChoosableFileFilter(new JAVAFileFilter("csv"));
-                jfc.showDialog(new JLabel(), "选择");
-                File file = jfc.getSelectedFile();
-                if (file == null) {
-                    log.log(Level.FINE, "no select file");
-                    return;
-                }
-
-                importFile(file);
+                importFile();
             }
         });
         exportMenu.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {// 只能检测到mousePressed事件
-                CalSelectUi cui = new CalSelectUi(f, true, 350, 550);
-                cui.setDicSer(dicSer);
-                cui.initCalSelectUi("请选择导出日历");
-                String calid = cui.getSelectCans();
-                cui.dispose();
-                if (UtilValidate.isEmpty(calid)) {
-                    log.log(Level.INFO, "没有选择");
-                    return;
-                }
-                try {
-
-                    JFileChooser jfc = new JFileChooser();
-                    jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                    jfc.removeChoosableFileFilter(jfc.getAcceptAllFileFilter());
-                    jfc.addChoosableFileFilter(new JAVAFileFilter("ics"));//导入可选择的文件的后缀名类型
-                    jfc.addChoosableFileFilter(new JAVAFileFilter("csv"));
-                    jfc.showDialog(new JLabel(), "选择");
-                    File file = jfc.getSelectedFile();
-
-                    if (file.getName().toLowerCase().endsWith("ics")) {
-                        exportIcsFile(calid, file);
-                    } else {
-
-                    }
-
-                } catch (IOException ex) {
-                    log.log(Level.SEVERE, null, ex);
-                }
+                exportToFile();
             }
         });
+    }
+
+    void exportToFile() {
+        CalSelectUi cui = new CalSelectUi(f, true, 350, 550);
+        cui.setDicSer(dicSer);
+        cui.initCalSelectUi("请选择导出日历");
+        String calid = cui.getSelectCans();
+        cui.dispose();
+        if (UtilValidate.isEmpty(calid)) {
+            log.log(Level.INFO, "没有选择");
+            return;
+        }
+        try {
+
+            JFileChooser jfc = new JFileChooser();
+            jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            jfc.removeChoosableFileFilter(jfc.getAcceptAllFileFilter());
+            jfc.addChoosableFileFilter(new JAVAFileFilter("ics"));//导入可选择的文件的后缀名类型
+            jfc.addChoosableFileFilter(new JAVAFileFilter("csv"));
+            jfc.showDialog(new JLabel(), "选择");
+            File file = jfc.getSelectedFile();
+
+            if (file.getName().toLowerCase().endsWith("ics")) {
+                exportIcsFile(calid, file);
+            } else {
+
+            }
+
+        } catch (Exception ex) {
+            log.log(Level.SEVERE, null, ex);
+        }
     }
 
     class JAVAFileFilter extends FileFilter {
@@ -231,8 +229,18 @@ public class YCalendar {
         }
     }
 
-    private void importFile(File file) {
-
+    private void importFile() {
+        JFileChooser jfc = new JFileChooser();
+        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfc.removeChoosableFileFilter(jfc.getAcceptAllFileFilter());
+        jfc.addChoosableFileFilter(new JAVAFileFilter("ics"));//导入可选择的文件的后缀名类型
+        jfc.addChoosableFileFilter(new JAVAFileFilter("csv"));
+        jfc.showDialog(new JLabel(), "选择");
+        File file = jfc.getSelectedFile();
+        if (file == null) {
+            log.log(Level.FINE, "no select file");
+            return;
+        }
         if (file.isFile()) {
 
             CalSelectUi cui = new CalSelectUi(f, true, 350, 550);
@@ -554,7 +562,14 @@ public class YCalendar {
         return new Tuple2(result - 1, 0);
     }
 
-    public void exportIcsFile(String calendarid, File toSave) throws FileNotFoundException, IOException {
+    private DateTime longToDateTime(long javatime) {
+        DateTime icaltime = new DateTime(javatime);
+        // 开始时间转换为UTC时间（UTC ＋ 时区差 ＝ 本地时间 ）
+        icaltime.setUtc(false);
+        return icaltime;
+    }
+
+    public void exportIcsFile(String calendarid, File toSave) throws FileNotFoundException, IOException, ParseException {
 
         // 创建一个时区（TimeZone）
         TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
@@ -572,15 +587,13 @@ public class YCalendar {
             // 时间主题
             String summary = ed.getTitle();
             // 开始时间
-            DateTime start = new DateTime(ed.getStartTime());
-            // 开始时间转换为UTC时间（UTC ＋ 时区差 ＝ 本地时间 ）
-            start.setUtc(false);
+            DateTime start = longToDateTime(ed.getStartTime());
+ 
             // 结束时间
-            DateTime end = new DateTime(ed.getEndTime());
-            // 结束时间设置成UTC时间（UTC ＋ 时区差 ＝ 本地时间 ）
-            end.setUtc(false);
+            DateTime end = longToDateTime(ed.getEndTime());
+ 
             // 新建普通事件
-            // VEvent event = new VEvent(start, end, summary);
+            // VEvent event = new VEvent(icaltime, end, summary);
             // 定义全天事件（注意默认是UTC时间）
             VEvent event = new VEvent(start, end, summary);
             event.getProperties().add(new Location(ed.getLocation()));
@@ -588,6 +601,11 @@ public class YCalendar {
             event.getProperties().add(new Uid(ed.getEventid()));
             // 添加时区信息
             event.getProperties().add(tz.getTimeZoneId());
+            event.getProperties().add(new Description(ed.getEventDesc()));
+            event.getProperties().add(new Categories(ed.getCategory()));
+            event.getProperties().add(new Created(longToDateTime(ed.getCreateTime())));
+            event.getProperties().add(new LastModified(longToDateTime(ed.getLastChangeTime())));
+            event.getProperties().add(new Clazz(ed.getEventType()));
             // 添加邀请者,目前不支持
 //            Attendee dev1 = new Attendee(URI.create("mailto:dev1@mycompany.com"));
 //            dev1.getParameters().add(Role.REQ_PARTICIPANT);
@@ -650,7 +668,81 @@ public class YCalendar {
             // 添加事件
             calendar.getComponents().add(event);
         }
+        List<TaskData> tasks = tsSe.queryTask("1=1", Arrays.asList(UtilValidate.isNotEmpty(calendarid) ? calendarid : conInfo.getDefaultCalId()), null);
+        for (TaskData td : tasks) {
+            // 时间主题
+            String summary = td.getTitle();
+            // 开始时间
+            DateTime start = new DateTime(td.getStartTime());
+            // 开始时间转换为UTC时间（UTC ＋ 时区差 ＝ 本地时间 ）
+            start.setUtc(false);
+            // 结束时间
+            DateTime end = new DateTime(td.getEndTime());
+            // 结束时间设置成UTC时间（UTC ＋ 时区差 ＝ 本地时间 ）
+            end.setUtc(false);
+            // 新建普通事件
+            // VEvent event = new VEvent(icaltime, end, summary);
+            // 定义全天事件（注意默认是UTC时间）
+            VToDo todo = new VToDo(start, end, summary);
+            todo.getProperties().add(new Location(td.getLocation()));
+            // 生成唯一标示
+            todo.getProperties().add(new Uid(td.getTaskid()));
+            // 添加时区信息
+            todo.getProperties().add(tz.getTimeZoneId());
+            todo.getProperties().add(new Description(td.getTaskdesc()));
+            todo.getProperties().add(new Categories(td.getCategory()));
+            todo.getProperties().add(new Created(longToDateTime(td.getCreateTime())));
+            todo.getProperties().add(new LastModified(longToDateTime(td.getLastChangeTime())));
+            todo.getProperties().add(new Clazz(td.getEventType()));
+            todo.getProperties().add(new Status(td.getTstatus()));
+            // 添加邀请者,目前不支持
+//            Attendee dev1 = new Attendee(URI.create("mailto:dev1@mycompany.com"));
+//            dev1.getParameters().add(Role.REQ_PARTICIPANT);
+//            dev1.getParameters().add(new Cn("Developer 1"));
+//            event.getProperties().add(dev1);
 
+            String ale = td.getRemind();
+            if (!"-1S".equalsIgnoreCase(ale)) {
+                VAlarm valarm;
+                // 提醒
+                switch (ale) {
+                    case "0M":
+                        valarm = new VAlarm(new Dur(0, 0, 0, 0));
+                        break;
+                    case "5M":
+                        valarm = new VAlarm(new Dur(0, 0, -5, 0));
+                        break;
+                    case "15M":
+                        valarm = new VAlarm(new Dur(0, 0, -15, 0));
+                        break;
+                    case "1H":
+                        valarm = new VAlarm(new Dur(0, -1, 0, 0));
+                        break;
+                    case "2H":
+                        valarm = new VAlarm(new Dur(0, -2, 0, 0));
+                        break;
+                    case "1D":
+                        valarm = new VAlarm(new Dur(-1, 0, 0, 0));
+                        break;
+                    case "2D":
+                        valarm = new VAlarm(new Dur(-2, 0, 0, 0));
+                        break;
+                    case "1W":
+                        valarm = new VAlarm(new Dur(-7, 0, 0, 0));
+                        break;
+                    default:
+                        valarm = new VAlarm(new Dur(0, 0, 0, 0));
+                }
+
+                valarm.getProperties().add(new Summary("时间提醒"));
+                valarm.getProperties().add(Action.DISPLAY);
+                valarm.getProperties().add(new Description(td.getTitle() + "在" + UtilDateTime.longToString(td.getStartTime())));
+                // 将VAlarm加入VEvent
+                todo.getAlarms().add(valarm);
+                // 添加事件
+                calendar.getComponents().add(todo);
+            }
+        }
         // 验证
         calendar.validate();
 
