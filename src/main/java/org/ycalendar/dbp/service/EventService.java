@@ -82,7 +82,16 @@ public class EventService extends GenalService {
 
         return result;
     }
+    public Integer delEventByCalendarId(String cid) {
 
+        Integer result = hd.exeTran(new ExecuDbopention<Integer>() {
+            public Integer exeDbAction() {
+                return gdao.delete(hd.getCurCnection(), EventData.class, "calendarid", cid);
+            }
+        });
+
+        return result;
+    }
     /**
      * 修改事件
      *

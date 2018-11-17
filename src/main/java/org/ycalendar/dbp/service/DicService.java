@@ -122,6 +122,15 @@ public class DicService extends GenalService implements Dictionary {
         hd.exeTran(ei);
     }
 
+    public void updateDictionary(final DictionaryData d) {
+
+        ExecuDbopention<Integer> ei = () -> {
+            return gdao.update(hd.getCurCnection(), DictionaryData.class, d, "id", false);
+
+        };
+        hd.exeTran(ei);
+    }
+
     public Integer delDictionary(final String id) {
 
         return hd.exeTran(() -> gdao.delete(hd.getCurCnection(), DictionaryData.class, "id", id));
@@ -130,5 +139,12 @@ public class DicService extends GenalService implements Dictionary {
     public Integer delDictionaryByType(final String dicType) {
 
         return hd.exeTran(() -> gdao.delete(hd.getCurCnection(), DictionaryData.class, "dict_type", dicType));
+    }
+
+    public Integer delDictionaryData(final String dicType, final String dicCode) {
+        Map<String, Object> cond = new HashMap<>();
+        cond.put("dict_type", dicType);
+        cond.put("code", dicCode);
+        return hd.exeTran(() -> gdao.delete(hd.getCurCnection(), DictionaryData.class, cond));
     }
 }

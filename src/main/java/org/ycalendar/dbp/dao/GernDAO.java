@@ -14,8 +14,10 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.ycalendar.util.UtilValidate;
 
 /**
  * 如果仅仅考虑h2，可以作为静态类
@@ -40,13 +42,13 @@ public class GernDAO {
         ResultSet rs = null;
         T result = null;
         try {
-            psh.adjustParams(params.length,params);
+            psh.adjustParams(params.length, params);
             stmt = conn.prepareStatement(sql);
-            this.fillStatement(stmt,params.length,params);
+            this.fillStatement(stmt, params.length, params);
             rs = stmt.executeQuery();
             result = rsh.handle(rs);
         } catch (SQLException e) {
-            psh.print(sql,params.length, params);
+            psh.print(sql, params.length, params);
             throw new RuntimeException(e);
         } finally {
             close(rs, stmt);
@@ -62,12 +64,12 @@ public class GernDAO {
         PreparedStatement stmt = null;
         int rows = 0;
         try {
-            psh.adjustParams(params.length,params);
+            psh.adjustParams(params.length, params);
             stmt = conn.prepareStatement(sql);
-            this.fillStatement(stmt,params.length, params);
+            this.fillStatement(stmt, params.length, params);
             rows = stmt.executeUpdate();
         } catch (SQLException e) {
-            psh.print(sql,params.length, params);
+            psh.print(sql, params.length, params);
             throw new RuntimeException(e);
         } finally {
             close(stmt);
@@ -79,17 +81,16 @@ public class GernDAO {
         PreparedStatement stmt = null;
         int[] rows = null;
         try {
-            conn.setAutoCommit(false);
+
             //psh.adjustParams(params[0].length,params[0]);
             stmt = conn.prepareStatement(sql);
             for (int i = 0; i < params.length; i++) {
                 psh.adjustParams(params[i].length, params[i]);
-                this.fillStatement(stmt,params[i].length, params[i]);
+                this.fillStatement(stmt, params[i].length, params[i]);
                 stmt.addBatch();
             }
             rows = stmt.executeBatch();
-            conn.commit();
-            conn.setAutoCommit(true);
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -129,15 +130,15 @@ public class GernDAO {
             questionMarks.delete(questionMarks.length() - 1, questionMarks.length());
             String sql = String.format("insert into %s (%s) values (%s)", table, columns.toString(), questionMarks.toString());
 
-            psh.adjustParams(j,params);
+            psh.adjustParams(j, params);
 
             stmt = conn.prepareStatement(sql);
 
-            this.fillStatement(stmt,j, params);
+            this.fillStatement(stmt, j, params);
             try {
                 rows = stmt.executeUpdate();
             } catch (SQLException e) {
-                psh.print(sql, j,params);
+                psh.print(sql, j, params);
                 throw new RuntimeException(e);
             }
 
@@ -197,10 +198,10 @@ public class GernDAO {
         return batch(conn, sql, params);
     }
 
-    public <T> T read(Connection conn, Class<T> cls, String pkName, String id) {
+    public <T> T read(Connection conn, Class<T> cls, String column, String id) {
         String table = PreparedStatementHandler.camel2underscore(cls.getSimpleName());
 
-        String sql = String.format("select * from %s where %s=?", table, pkName);
+        String sql = String.format("select * from %s where %s=?", table, column);
         return (T) query(conn, sql, new BeanHandler<T>(cls), id);
     }
 
@@ -283,9 +284,28 @@ public class GernDAO {
         }
     }
 
-    public <T> int delete(Connection conn, Class<T> cls, String pkName, String id) {
-        String sql = String.format("delete from %s where %s=?", PreparedStatementHandler.camel2underscore(cls.getSimpleName()), pkName);
+    public <T> int delete(Connection conn, Class<T> cls, String column, String id) {
+        String sql = String.format("delete from %s where %s=?", PreparedStatementHandler.camel2underscore(cls.getSimpleName()), column);
         return update(conn, sql, new Object[]{id});
+    }
+
+    public <T> int delete(Connection conn, Class<T> cls, Map<String, Object> cond) {
+        StringBuilder sql = new StringBuilder("delete from ");
+        sql.append(PreparedStatementHandler.camel2underscore(cls.getSimpleName()));
+        if (UtilValidate.isNotEmpty(cond)) {
+            Object[] param = new Object[cond.size()];
+            sql.append(" where ");
+            int i = 0;
+            for (Map.Entry<String, Object> en : cond.entrySet()) {
+                sql.append(en.getKey()).append("=? ");
+                param[i] = en.getValue();
+                i++;
+            }
+            return update(conn, sql.toString(), param);
+        } else {
+            return update(conn, sql.toString(), new Object[0]);
+        }
+
     }
 
     public void pager(StringBuffer sql, List<Object> params, int pageSize, int pageNo) {
@@ -305,7 +325,7 @@ public class GernDAO {
         psh.in(sql, params, operator, field, values);
     }
 
-    private void fillStatement(PreparedStatement stmt,final int len, Object... params) {
+    private void fillStatement(PreparedStatement stmt, final int len, Object... params) {
         if (params == null) {
             return;
         }

@@ -106,6 +106,17 @@ public class TaskService extends GenalService {
 
     }
 
+    public Integer delTaskByCalendarId(String cid) {
+
+        Integer result = hd.exeTran(new ExecuDbopention<Integer>() {
+            public Integer exeDbAction() {
+                return gdao.delete(hd.getCurCnection(), TaskData.class, "calendarid", cid);
+            }
+        });
+
+        return result;
+    }
+
     public TaskData readTask(String taskid) {
         if (UtilValidate.isEmpty(taskid)) {
             throw new RuntimeException("缺少主键");
