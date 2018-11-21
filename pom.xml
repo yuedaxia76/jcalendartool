@@ -191,6 +191,7 @@
                 <configuration>
                     <!-- 不运行单元测试 -->
                     <skipTests>false</skipTests>
+                    <trimStackTrace>false</trimStackTrace>
                 </configuration>
             </plugin>
         </plugins>

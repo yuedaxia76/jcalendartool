@@ -77,7 +77,7 @@ public class CalendarService extends GenalService {
 
     public Tuple2<Integer, Integer> delCalendar(String id) {
         //删除日历 
-
+        log.log(Level.INFO, "del calendar {0}", id);
         try {
             hd.begin();
             drs.delDictionaryData("calendar", id);

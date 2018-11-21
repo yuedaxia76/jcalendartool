@@ -13,6 +13,7 @@ insert into dictionary_data VALUES ('event_cate_6','event_cate','zh_CN','4','生
 insert into dictionary_data VALUES ('event_cate_7','event_cate','zh_CN','5','问题',5)#
 insert into dictionary_data VALUES ('event_cate_8','event_cate','zh_CN','6','收藏',6)#
 insert into dictionary_data VALUES ('event_cate_9','event_cate','zh_CN','7','知识',7)#
+insert into dictionary_data VALUES ('event_cate_10','event_cate','zh_CN','8','公共假日',7)#
 insert into dictionary_data VALUES ('event_cate_700','event_cate','zh_CN','700','其他',700)#
 
 

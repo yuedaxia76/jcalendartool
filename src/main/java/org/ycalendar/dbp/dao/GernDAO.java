@@ -297,7 +297,11 @@ public class GernDAO {
             sql.append(" where ");
             int i = 0;
             for (Map.Entry<String, Object> en : cond.entrySet()) {
+                if (i > 0) {
+                    sql.append(" and ");
+                }
                 sql.append(en.getKey()).append("=? ");
+
                 param[i] = en.getValue();
                 i++;
             }

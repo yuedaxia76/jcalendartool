@@ -695,7 +695,10 @@ public class YCalendar {
             todo.getProperties().add(new Created(longToDateTime(td.getCreateTime())));
             todo.getProperties().add(new LastModified(longToDateTime(td.getLastChangeTime())));
             todo.getProperties().add(new Clazz(td.getEventType()));
-            todo.getProperties().add(new Status(td.getTstatus()));
+            if(!conInfo.getDefaultTaskStatus().equals(td.getTstatus())){
+                todo.getProperties().add(new Status(td.getTstatus()));
+            }
+            
             // 添加邀请者,目前不支持
 //            Attendee dev1 = new Attendee(URI.create("mailto:dev1@mycompany.com"));
 //            dev1.getParameters().add(Role.REQ_PARTICIPANT);

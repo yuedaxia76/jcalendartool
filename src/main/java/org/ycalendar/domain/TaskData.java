@@ -1,5 +1,7 @@
 package org.ycalendar.domain;
 
+import org.ycalendar.util.UtilValidate;
+
 /**
  * 任务类
  *
@@ -152,4 +154,17 @@ public class TaskData {
     public void setEventType(String eventType) {
         this.eventType = eventType;
     }    
+    
+        @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof TaskData) {
+            if (UtilValidate.isEmpty(taskid)) {
+                return false;
+            } else {
+                return taskid.equals(((TaskData) obj).getTaskid());
+            }
+        } else {
+            return false;
+        }
+    }
 }
