@@ -189,8 +189,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.1</version>
                 <configuration>
-                    <!-- 不运行单元测试 -->
+                    <!-- 是否运行单元测试 -->
                     <skipTests>false</skipTests>
+                    <!-- 是否显示测试异常堆栈 -->
                     <trimStackTrace>false</trimStackTrace>
                 </configuration>
             </plugin>
