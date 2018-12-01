@@ -100,6 +100,8 @@ public class CalendarTest {
     public void testDel() throws IOException, ParserException {
 
         cs.delCalendar("test");
-
+        DictionaryData cd = cs.getCalendar("test");
+        Assert.assertEquals(cd, null);
     }
+
 }
