@@ -86,7 +86,9 @@ public class ImportTest {
 
     @AfterSuite
     public void testEnd() {
-
+//       if(hd!=null){
+//        hd.close();
+//       }
     }
 
     @Test
@@ -166,6 +168,16 @@ public class ImportTest {
         
         Assert.assertEquals(testen.equals(teste), true);
         Assert.assertEquals(tsdan.equals(tsda), true);
+        
+        //加上其他属性比较
+        String one=testen.getCategory()+testen.getEventDesc()+testen.getEventRepeat()+testen.getEventType()+testen.getLocation();
+        String two=teste.getCategory()+teste.getEventDesc()+teste.getEventRepeat()+teste.getEventType()+teste.getLocation();
+        Assert.assertEquals(one, two);
+        
+        one=tsdan.getCategory()+tsdan.getTaskdesc()+tsdan.getTstatus()+tsdan.getEventType()+tsdan.getLocation();
+        two=tsda.getCategory()+tsda.getTaskdesc()+tsda.getTstatus()+tsda.getEventType()+tsda.getLocation();
+        Assert.assertEquals(one, two);    
+        
         
         //删除测试日历 
         cs.delCalendar("test1");

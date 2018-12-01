@@ -1,5 +1,6 @@
 package org.ycalendar.domain;
 
+import java.util.Objects;
 import org.ycalendar.util.UtilValidate;
 
 /**
@@ -167,4 +168,15 @@ public class TaskData {
             return false;
         }
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 53 * hash + Objects.hashCode(this.taskid);
+        return hash;
+    }
+    @Override
+    public String toString() {
+        return taskid + "|" + title;
+    }    
 }

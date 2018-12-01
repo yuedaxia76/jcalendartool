@@ -9,6 +9,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -75,6 +77,7 @@ import net.fortuna.ical4j.model.property.Version;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.ycalendar.dbp.dao.H2Dao;
 import org.ycalendar.dbp.service.ConfigInfo;
 
 import org.ycalendar.dbp.service.Dictionary;
@@ -194,8 +197,8 @@ public class YCalendar {
             File file = jfc.getSelectedFile();
 
             if (file.getName().toLowerCase().endsWith("ics")) {
-              Tuple2<Integer, Integer> importCount= exportIcsFile(calid, file);
-                
+                Tuple2<Integer, Integer> importCount = exportIcsFile(calid, file);
+
                 JOptionPane.showMessageDialog(f, "导出:" + importCount.e1 + "条事件," + importCount.e2 + "条任务", "导出成功", JOptionPane.INFORMATION_MESSAGE);
             } else {
 
@@ -677,10 +680,10 @@ public class YCalendar {
             String summary = td.getTitle();
             // 开始时间
             DateTime start = longToDateTime(td.getStartTime());
- 
+
             // 结束时间
             DateTime end = longToDateTime(td.getEndTime());
- 
+
             // 新建普通事件
             // VEvent event = new VEvent(icaltime, end, summary);
             // 定义全天事件（注意默认是UTC时间）
@@ -695,16 +698,15 @@ public class YCalendar {
             todo.getProperties().add(new Created(longToDateTime(td.getCreateTime())));
             todo.getProperties().add(new LastModified(longToDateTime(td.getLastChangeTime())));
             todo.getProperties().add(new Clazz(td.getEventType()));
-            if(!conInfo.getDefaultTaskStatus().equals(td.getTstatus())){
+            if (!conInfo.getDefaultTaskStatus().equals(td.getTstatus())) {
                 todo.getProperties().add(new Status(td.getTstatus()));
             }
-            
+
             // 添加邀请者,目前不支持
 //            Attendee dev1 = new Attendee(URI.create("mailto:dev1@mycompany.com"));
 //            dev1.getParameters().add(Role.REQ_PARTICIPANT);
 //            dev1.getParameters().add(new Cn("Developer 1"));
 //            event.getProperties().add(dev1);
-
             String ale = td.getRemind();
             if (!"-1S".equalsIgnoreCase(ale)) {
                 VAlarm valarm;
@@ -744,7 +746,7 @@ public class YCalendar {
                 // 将VAlarm加入VEvent
                 todo.getAlarms().add(valarm);
                 // 添加事件
-                
+
             }
             calendar.getComponents().add(todo);
         }
@@ -947,7 +949,18 @@ public class YCalendar {
 
         loadInitData();
 
+        f.addWindowListener(new WindowAdapter() {
+             
+            @Override
+            public void windowClosing(WindowEvent e) {
+                mainExit();
+            }
+        });
         f.setVisible(true);
+    }
+
+    protected void mainExit() {
+        H2Dao.getH2Dao().close();
     }
 
     private InitDataService dataLoad;

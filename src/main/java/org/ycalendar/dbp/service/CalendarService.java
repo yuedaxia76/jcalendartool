@@ -108,4 +108,9 @@ public class CalendarService extends GenalService {
         }
 
     }
+
+    public DictionaryData getCalendar(String cid) {
+        return drs.getDictDataByCode("calendar", cid);
+
+    }
 }

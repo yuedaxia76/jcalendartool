@@ -91,6 +91,7 @@ public class DictionaryTest {
 		
 		
 		Map<Integer, String> mi=ds.getDictMap(testDicType,(s)->Integer.valueOf(s));
+                //System.out.println(mi);
 		assert(mi.size()==3);
 		assert("测试2".equals(mi.get(2)));
 	}

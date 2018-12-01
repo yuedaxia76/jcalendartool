@@ -1,5 +1,6 @@
 package org.ycalendar.domain;
 
+import java.util.Objects;
 import org.ycalendar.util.UtilValidate;
 
 public class EventData {
@@ -127,6 +128,13 @@ public class EventData {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 11 * hash + Objects.hashCode(this.eventid);
+        return hash;
     }
 
     @Override

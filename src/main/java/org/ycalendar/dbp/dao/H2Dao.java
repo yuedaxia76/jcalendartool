@@ -55,11 +55,21 @@ public class H2Dao implements Executdb {
         initSetUp();
     }
 
-    private void initSetUp() {
+    protected void initSetUp() {
         log.info("start init H2Dao");
         localTran = createJdbcDbTransaction(getMainUrl());
 
     }
+
+    public void close() {
+        log.info("close   H2Dao");
+        if (localTran != null) {
+            localTran.close();
+            localTran=null;
+        }
+
+    }
+
     private String delimiter = "#";
 
     public String getDelimiter() {
