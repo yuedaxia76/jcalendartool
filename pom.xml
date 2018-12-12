@@ -18,13 +18,13 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <project.build.outputDirectory>C:/ework/yc/dist</project.build.outputDirectory>
+        <yc.outputDirectory>C:/ework/yc/dist</yc.outputDirectory>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <commons-csv.version>1.6</commons-csv.version>
         <H2.version>1.4.197</H2.version>
         <jcache.version>1.1.0</jcache.version>
         <ehcache.version>3.6.1</ehcache.version>
-        <ical4j.version>3.0.1</ical4j.version>
+        <ical4j.version>3.0.2</ical4j.version>
         <log4j2.version>2.11.1</log4j2.version>
         <testng.version>7.0.0-beta1</testng.version>
     </properties>
@@ -159,7 +159,7 @@
                     <excludes>
                         <exclude>**/*.jar</exclude>
                     </excludes>
-                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                    <outputDirectory>${yc.outputDirectory}</outputDirectory>
                 </configuration>
 
             </plugin>
@@ -178,7 +178,7 @@
                         </goals>
                         <configuration>
                             <includeScope>compile</includeScope>
-                            <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
+                            <outputDirectory>${yc.outputDirectory}/lib</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

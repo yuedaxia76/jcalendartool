@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParseException;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -637,31 +638,31 @@ public class YCalendar {
                 // 提醒
                 switch (ale) {
                     case "0M":
-                        valarm = new VAlarm(new Dur(0, 0, 0, 0));
+                        valarm = new VAlarm(Duration.ofMinutes(0));
                         break;
                     case "5M":
-                        valarm = new VAlarm(new Dur(0, 0, -5, 0));
+                        valarm = new VAlarm(Duration.ofMinutes( -5));
                         break;
                     case "15M":
-                        valarm = new VAlarm(new Dur(0, 0, -15, 0));
+                        valarm = new VAlarm(Duration.ofMinutes( -15));
                         break;
                     case "1H":
-                        valarm = new VAlarm(new Dur(0, -1, 0, 0));
+                        valarm = new VAlarm(Duration.ofHours( -1));
                         break;
                     case "2H":
-                        valarm = new VAlarm(new Dur(0, -2, 0, 0));
+                        valarm = new VAlarm(Duration.ofHours( -2));
                         break;
                     case "1D":
-                        valarm = new VAlarm(new Dur(-1, 0, 0, 0));
+                        valarm = new VAlarm(Duration.ofDays(-1));
                         break;
                     case "2D":
-                        valarm = new VAlarm(new Dur(-2, 0, 0, 0));
+                        valarm = new VAlarm(Duration.ofDays(-2));
                         break;
                     case "1W":
-                        valarm = new VAlarm(new Dur(-7, 0, 0, 0));
+                        valarm = new VAlarm(Duration.ofDays(-7));
                         break;
                     default:
-                        valarm = new VAlarm(new Dur(0, 0, 0, 0));
+                        valarm = new VAlarm(Duration.ofMinutes(0));
                 }
 
                 valarm.getProperties().add(new Summary("时间提醒"));
@@ -713,31 +714,31 @@ public class YCalendar {
                 // 提醒
                 switch (ale) {
                     case "0M":
-                        valarm = new VAlarm(new Dur(0, 0, 0, 0));
+                        valarm = new VAlarm(Duration.ofMinutes(0));
                         break;
                     case "5M":
-                        valarm = new VAlarm(new Dur(0, 0, -5, 0));
+                        valarm = new VAlarm(Duration.ofMinutes( -5));
                         break;
                     case "15M":
-                        valarm = new VAlarm(new Dur(0, 0, -15, 0));
+                        valarm = new VAlarm(Duration.ofMinutes( -15));
                         break;
                     case "1H":
-                        valarm = new VAlarm(new Dur(0, -1, 0, 0));
+                        valarm = new VAlarm(Duration.ofHours( -1));
                         break;
                     case "2H":
-                        valarm = new VAlarm(new Dur(0, -2, 0, 0));
+                        valarm = new VAlarm(Duration.ofHours( -2));
                         break;
                     case "1D":
-                        valarm = new VAlarm(new Dur(-1, 0, 0, 0));
+                        valarm = new VAlarm(Duration.ofDays(-1));
                         break;
                     case "2D":
-                        valarm = new VAlarm(new Dur(-2, 0, 0, 0));
+                        valarm = new VAlarm(Duration.ofDays(-2));
                         break;
                     case "1W":
-                        valarm = new VAlarm(new Dur(-7, 0, 0, 0));
+                        valarm = new VAlarm(Duration.ofDays(-7));
                         break;
                     default:
-                        valarm = new VAlarm(new Dur(0, 0, 0, 0));
+                        valarm = new VAlarm(Duration.ofMinutes(0));
                 }
 
                 valarm.getProperties().add(new Summary("时间提醒"));
