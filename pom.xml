@@ -18,7 +18,7 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <yc.outputDirectory>C:/ework/yc/dist</yc.outputDirectory>
+        <resease.outputDirectory>C:/ework/yc/dist</resease.outputDirectory>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <commons-csv.version>1.6</commons-csv.version>
         <H2.version>1.4.197</H2.version>
@@ -131,7 +131,7 @@
                     <fork>true</fork>
                     <executable><!-- path-to-javac -->
                     </executable>
-                    <compilerVersion>${maven.compiler.target>}</compilerVersion>
+                    <compilerVersion>${maven.compiler.target}</compilerVersion>
                 </configuration>
             </plugin>
 
@@ -139,7 +139,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.1.1</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -156,10 +156,19 @@
 
                         </manifestEntries>
                     </archive>
+
                     <excludes>
                         <exclude>**/*.jar</exclude>
-                    </excludes>
-                    <outputDirectory>${yc.outputDirectory}</outputDirectory>
+                        <!--注意这玩意从编译结果目录开始算目录结构-->
+                        <exclude>/log4j2.xml</exclude>
+                        <exclude>/YCalendar.xml</exclude>
+                        <exclude>/ical4j.properties</exclude>
+                        <exclude>/.netbeans_automatic_build</exclude>
+                        <exclude>/alreadyLoad</exclude>        
+                        <exclude>/calendardb.mv.db</exclude>  
+                        <exclude>/lib</exclude>                
+                    </excludes>                    
+                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                 </configuration>
 
             </plugin>
@@ -178,12 +187,37 @@
                         </goals>
                         <configuration>
                             <includeScope>compile</includeScope>
-                            <outputDirectory>${yc.outputDirectory}/lib</outputDirectory>
+                            <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
 
             </plugin>
+            
+            
+ 
+            <plugin> 
+                <artifactId>maven-assembly-plugin</artifactId> 
+                <version>3.1.0</version> 
+                <configuration> 
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <outputDirectory>${resease.outputDirectory}</outputDirectory>
+                    <descriptors> <!--描述文件路径--> 
+                        <descriptor>assembly.xml</descriptor> 
+                    </descriptors> 
+                </configuration> 
+                <executions> 
+                    <execution> 
+                        <id>make-assembly</id> 
+                        <phase>package</phase> <!-- 绑定到package生命周期阶段上 --> 
+                        <goals>  
+                            <goal>single</goal> 
+                        </goals> 
+                    </execution> 
+                </executions> 
+            </plugin> 
+      
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>日历配置</comment>
+
+<!-- 默认日历名称 -->
+<entry key="DefaultCalId">main</entry>
+
+
+
+<!-- 是否执行初始化 -->
+<entry key="RunInitDb">true</entry>
+<!-- 默认任务状态 -->
+<entry key="DefaultTaskStatus">NOTSET</entry>
+
+</properties>

@@ -3,11 +3,15 @@ package org.ycalendar.util;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.GraphicsEnvironment;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -15,6 +19,7 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
+import org.ycalendar.dbp.service.ConfigInfo;
 
 public class MiscUtil {
 
@@ -194,7 +199,7 @@ public class MiscUtil {
         }
     }
 
-    public static Map<String, String> strToMap(final String str,final  boolean trim,final  String splite) {
+    public static Map<String, String> strToMap(final String str, final boolean trim, final String splite) {
 
         if (UtilValidate.isEmpty(str)) {
             return new HashMap<>();
@@ -213,9 +218,9 @@ public class MiscUtil {
      * @param delim 分割符号
      * @return
      */
-    public static List<String> split(final String str,final  String delim) {
+    public static List<String> split(final String str, final String delim) {
         List<String> splitList = null;
-        StringTokenizer st ;
+        StringTokenizer st;
 
         if (str == null) {
             return splitList;
@@ -236,7 +241,7 @@ public class MiscUtil {
         return splitList;
     }
 
-    public static void setToMap(Map<String, String> decodedMap, Iterable<String> source,final  boolean trim) {
+    public static void setToMap(Map<String, String> decodedMap, Iterable<String> source, final boolean trim) {
         for (String s : source) {
 
             List<String> e = split(s, "=");
@@ -256,6 +261,52 @@ public class MiscUtil {
             }
 
             decodedMap.put(name, value);
+        }
+
+    }
+
+    public static final boolean closeObjNoExc(final Closeable o) {
+        if (o != null) {
+            try {
+                o.close();
+
+            } catch (Exception e) {
+                log.log(Level.INFO, "closeObjNoExc error ", e);
+                log.log(Level.WARNING, "closeObjNoExc error :{0}", e.toString());
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static final Properties getPropertiesFromRes(final String resourceName) {
+
+
+        InputStream is = ConfigInfo.class.getClassLoader().getResourceAsStream(resourceName);
+        if (is == null) {
+            is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceName);
+        }
+        if (is == null) {
+            log.log(Level.SEVERE, "找不到资源:{0}", resourceName);
+            return null;
+        }
+
+        Properties p;
+        try {
+            p = new Properties();
+
+            p.loadFromXML(is);
+
+            return p;
+
+        } catch (IOException ex) {
+            MiscUtil.closeObjNoExc(is);
+
+            log.log(Level.SEVERE, "处理发生错误:" + resourceName, ex);
+            return null;
+
+        } finally {
+            MiscUtil.closeObjNoExc(is);
         }
 
     }
