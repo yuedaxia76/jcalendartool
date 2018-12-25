@@ -24,7 +24,7 @@
         <H2.version>1.4.197</H2.version>
         <jcache.version>1.1.0</jcache.version>
         <ehcache.version>3.6.1</ehcache.version>
-        <ical4j.version>3.0.2</ical4j.version>
+        <ical4j.version>3.0.4</ical4j.version>
         <log4j2.version>2.11.1</log4j2.version>
         <testng.version>7.0.0-beta1</testng.version>
     </properties>

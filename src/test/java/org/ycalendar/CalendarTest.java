@@ -6,7 +6,6 @@
 package org.ycalendar;
 
 import java.io.IOException;
-import java.io.InputStream;
 import net.fortuna.ical4j.data.ParserException;
 import org.testng.Assert;
 import org.testng.annotations.AfterSuite;
@@ -20,9 +19,7 @@ import org.ycalendar.dbp.service.DicService;
 import org.ycalendar.dbp.service.EventService;
 import org.ycalendar.dbp.service.TaskService;
 import org.ycalendar.domain.DictionaryData;
-import org.ycalendar.ui.ImportTest;
 import org.ycalendar.ui.YCalendar;
-import org.ycalendar.util.Tuple2;
 
 /**
  *
