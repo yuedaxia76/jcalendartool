@@ -6,7 +6,7 @@
 
     <groupId>org.ycalendar</groupId>
     <artifactId>jcalendartool</artifactId>
-    <version>0.2.1</version>
+    <version>0.2.2</version>
     <packaging>jar</packaging>
 
     <name>jcalendartool</name>
@@ -109,6 +109,13 @@
                     <include>META-INF/**</include>
                 </includes>
             </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.cmd</include>
+                </includes>
+            </resource>            
         </resources>
         <testResources>
             <testResource>
@@ -163,6 +170,7 @@
                         <exclude>/log4j2.xml</exclude>
                         <exclude>/YCalendar.xml</exclude>
                         <exclude>/ical4j.properties</exclude>
+                        <exclude>/startcl.cmd</exclude>
                         <exclude>/.netbeans_automatic_build</exclude>
                         <exclude>/alreadyLoad</exclude>        
                         <exclude>/calendardb.mv.db</exclude>  

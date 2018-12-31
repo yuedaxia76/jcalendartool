@@ -23,6 +23,11 @@
  
         </file>
         <file>
+            <source>${project.build.outputDirectory}/startcl.cmd</source>
+            <outputDirectory>/</outputDirectory>
+ 
+        </file>        
+        <file>
             <source>${project.build.outputDirectory}/jcalendartool-${project.version}.jar</source>
             <outputDirectory>/</outputDirectory>
  
