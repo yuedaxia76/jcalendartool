@@ -338,7 +338,7 @@ public class EventUi extends JDialog {
             for (int i = 0; i < inte.size(); i++) {
                 DictionaryData dd = inte.get(i);
                 repeatModel.insertElementAt(new ItemData<String, String>(dd.getCode(), dd.getDictdataValue()), i);
-                if (this.data != null && Integer.valueOf(dd.getCode()).equals(data.getEventRepeat())) {
+                if (this.data != null && dd.getCode().equals(data.getEventRepeat())) {
 
                     selectIndex = i;
 
