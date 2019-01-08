@@ -13,8 +13,8 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.ButtonGroup;
 
 import javax.swing.DefaultListModel;
@@ -54,7 +54,7 @@ import org.ycalendar.util.UtilValidate;
  */
 public class TaskUi {
 
-    private static final Logger log = Logger.getLogger(TaskUi.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(TaskUi.class);
 
     private final String[] columnHeaders = {"", "标题", "%完成", "状态", "开始日期", "结束日期"};
     JPanel left;
@@ -137,7 +137,7 @@ public class TaskUi {
         ValueRadioButton<String> vb = (ValueRadioButton<String>) e.getSource();
         String cond = MiscUtil.evaluateExpr(vb.getValue());
         String word = taskCondi.getText();
-        log.log(Level.INFO, cond);
+        log.info( cond);
         List<TaskData> tasks = this.taskSer.queryTask(cond, getSelectCans(), word);
 
         taskDataModel.setDatas(tasks);
@@ -289,7 +289,7 @@ public class TaskUi {
                     return UtilDateTime.longToString(edt, UtilDateTime.defaultDatePattern);
 
             }
-            log.log(Level.SEVERE, "error columnIndex {0}", columnIndex);
+            log.error( "error columnIndex {}", columnIndex);
             return null;
         }
 
@@ -392,7 +392,7 @@ public class TaskUi {
         Class[] coluClass = {String.class, String.class, Integer.class, String.class, String.class, String.class};
         List<String> st = taskSer.getNotcompleteStatus();
         List<TaskData> tasks = this.taskSer.queryTask(st, -1, -1, getSelectCans(), null, -1);
-        log.log(Level.FINE, "任务数量{0}", tasks.size());
+        log.debug("任务数量{}", tasks.size());
         taskDataModel = new TaskModel(coluClass, tasks);
         taskTable = new JTable(taskDataModel);
         taskTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 表格选择为单选  

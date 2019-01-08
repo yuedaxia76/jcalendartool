@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.ycalendar.dbp.dao.BeanHandler;
 import org.ycalendar.dbp.dao.BeanListHandler;
@@ -23,7 +23,7 @@ import org.ycalendar.util.UtilValidate;
  */
 public class DicService extends GenalService implements Dictionary {
 
-    public static Logger log = Logger.getLogger(DicService.class.getName());
+    private static Logger log = LoggerFactory.getLogger(DicService.class);
 
     @Override
     public <T> Map<T, String> getDictMap(String type, StringCinvert<T> sc) {
@@ -45,7 +45,7 @@ public class DicService extends GenalService implements Dictionary {
 
                 List<DictionaryData> tem = gdao.query(hd.getCurCnection(), sql, rsh, type, Locale.getDefault().toString());
                 if (UtilValidate.isEmpty(tem)) {
-                    log.log(Level.WARNING, "error dictionary type {0} no data", type);
+                    log.warn("error dictionary type {} no data", type);
                 }
                 return tem;
 
@@ -64,7 +64,7 @@ public class DicService extends GenalService implements Dictionary {
 
                 DictionaryData tem = gdao.query(hd.getCurCnection(), sql, rsh, type, code, Locale.getDefault().toString());
                 if (tem == null) {
-                    log.log(Level.WARNING, "error dic type {0} dic code :{1} no data", new Object[]{type, code});
+                    log.warn("error dic type {} dic code :{} no data", type, code);
                 }
                 return tem;
 
@@ -82,7 +82,7 @@ public class DicService extends GenalService implements Dictionary {
 
                 DictionaryData tem = gdao.query(hd.getCurCnection(), sql, rsh, type, value, Locale.getDefault().toString());
                 if (tem == null) {
-                    log.log(Level.WARNING, "error dic type {0} dic value :{1} no data", new Object[]{type, value});
+                    log.warn("error dic type {} dic value :{} no data", type, value);
                 }
                 return tem;
 

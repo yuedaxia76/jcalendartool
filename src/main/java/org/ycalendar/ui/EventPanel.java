@@ -15,8 +15,8 @@ import java.awt.event.MouseEvent;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -40,7 +40,7 @@ import org.ycalendar.util.msg.MessageFac;
  */
 public class EventPanel extends JPanel {
 
-    private static final Logger log = Logger.getLogger(EventPanel.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(EventPanel.class);
     private final EventService es;
 
     public EventService getEs() {
@@ -193,7 +193,7 @@ public class EventPanel extends JPanel {
                 MessageFac.getMemoryMsg().sendMsg(md);
                 break;
             default:
-                log.log(Level.WARNING,"error type {0}", newData.e2);
+                log.warn("error type {}", newData.e2);
 
         }
         evu.dispose();

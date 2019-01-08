@@ -12,8 +12,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ycalendar.util.UtilValidate;
 
 /**
@@ -22,7 +22,7 @@ import org.ycalendar.util.UtilValidate;
  */
 public class MemoryMsgImpli implements MemoryMsg {
 
-    protected static final Logger log = Logger.getLogger(MemoryMsgImpli.class.getName());
+    protected static final Logger log = LoggerFactory.getLogger(MemoryMsgImpli.class);
 
     private final ExecutorService taskExe = Executors.newSingleThreadExecutor();
 
@@ -33,7 +33,7 @@ public class MemoryMsgImpli implements MemoryMsg {
             public void run() {
                 List<DealMsg> events = getMsgHandle(m);
                 if (UtilValidate.isEmpty(events)) {
-                    log.log(Level.FINE, "mesage type {0} no event ", m.getMsgType());
+                    log.debug( "mesage type {} no event ", m.getMsgType());
                     return;
                 }
                 events.forEach((h) -> {

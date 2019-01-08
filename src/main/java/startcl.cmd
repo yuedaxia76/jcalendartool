@@ -27,12 +27,10 @@ if NOT "%removed%"=="\" goto strip
  
  
 
-SET PRO_PARMS=-Xms256m -Xmx512m 
+SET PRO_PARMS=-Xms256m -Xmx512m  -Djava.util.logging.config.file=jclog.properties
  
 @rem 
 start "jcalendartool" /B  "%LOCAL_JAVA%" -jar "%basedir%\jcalendartool-${project.version}.jar" %PRO_PARMS%
 
-@rem %LOCAL_JAVA% -jar %basedir%\jcalendartool-0.2.1.jar %PRO_PARMS%
-
-:ExitForWrongJavaVersion
+@rem %LOCAL_JAVA% -jar %basedir%\jcalendartool-${project.version}.jar %PRO_PARMS%
 

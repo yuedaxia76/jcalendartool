@@ -8,8 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 
@@ -19,7 +19,7 @@ import org.ycalendar.util.UtilValidate;
 
 public class H2Dao implements Executdb {
 
-    public static final Logger log = Logger.getLogger(H2Dao.class.getName());
+    public static final Logger log = LoggerFactory.getLogger(H2Dao.class);
 
     @Override
     public void begin() {
@@ -82,7 +82,7 @@ public class H2Dao implements Executdb {
 
     @Override
     public int loadSql(String sqlFile) {
-        log.log(Level.INFO, "    load sql file {0}", sqlFile);
+        log.info( " load sql file {}", sqlFile);
         int result = 0;
         localTran.begin();
 
@@ -123,8 +123,8 @@ public class H2Dao implements Executdb {
 
             localTran.commit();
         } catch (Exception e) {
-            log.log(Level.WARNING, "loadSql  " + sqlFile + " error", e);
-            log.log(Level.SEVERE, "execuSql error  {0}", e.toString());
+            log.warn( "loadSql  " + sqlFile + " error", e);
+            log.error( "execuSql error  {}", e.toString());
             localTran.rollback();
         } finally {
             localTran.release();
@@ -183,7 +183,7 @@ public class H2Dao implements Executdb {
         } catch (Exception e) {
 
             localTran.rollback();
-            log.log(Level.SEVERE, "exeQuery error", e);
+            log.error( "exeQuery error", e);
             throw new RuntimeException(e);
 
         } finally {
@@ -211,7 +211,7 @@ public class H2Dao implements Executdb {
         } catch (Exception e) {
 
             localTran.rollback();
-            log.log(Level.SEVERE, "exeTran error", e);
+            log.error( "exeTran error", e);
             throw new RuntimeException(e);
         } finally {
             localTran.release();

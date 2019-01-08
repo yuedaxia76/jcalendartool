@@ -2,8 +2,8 @@ package org.ycalendar.dbp;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 
@@ -12,7 +12,7 @@ import org.ycalendar.util.UtilValidate;
 
 public class JdbcDbTransaction {
 
-    public static final Logger log = Logger.getLogger(JdbcDbTransaction.class.getName());
+    public static final Logger log = LoggerFactory.getLogger(JdbcDbTransaction.class);
 
     private final DataSource key;
 
@@ -44,8 +44,8 @@ public class JdbcDbTransaction {
             throw new GenericTransactionException("datasource is null");
         }
         if (ThreadLocalDbSession.hasResource(key)) {
-            if (log.isLoggable(Level.INFO)) {
-                log.log(Level.INFO, ("has bindResource count is  " + ThreadLocalDbSession.getResourceMap().get(key).count));
+            if (log.isInfoEnabled()) {
+                log.info("has bindResource count is {} " , ThreadLocalDbSession.getResourceMap().get(key).count);
             }
 
         } else {
@@ -80,7 +80,7 @@ public class JdbcDbTransaction {
                 }
                 return;
             }
-            log.log(Level.FINE, "commit");
+            log.trace( "commit");
             try {
                 ThreadLocalDbSession.currentSession(key).commit();
             } catch (SQLException e) {
@@ -99,14 +99,14 @@ public class JdbcDbTransaction {
     public void release() throws GenericTransactionException {
         int count = ThreadLocalDbSession.getResourceMap().get(key).count;
         if (0 == count) {
-            log.log(Level.FINE, "closeSession");
+            log.trace(  "closeSession");
             try {
                 ThreadLocalDbSession.closeSession(key).close();
             } catch (SQLException e) {
-                log.warning("close session error:" + e.toString());
+                log.warn("close session error:{}" , e.toString());
             }
         } else {
-            log.info("not closeSession count is  " + count);
+            log.info("not closeSession count is  {}" , count);
         }
 
     }
@@ -155,11 +155,11 @@ public class JdbcDbTransaction {
                 try {
                     UtilObject.runMethod(key, closeMothod, null);
                 } catch (Exception e) {
-                    log.log(Level.WARNING, "close dataSource error:{0}", e.toString());
+                    log.warn( "close dataSource error:{}", e.toString());
                 }
 
             } else {
-                log.warning("closeMothod is empty");
+                log.warn("closeMothod is empty");
             }
         }
     }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.ycalendar.ui;
 
 import java.awt.BorderLayout;
@@ -16,8 +11,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -50,7 +45,7 @@ import org.ycalendar.util.UtilValidate;
  */
 public class CalTaskUi extends JDialog {
 
-    public static final Logger log = Logger.getLogger(CalTaskUi.class.getName());
+    public static final Logger log = LoggerFactory.getLogger(CalTaskUi.class);
     private JToolBar myJToolBar;
 
     private JTextField titleText;
@@ -120,7 +115,7 @@ public class CalTaskUi extends JDialog {
         if (UtilValidate.isNotEmpty(taskId)) {
             data = taskSe.readTask(taskId);
             if (data == null) {
-                log.log(Level.WARNING, "taskid {0} no data", taskId);
+                log.warn( "taskid {} no data", taskId);
                 super.setTitle("新建任务");
             } else {
                 super.setTitle("编辑任务:" + data.getTitle());

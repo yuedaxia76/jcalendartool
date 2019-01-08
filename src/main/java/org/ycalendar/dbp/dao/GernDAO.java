@@ -15,8 +15,8 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ycalendar.util.UtilValidate;
 
 /**
@@ -24,7 +24,7 @@ import org.ycalendar.util.UtilValidate;
  */
 public class GernDAO {
 
-    public static final Logger log = Logger.getLogger(GernDAO.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(GernDAO.class.getName());
     private final PreparedStatementHandler psh;
 
     public GernDAO() {
@@ -350,11 +350,11 @@ public class GernDAO {
 
     public void execuSql(Connection conn, String sql) {
         try (Statement st = conn.createStatement()) {
-            log.fine(sql);
+            log.debug(sql);
             st.execute(sql);
 
         } catch (IllegalArgumentException | SQLException e) {
-            log.log(Level.SEVERE, "execuSql error, sql :{0}", sql);
+            log.error( "execuSql error, sql :{}", sql);
             throw new RuntimeException(e);
         }
     }
@@ -365,14 +365,14 @@ public class GernDAO {
             try {
                 rs.close();
             } catch (Exception e) {
-                log.warning(e.toString());
+                log.warn(e.toString());
             }
         }
         if (stmt != null) {
             try {
                 stmt.close();
             } catch (Exception e) {
-                log.warning(e.toString());
+                log.warn(e.toString());
             }
         }
 
@@ -384,7 +384,7 @@ public class GernDAO {
             try {
                 stmt.close();
             } catch (Exception e) {
-                log.warning(e.toString());
+                log.warn(e.toString());
             }
         }
 

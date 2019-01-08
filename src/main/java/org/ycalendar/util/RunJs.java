@@ -7,8 +7,8 @@ package org.ycalendar.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -23,12 +23,12 @@ import javax.script.SimpleScriptContext;
  */
 public class RunJs {
 
-    public static final Logger log = Logger.getLogger(RunJs.class.getName());
+    public static final Logger log = LoggerFactory.getLogger(RunJs.class);
     private static final ScriptEngineManager manager = new ScriptEngineManager();
 
     public static Object evaluate(final String script, Map<String, Object> context) throws Exception {
         if (UtilValidate.isEmpty(script)) {
-            log.warning("script Evaluation error. Empty script");
+            log.warn("script Evaluation error. Empty script");
             return null;
         }
         try {
@@ -39,7 +39,7 @@ public class RunJs {
             return engine.eval(script, scriptContext);
         } catch (Exception e) {
             String errMsg = "Error running JavaScript script [" + script + "]: " + e.toString();
-            log.log(Level.SEVERE, errMsg, e);
+            log.error( errMsg, e);
 
             throw new IllegalArgumentException(errMsg);
         }

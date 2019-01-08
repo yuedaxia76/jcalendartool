@@ -2,14 +2,15 @@ package org.ycalendar.dbp.dao;
 
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.ycalendar.util.UtilValidate;
 
 public class PreparedStatementHandler {
-	public static Logger log = Logger.getLogger(PreparedStatementHandler.class.getName());
+	private static final Logger log = LoggerFactory.getLogger(PreparedStatementHandler.class);
 
 	private static final PreparedStatementHandler psh = new PreparedStatementHandler();
  
@@ -108,7 +109,7 @@ public class PreparedStatementHandler {
 	/* 语句和参数已经经过调整 */
 	public void print(final String sql,final int len, final Object[] params) {
 		if (!match(sql, len)) {
-			log.severe(sql);
+			log.error(sql);
 			return;
 		}
 
@@ -123,7 +124,7 @@ public class PreparedStatementHandler {
 			}
 		}
 		String statement = String.format(sql.replaceAll("\\?", "%s"), values);
-		log.severe(statement);
+		log.error(statement);
 	}
 
 	/* ?和参数的实际个数是否匹配 */

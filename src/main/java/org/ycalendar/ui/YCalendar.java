@@ -27,8 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -77,6 +75,8 @@ import net.fortuna.ical4j.model.property.Version;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ycalendar.dbp.dao.H2Dao;
 import org.ycalendar.dbp.service.ConfigInfo;
 
@@ -99,7 +99,8 @@ import org.ycalendar.util.UtilValidate;
  */
 public class YCalendar {
 
-    public static final Logger log = Logger.getLogger(YCalendar.class.getName());
+    
+    private static final Logger log = LoggerFactory.getLogger(YCalendar.class);
     final JFrame f = new JFrame("日历");
 
     private JMenuBar jmb;
@@ -183,7 +184,7 @@ public class YCalendar {
         String calid = cui.getSelectCans();
         cui.dispose();
         if (UtilValidate.isEmpty(calid)) {
-            log.log(Level.INFO, "没有选择");
+            log.info( "没有选择");
             return;
         }
         try {
@@ -205,7 +206,7 @@ public class YCalendar {
             }
 
         } catch (Exception ex) {
-            log.log(Level.SEVERE, null, ex);
+            log.error( "导出错误", ex);
             JOptionPane.showMessageDialog(f, "错误:" + ex.toString(), "错误", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -244,7 +245,7 @@ public class YCalendar {
         jfc.showDialog(new JLabel(), "选择");
         File file = jfc.getSelectedFile();
         if (file == null) {
-            log.log(Level.FINE, "no select file");
+            log.warn( "no select file");
             return;
         }
         if (file.isFile()) {
@@ -255,7 +256,7 @@ public class YCalendar {
             String calid = cui.getSelectCans();
             cui.dispose();
             if (UtilValidate.isEmpty(calid)) {
-                log.log(Level.INFO, "没有选择");
+                log.info( "没有选择");
                 return;
             }
             try {
@@ -276,7 +277,7 @@ public class YCalendar {
 
                 JOptionPane.showMessageDialog(f, "导入:" + importCount.e1 + "条事件," + importCount.e2 + "条任务", "导入成功", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception e) {
-                log.log(Level.SEVERE, "importFile {0} error{1}", new Object[]{file.getName(), e.toString()});
+                log.error( "importFile {} error{}", file.getName(), e.toString());
                 JOptionPane.showMessageDialog(f, "错误:" + e.toString(), "错误", JOptionPane.ERROR_MESSAGE);
             }
 
@@ -347,7 +348,7 @@ public class YCalendar {
                     if (code != null) {
                         ev.setCategory(code);
                     } else {
-                        log.log(Level.WARNING, "Category {0} no code", catl);
+                        log.warn( "Category {} no code", catl);
                         ev.setCategory("-1");
                     }
 
@@ -371,7 +372,7 @@ public class YCalendar {
                 if (value != null) {
                     ev.setEventRepeat(freValue);
                 } else {
-                    log.log(Level.WARNING, "RRULE {0} no value set none", errule);
+                    log.warn( "RRULE {} no value set none", errule);
                     ev.setEventRepeat("NONE");
                 }
                 String utilDate = rulePropers.get("UNTIL");
@@ -485,7 +486,7 @@ public class YCalendar {
                     if (code != null) {
                         td.setCategory(code);
                     } else {
-                        log.log(Level.WARNING, "Category {0} no dic code", catl);
+                        log.warn( "Category {} no dic code", catl);
                         td.setCategory("-1");
                     }
 
@@ -753,7 +754,7 @@ public class YCalendar {
         // 验证
         calendar.validate();
 
-        log.log(Level.INFO, "export ics to {0}", toSave.getAbsolutePath());
+        log.info( "export ics to {}", toSave.getAbsolutePath());
         try (FileOutputStream fout = new FileOutputStream(toSave)) {
 
             CalendarOutputter outputter = new CalendarOutputter();
@@ -785,6 +786,7 @@ public class YCalendar {
 
             @Override
             public void run() {
+                log.info("newEvent run");
                 EventUi evu = new EventUi(f, true, 750, 850, null);
                 evu.setEvSe(evSe);
                 evu.setDicSer(dicSer);

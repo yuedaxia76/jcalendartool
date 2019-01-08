@@ -17,8 +17,8 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultListModel;
@@ -67,7 +67,7 @@ import org.ycalendar.util.msg.MessageFac;
  */
 public class JCalendarPanel extends JComponent {
 
-    public static final Logger log = Logger.getLogger(JCalendarPanel.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(JCalendarPanel.class);
     private static final long serialVersionUID = -2299239311312882915L;
 
     private final int firstDayOfWeek;
@@ -183,14 +183,14 @@ public class JCalendarPanel extends JComponent {
     public EventData getSelectEventData() {
         int y = internalView.dayTable.getSelectedColumn();
         if (y == -1) {
-            log.log(Level.WARNING, "no select cell");
+            log.warn( "no select cell");
             return null;
         }
         int x = internalView.dayTable.getSelectedRow();
         CellObject curObj = this.getModel().getCalendar(x, y);
         EventData ed = curObj.getSelectEvent();
         if (ed == null) {
-            log.log(Level.WARNING, "no event select cell Row:" + x + " Column:" + y);
+            log.warn( "no event select cell Row:{} Column:{}" ,x , y);
             return null;
         }
         return ed;
@@ -202,14 +202,14 @@ public class JCalendarPanel extends JComponent {
     public boolean delSelectEvent() {
         int y = internalView.dayTable.getSelectedColumn();
         if (y == -1) {
-            log.log(Level.WARNING, "no select cell");
+            log.warn( "no select cell");
             return false;
         }
         int x = internalView.dayTable.getSelectedRow();
         CellObject curObj = this.getModel().getCalendar(x, y);
         EventData ed = curObj.getSelectEvent();
         if (ed == null) {
-            log.log(Level.WARNING, "no event select cell Row:{0} Column:{1}", new Object[]{x, y});
+            log.warn("no event select cell Row:{} Column:{}",x, y);
             return false;
         }
 
@@ -228,7 +228,7 @@ public class JCalendarPanel extends JComponent {
     public void refreshData(Tuple2<EventData, Integer> newData) {
         int col = internalView.dayTable.getSelectedColumn();
         if (col == -1) {
-            log.log(Level.WARNING, "no Column select");
+            log.warn( "no Column select");
             return;
         }
         int row = internalView.dayTable.getSelectedRow();
@@ -265,7 +265,7 @@ public class JCalendarPanel extends JComponent {
 
     public Calendar getSelectData() {
         if (internalView.dayTable.getSelectedColumn() == -1) {
-            log.log(Level.WARNING, "no select date");
+            log.warn("no select date");
             return null;
         }
         int x = internalView.dayTable.getSelectedRow();
@@ -280,13 +280,13 @@ public class JCalendarPanel extends JComponent {
         MainDateModel mm = getModel();
         Tuple2<Integer, Integer> coordinate = mm.getIndex(s);
         if (coordinate.e1 == -1) {
-            log.log(Level.FINE, "no Calendar{0} in curent model", s.toString());
+            log.debug( "no Calendar{} in curent model", s.toString());
             mm.setYear(s.get(Calendar.YEAR));
             mm.setMonth(s.get(Calendar.MONTH));
 
             coordinate = mm.getIndex(s);
             if (coordinate.e1 == -1) {
-                log.log(Level.WARNING, "no Calendar{0} in curent model", s.toString());
+                log.warn( "no Calendar{} in curent model", s.toString());
                 return false;
             }
 
@@ -715,7 +715,7 @@ public class JCalendarPanel extends JComponent {
     private void setSelectEvent(EventData selectEvent) {
         int y = internalView.dayTable.getSelectedColumn();
         if (y == -1) {
-            log.log(Level.WARNING, "no select cell");
+            log.warn( "no select cell");
             return;
         }
         int x = internalView.dayTable.getSelectedRow();

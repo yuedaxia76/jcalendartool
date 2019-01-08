@@ -3,8 +3,8 @@ package org.ycalendar.ui.maincan;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -15,7 +15,7 @@ import org.ycalendar.util.UtilDateTime;
 
 public class CalendarModel implements MainDateModel {
 
-    protected static final Logger log = Logger.getLogger(CalendarModel.class.getName());
+    protected static final Logger log = LoggerFactory.getLogger(CalendarModel.class.getName());
     private final Set<ChangeListener> changeListeners;
 
     private int x;
@@ -54,7 +54,7 @@ public class CalendarModel implements MainDateModel {
         if (!setCurSelect(curDayInfo)) {
             x = 0;
             y = 0;
-            log.log(Level.WARNING, "not set select day,date :{0}", UtilDateTime.longToString(curDayInfo.getTimeInMillis()));
+            log.warn( "not set select day,date :{}", UtilDateTime.longToString(curDayInfo.getTimeInMillis()));
         }
 
     }
@@ -239,7 +239,7 @@ public class CalendarModel implements MainDateModel {
 
             }
         } else {
-            log.log(Level.WARNING, "calendarValue is null");
+            log.warn( "calendarValue is null");
         }
 
         return new Tuple2<>(-1, -1);

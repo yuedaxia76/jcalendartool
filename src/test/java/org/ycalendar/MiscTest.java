@@ -7,8 +7,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
@@ -21,6 +21,8 @@ import org.ycalendar.util.msg.MemoryMsg;
 import org.ycalendar.util.msg.MemoryMsgImpli;
 
 public class MiscTest {
+
+    protected static final Logger log = LoggerFactory.getLogger(MiscTest.class);
 
     @Test
     public void testStoS() {
@@ -73,7 +75,7 @@ public class MiscTest {
             //异步，还没有执行,需要等待
             wait.get(100, TimeUnit.MILLISECONDS);
         } catch (TimeoutException ex) {
-            Logger.getLogger(MiscTest.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("testSend error", ex);
         }
 
         Assert.assertEquals(count.get(), 2, "应该=2");

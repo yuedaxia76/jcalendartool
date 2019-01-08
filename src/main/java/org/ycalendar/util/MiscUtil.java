@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
@@ -23,7 +23,7 @@ import org.ycalendar.dbp.service.ConfigInfo;
 
 public class MiscUtil {
 
-    public static final Logger log = Logger.getLogger(MiscUtil.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(MiscUtil.class);
 
     public static final String getId() {
 
@@ -83,7 +83,7 @@ public class MiscUtil {
                 return "十二月";
 
         }
-        log.log(Level.SEVERE, "error month {0}", month);
+        log.error( "error month {}", month);
         return "一月";
     }
 
@@ -106,7 +106,7 @@ public class MiscUtil {
             case 7:
                 return "星期天";
         }
-        log.log(Level.SEVERE, "error week {0}", week);
+        log.error( "error week {}", week);
         return "星期一";
     }
 
@@ -133,7 +133,7 @@ public class MiscUtil {
             locale = new Locale(language, country, extension);
         } else {
 
-            log.log(Level.SEVERE, "Do not know what to do with the localeString [{0}], should be length 2, 5, or greater than 6, returning null", localeString);
+            log.error( "Do not know what to do with the localeString [{}], should be length 2, 5, or greater than 6, returning null", localeString);
         }
 
         return locale;
@@ -191,7 +191,7 @@ public class MiscUtil {
             try {
                 return RunJs.evaluate(str.substring(3), null).toString();
             } catch (Exception ex) {
-                log.log(Level.SEVERE, null, ex);
+                log.error("evaluateExpr error", ex);
                 throw new RuntimeException(ex);
             }
         } else {
@@ -271,8 +271,8 @@ public class MiscUtil {
                 o.close();
 
             } catch (Exception e) {
-                log.log(Level.INFO, "closeObjNoExc error ", e);
-                log.log(Level.WARNING, "closeObjNoExc error :{0}", e.toString());
+                log.info("closeObjNoExc error ", e);
+                log.warn("closeObjNoExc error :{}", e.toString());
                 return false;
             }
         }
@@ -287,7 +287,7 @@ public class MiscUtil {
             is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceName);
         }
         if (is == null) {
-            log.log(Level.SEVERE, "找不到资源:{0}", resourceName);
+            log.error( "找不到资源:{}", resourceName);
             return null;
         }
 
@@ -302,7 +302,7 @@ public class MiscUtil {
         } catch (IOException ex) {
             MiscUtil.closeObjNoExc(is);
 
-            log.log(Level.SEVERE, "处理发生错误:" + resourceName, ex);
+            log.error("处理发生错误:{}", resourceName, ex);
             return null;
 
         } finally {

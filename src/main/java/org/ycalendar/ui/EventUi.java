@@ -11,8 +11,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -49,7 +49,7 @@ import org.ycalendar.util.msg.MessageFac;
  */
 public class EventUi extends JDialog {
 
-    public static final Logger log = Logger.getLogger(EventUi.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(EventUi.class);
     private JToolBar myJToolBar;
 
     private JTextField titleText;
@@ -120,7 +120,7 @@ public class EventUi extends JDialog {
         if (UtilValidate.isNotEmpty(eventId)) {
             data = evSe.readEvent(eventId);
             if (data == null) {
-                log.log(Level.WARNING, "eventid {0} no data", eventId);
+                log.warn( "eventid {} no data", eventId);
                 super.setTitle("新建事件");
             } else {
                 super.setTitle("编辑事件:" + data.getTitle());
