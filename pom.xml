@@ -25,7 +25,7 @@
         <slf4j.version>1.7.25</slf4j.version>
         <jcache.version>1.1.0</jcache.version>
         <ehcache.version>3.6.1</ehcache.version>
-        <ical4j.version>3.0.4</ical4j.version>
+        <ical4j.version>3.0.5</ical4j.version>
         <log4j2.version>2.11.1</log4j2.version>
         <testng.version>7.0.0-beta1</testng.version>
     </properties>
@@ -201,7 +201,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeScope>compile</includeScope>
+                            <includeScope>runtime</includeScope>
                             <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
                         </configuration>
                     </execution>
