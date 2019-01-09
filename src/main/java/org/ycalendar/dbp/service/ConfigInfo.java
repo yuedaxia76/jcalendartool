@@ -36,5 +36,9 @@ public class ConfigInfo {
         return ConfRef.cp == null ? "NOTSET" : ConfRef.cp.getProperty("DefaultTaskStatus");
 
     }
+    
+    public boolean isDebug(){
+    return ConfRef.cp == null ? true : "true".equals(ConfRef.cp.getProperty("debug"));
+    }
 
 }

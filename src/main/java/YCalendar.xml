@@ -13,4 +13,5 @@
 <!-- 默认任务状态 -->
 <entry key="DefaultTaskStatus">NOTSET</entry>
 
+<entry key="debug">false</entry>
 </properties>

@@ -28,7 +28,7 @@
     </Appenders>
     <Loggers>
  
-        <Logger name="org.ycalendar" level="INFO">
+        <Logger name="org.ycalendar" level="TRACE">
 		 
         </Logger>		
 		

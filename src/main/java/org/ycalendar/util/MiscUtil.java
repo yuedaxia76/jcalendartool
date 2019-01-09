@@ -6,6 +6,10 @@ import java.awt.GraphicsEnvironment;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -310,4 +314,23 @@ public class MiscUtil {
         }
 
     }
+    
+	public final static void writeString(OutputStream out, final Charset charset, final String value) throws IOException {
+		
+		final String nl = System.getProperty("line.separator");
+		try(Writer writer = new OutputStreamWriter(out, charset)) {
+			int r = 0;
+			while (r < value.length()) {
+				int i = value.indexOf('\n', r);
+				if (i == -1) {
+					break;
+				}
+				writer.write(value.substring(r, i));
+				writer.write(nl);
+				r = i + 1;
+			}
+			writer.write(value.substring(r));
+		}  
+
+	}
 }

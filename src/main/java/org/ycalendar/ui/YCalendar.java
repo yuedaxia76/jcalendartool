@@ -782,11 +782,12 @@ public class YCalendar {
 
     private void newEvent() {
         areare.setSelectedIndex(0);
+        log.debug("newEvent run");
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             @Override
             public void run() {
-                log.info("newEvent run");
+                log.info("newEvent run1");
                 EventUi evu = new EventUi(f, true, 750, 850, null);
                 evu.setEvSe(evSe);
                 evu.setDicSer(dicSer);

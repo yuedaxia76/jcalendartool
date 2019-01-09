@@ -36,8 +36,8 @@
     <dependencySets> 
         <dependencySet> 
             <useProjectArtifact>false</useProjectArtifact> 
-            <outputDirectory>/lib</outputDirectory> <!-- 将scope为compile的依赖包打包到lib目录下。 --> 
-            <scope>compile</scope> 
+            <outputDirectory>/lib</outputDirectory> <!-- 将scope为runtime的依赖包打包到lib目录下。 --> 
+            <scope>runtime</scope> 
             
         </dependencySet> 
     </dependencySets>
