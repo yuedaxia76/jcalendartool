@@ -111,9 +111,8 @@ public class MiscTest {
     
         @Test
     public void testresName() {
-        String testn=JDatePicker.class.getPackage().getName()+"/datePicker.gif";
-        System.out.println(testn);
-        String name=MiscUtil.getResourceName(testn);
+ 
+        String name=MiscUtil.getResourceName(JDatePicker.class,"/datePicker.gif");
          Assert.assertEquals(name, "org/ycalendar/ui/jdatepicker/datePicker.gif");
     }
 }

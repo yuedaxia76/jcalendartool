@@ -26,15 +26,15 @@ import javax.swing.table.TableColumn;
 import org.ycalendar.dbp.service.ConfigInfo;
 
 public class MiscUtil {
-    
+
     private static final Logger log = LoggerFactory.getLogger(MiscUtil.class);
-    
+
     public static final String getId() {
-        
+
         return UUIDToStr(java.util.UUID.randomUUID());
-        
+
     }
-    
+
     private static final String UUIDToStr(final UUID uuid) {
         StringBuilder sb = new StringBuilder(32);
         sb.append(digitsl(uuid.getMostSignificantBits() >> 32, 8));
@@ -42,15 +42,15 @@ public class MiscUtil {
         sb.append(digitsl(uuid.getMostSignificantBits(), 4));
         sb.append(digitsl(uuid.getLeastSignificantBits() >> 48, 4));
         sb.append(digitsl(uuid.getLeastSignificantBits(), 12));
-        
+
         return sb.toString();
     }
-    
+
     private static final String digitsl(final long val, final int digits) {
         long hi = 1L << (digits << 2);
         return Long.toHexString(hi | (val & (hi - 1))).substring(1);
     }
-    
+
     public static void main(String[] args) {
         GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
         String[] fonts = environment.getAvailableFontFamilyNames();// ���ϵͳ����
@@ -58,7 +58,7 @@ public class MiscUtil {
             System.out.println(fonts[i]);
         }
     }
-    
+
     public static String toLocalMonth(final int month) {
         switch (month) {
             case 0:
@@ -85,15 +85,15 @@ public class MiscUtil {
                 return "十一月";
             case 11:
                 return "十二月";
-            
+
         }
         log.error("error month {}", month);
         return "一月";
     }
-    
+
     public static String toLocalWeek(final int week) {
         switch (week) {
-            
+
             case 1:
                 return "星期一";
             case 2:
@@ -113,12 +113,12 @@ public class MiscUtil {
         log.error("error week {}", week);
         return "星期一";
     }
-    
+
     public static Locale parseLocale(final String localeString) {
         if (localeString == null || localeString.length() == 0) {
             return null;
         }
-        
+
         Locale locale = null;
         if (localeString.length() == 2) {
             // two letter language code
@@ -136,13 +136,13 @@ public class MiscUtil {
             String extension = localeString.substring(6);
             locale = new Locale(language, country, extension);
         } else {
-            
+
             log.error("Do not know what to do with the localeString [{}], should be length 2, 5, or greater than 6, returning null", localeString);
         }
-        
+
         return locale;
     }
-    
+
     public static JFrame getComJFrame(Component com) {
         Container result;
         while (com != null) {
@@ -188,9 +188,9 @@ public class MiscUtil {
         table.getTableHeader().getColumnModel().getColumn(column).setMaxWidth(width);
         table.getTableHeader().getColumnModel().getColumn(column).setMinWidth(width);
     }
-    
+
     public static String evaluateExpr(String str) {
-        
+
         if (str.startsWith("js:")) {
             try {
                 return RunJs.evaluate(str.substring(3), null).toString();
@@ -202,9 +202,9 @@ public class MiscUtil {
             return str;
         }
     }
-    
+
     public static Map<String, String> strToMap(final String str, final boolean trim, final String splite) {
-        
+
         if (UtilValidate.isEmpty(str)) {
             return new HashMap<>();
         }
@@ -212,7 +212,7 @@ public class MiscUtil {
         List<String> elements = split(str, splite);
         setToMap(decodedMap, elements, trim);
         return decodedMap;
-        
+
     }
 
     /**
@@ -225,31 +225,31 @@ public class MiscUtil {
     public static List<String> split(final String str, final String delim) {
         List<String> splitList = null;
         StringTokenizer st;
-        
+
         if (str == null) {
             return splitList;
         }
-        
+
         if (delim != null) {
             st = new StringTokenizer(str, delim);
         } else {
             st = new StringTokenizer(str);
         }
-        
+
         splitList = new ArrayList<>();
-        
+
         while (st.hasMoreTokens()) {
             splitList.add(st.nextToken());
         }
-        
+
         return splitList;
     }
-    
+
     public static void setToMap(Map<String, String> decodedMap, Iterable<String> source, final boolean trim) {
         for (String s : source) {
-            
+
             List<String> e = split(s, "=");
-            
+
             if (e.size() != 2) {
                 continue;
             }
@@ -263,17 +263,17 @@ public class MiscUtil {
                     value = value.trim();
                 }
             }
-            
+
             decodedMap.put(name, value);
         }
-        
+
     }
-    
+
     public static final boolean closeObjNoExc(final Closeable o) {
         if (o != null) {
             try {
                 o.close();
-                
+
             } catch (Exception e) {
                 log.info("closeObjNoExc error ", e);
                 log.warn("closeObjNoExc error :{}", e.toString());
@@ -282,9 +282,9 @@ public class MiscUtil {
         }
         return true;
     }
-    
+
     public static final Properties getPropertiesFromRes(final String resourceName) {
-        
+
         InputStream is = ConfigInfo.class.getClassLoader().getResourceAsStream(resourceName);
         if (is == null) {
             is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceName);
@@ -293,29 +293,29 @@ public class MiscUtil {
             log.error("找不到资源:{}", resourceName);
             return null;
         }
-        
+
         Properties p;
         try {
             p = new Properties();
-            
+
             p.loadFromXML(is);
-            
+
             return p;
-            
+
         } catch (IOException ex) {
             MiscUtil.closeObjNoExc(is);
-            
+
             log.error("处理发生错误:{}", resourceName, ex);
             return null;
-            
+
         } finally {
             MiscUtil.closeObjNoExc(is);
         }
-        
+
     }
-    
+
     public final static void writeString(OutputStream out, final Charset charset, final String value) throws IOException {
-        
+
         final String nl = System.getProperty("line.separator");
         try (Writer writer = new OutputStreamWriter(out, charset)) {
             int r = 0;
@@ -329,24 +329,21 @@ public class MiscUtil {
                 r = i + 1;
             }
             writer.write(value.substring(r));
-        }        
-        
-    }
-    public static String getResourceName(Class resClass,final String resourceName) {
-        String tem=resClass.getPackage().getName()+"/"+resourceName;
-        return MiscUtil.getResourceName(tem);
-    }
-    
-    public static String getResourceName(final String resourceName) {
-        int lastp = resourceName.lastIndexOf('.');
-        if (lastp < 0) {
-            return resourceName;
         }
-        
-        String cutProperties = resourceName.substring(0, lastp);
-        String tem = cutProperties.replace('.', '/') +  resourceName.substring(lastp);
-        return tem;
-        
+
     }
-    
+
+    public static String getResourceName(Class resClass, final String resName) {
+
+        String posion = resClass.getPackage().getName();
+        posion = posion.replace('.', '/');
+
+        if (resName.charAt(0)=='/') {
+            return posion.concat(resName);
+        } else {
+            return posion + "/" + resName;
+        }
+
+    }
+
 }
