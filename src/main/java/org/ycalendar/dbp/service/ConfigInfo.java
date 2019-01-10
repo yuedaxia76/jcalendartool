@@ -38,7 +38,7 @@ public class ConfigInfo {
     }
     
     public boolean isDebug(){
-    return ConfRef.cp == null ? true : "true".equals(ConfRef.cp.getProperty("debug"));
+    return ConfRef.cp == null ? false : "true".equals(ConfRef.cp.getProperty("debug"));
     }
 
 }

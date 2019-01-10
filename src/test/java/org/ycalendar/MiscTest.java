@@ -14,6 +14,7 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 import org.ycalendar.dbp.service.StringCinvert;
+import org.ycalendar.ui.jdatepicker.JDatePicker;
 import org.ycalendar.util.MiscUtil;
 import org.ycalendar.util.UtilDateTime;
 import org.ycalendar.util.msg.MemMsg;
@@ -103,5 +104,16 @@ public class MiscTest {
         ds = "aaa";
         s = MiscUtil.evaluateExpr(ds);
         Assert.assertEquals(s, ds);
+    }
+    
+    
+    
+    
+        @Test
+    public void testresName() {
+        String testn=JDatePicker.class.getPackage().getName()+"/datePicker.gif";
+        System.out.println(testn);
+        String name=MiscUtil.getResourceName(testn);
+         Assert.assertEquals(name, "org/ycalendar/ui/jdatepicker/datePicker.gif");
     }
 }

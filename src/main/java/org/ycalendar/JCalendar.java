@@ -67,19 +67,16 @@ public class JCalendar {
 
     public static void showClassPath() {
         final String nl = System.getProperty("line.separator");
-            StringBuilder tem = new StringBuilder(1024);
+        StringBuilder tem = new StringBuilder(1024);
 
-            tem.append("root:").append(ClassLoader.getSystemResource("")).append(nl);
-            tem.append("app class root:").append(JCalendar.class.getClassLoader().getResource("")).append(nl);
-            tem.append("app class root:").append(JCalendar.class.getResource("/")).append(nl);
-            tem.append("app class root:").append(JCalendar.class.getResource("")).append(nl);       // 获得当前类所在路径
-            tem.append("user.dir:").append(System.getProperty("user.dir")).append(nl);              // 获得项目根目录的绝对路径
-            tem.append("java.class.path:").append(System.getProperty("java.class.path")).append(nl);   //得到类路径和包路径
-            
-            
-        try (FileOutputStream out = new FileOutputStream("debugInfo.txt")){
-            
+        tem.append("root:").append(ClassLoader.getSystemResource("")).append(nl);
+        tem.append("app class root:").append(JCalendar.class.getClassLoader().getResource("")).append(nl);
+        tem.append("app class / root:").append(JCalendar.class.getResource("/")).append(nl);
+        tem.append("app class root:").append(JCalendar.class.getResource("")).append(nl);       // 获得当前类所在路径
+        tem.append("user.dir:").append(System.getProperty("user.dir")).append(nl);              // 获得项目根目录的绝对路径
+        tem.append("java.class.path:").append(System.getProperty("java.class.path")).append(nl);   //得到类路径和包路径
 
+        try (FileOutputStream out = new FileOutputStream("debugInfo.txt")) {
 
             MiscUtil.writeString(out, StandardCharsets.UTF_8, tem.toString());
         } catch (Exception ex) {

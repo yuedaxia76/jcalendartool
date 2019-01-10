@@ -58,6 +58,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.ycalendar.ui.jdatepicker.constraints.DateSelectionConstraint;
+import org.ycalendar.util.MiscUtil;
 
 /**
  * Created on 25 Mar 2004 Refactored 21 Jun 2004 Refactored 14 May 2009
@@ -151,7 +152,7 @@ public class JDatePicker<T> extends JComponent implements DatePicker<T> {
 		// Add and Configure Button
 		button = new JButton();
 		button.setFocusable(true);
-		ImageIcon icon = new ImageIcon(JDatePicker.class.getResource("datepicker.gif"));
+		ImageIcon icon = new ImageIcon(JDatePicker.class.getClassLoader().getResource(MiscUtil.getResourceName(JDatePicker.class,"datePicker.gif")));
 		// Icon icon = ComponentIconDefaults.getInstance().getPopupButtonIcon();
 		// button.setSize(icon.getImage().getWidth(null),
 		// icon.getImage().getHeight(null));
