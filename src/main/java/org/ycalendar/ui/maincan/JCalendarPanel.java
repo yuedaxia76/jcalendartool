@@ -60,7 +60,7 @@ import org.ycalendar.util.msg.MemMsg;
 import org.ycalendar.util.msg.MessageFac;
 
 /**
- * 带有表格的日历，考虑支持周显示
+ * 带有表格的日历，目前按月显示，考虑支持周显示
  *
  * @author lenovo
  *
@@ -128,7 +128,7 @@ public class JCalendarPanel extends JComponent {
 
         firstDayOfWeek = Calendar.getInstance().getFirstDayOfWeek();
 
-        loadEvent(model,false);
+        loadEvent(model, false);
         internalModel = new InternalCalendarModel(model);
 
         internalController = new InternalController();
@@ -183,14 +183,14 @@ public class JCalendarPanel extends JComponent {
     public EventData getSelectEventData() {
         int y = internalView.dayTable.getSelectedColumn();
         if (y == -1) {
-            log.warn( "no select cell");
+            log.warn("no select cell");
             return null;
         }
         int x = internalView.dayTable.getSelectedRow();
         CellObject curObj = this.getModel().getCalendar(x, y);
         EventData ed = curObj.getSelectEvent();
         if (ed == null) {
-            log.warn( "no event select cell Row:{} Column:{}" ,x , y);
+            log.warn("no event select cell Row:{} Column:{}", x, y);
             return null;
         }
         return ed;
@@ -202,14 +202,14 @@ public class JCalendarPanel extends JComponent {
     public boolean delSelectEvent() {
         int y = internalView.dayTable.getSelectedColumn();
         if (y == -1) {
-            log.warn( "no select cell");
+            log.warn("no select cell");
             return false;
         }
         int x = internalView.dayTable.getSelectedRow();
         CellObject curObj = this.getModel().getCalendar(x, y);
         EventData ed = curObj.getSelectEvent();
         if (ed == null) {
-            log.warn("no event select cell Row:{} Column:{}",x, y);
+            log.warn("no event select cell Row:{} Column:{}", x, y);
             return false;
         }
 
@@ -228,7 +228,7 @@ public class JCalendarPanel extends JComponent {
     public void refreshData(Tuple2<EventData, Integer> newData) {
         int col = internalView.dayTable.getSelectedColumn();
         if (col == -1) {
-            log.warn( "no Column select");
+            log.warn("no Column select");
             return;
         }
         int row = internalView.dayTable.getSelectedRow();
@@ -280,13 +280,13 @@ public class JCalendarPanel extends JComponent {
         MainDateModel mm = getModel();
         Tuple2<Integer, Integer> coordinate = mm.getIndex(s);
         if (coordinate.e1 == -1) {
-            log.debug( "no Calendar{} in curent model", s.toString());
+            log.debug("no Calendar{} in curent model", s.toString());
             mm.setYear(s.get(Calendar.YEAR));
             mm.setMonth(s.get(Calendar.MONTH));
 
             coordinate = mm.getIndex(s);
             if (coordinate.e1 == -1) {
-                log.warn( "no Calendar{} in curent model", s.toString());
+                log.warn("no Calendar{} in curent model", s.toString());
                 return false;
             }
 
@@ -457,7 +457,7 @@ public class JCalendarPanel extends JComponent {
                 dayTable.setShowGrid(true);
                 dayTable.setGridColor(getColors().getColor(ComponentColorDefaults.Key.MG_GRID));
                 // dayTable.setGridColor(Color.BLACK);
-
+                //dayTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
                 dayTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 dayTable.setCellSelectionEnabled(true);
                 dayTable.setRowSelectionAllowed(true);
@@ -715,7 +715,7 @@ public class JCalendarPanel extends JComponent {
     private void setSelectEvent(EventData selectEvent) {
         int y = internalView.dayTable.getSelectedColumn();
         if (y == -1) {
-            log.warn( "no select cell");
+            log.warn("no select cell");
             return;
         }
         int x = internalView.dayTable.getSelectedRow();
@@ -1211,6 +1211,12 @@ public class JCalendarPanel extends JComponent {
             internalView.updateMonthLabel();
 
             // Update day table
+            //取消选择
+            //internalView.dayTable.clearSelection();
+            if (internalView.dayTable.isEditing()) {
+                internalView.dayTable.getCellEditor().stopCellEditing();
+            }
+
             for (TableModelListener tl : tableModelListeners) {
 
                 tl.tableChanged(new TableModelEvent(this));
@@ -1223,7 +1229,7 @@ public class JCalendarPanel extends JComponent {
         @Override
         public void stateChanged(ChangeEvent e) {
             fireValueChanged();
-            loadEvent(internalModel.getModel(),true);
+            loadEvent(internalModel.getModel(), true);
         }
 
     }

@@ -105,14 +105,11 @@ public class MiscTest {
         s = MiscUtil.evaluateExpr(ds);
         Assert.assertEquals(s, ds);
     }
-    
-    
-    
-    
-        @Test
+
+    @Test
     public void testresName() {
- 
-        String name=MiscUtil.getResourceName(JDatePicker.class,"/datePicker.gif");
-         Assert.assertEquals(name, "org/ycalendar/ui/jdatepicker/datePicker.gif");
+
+        String name = MiscUtil.getResourceName(JDatePicker.class, "/datePicker.gif");
+        Assert.assertEquals(name, "org/ycalendar/ui/jdatepicker/datePicker.gif");
     }
 }
