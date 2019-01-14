@@ -82,7 +82,7 @@ public class DicService extends GenalService implements Dictionary {
 
                 DictionaryData tem = gdao.query(hd.getCurCnection(), sql, rsh, type, value, Locale.getDefault().toString());
                 if (tem == null) {
-                    log.warn("error dic type {} dic value :{} no data", type, value);
+                    log.info("error dic type {} dic value :{} no data", type, value);
                 }
                 return tem;
 

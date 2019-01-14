@@ -14,16 +14,16 @@ insert into dictionary_data VALUES ('event_cate_7','event_cate','zh_CN','5','问
 insert into dictionary_data VALUES ('event_cate_8','event_cate','zh_CN','6','收藏',6)#
 insert into dictionary_data VALUES ('event_cate_9','event_cate','zh_CN','7','知识',7)#
 insert into dictionary_data VALUES ('event_cate_10','event_cate','zh_CN','8','公共假日',8)#
+insert into dictionary_data VALUES ('event_cate_10','event_cate','zh_CN','9','公共假日',9)#
 insert into dictionary_data VALUES ('event_cate_700','event_cate','zh_CN','700','其他',700)#
 
 
 //重复周期
-insert into dictionary_data VALUES ('rep_int_1','repeat_interval','zh_CN','0','不重复',0)#
-insert into dictionary_data VALUES ('rep_int_2','repeat_interval','zh_CN','1','每天',1)#
-insert into dictionary_data VALUES ('rep_int_3','repeat_interval','zh_CN','2','每周',2)#
-insert into dictionary_data VALUES ('rep_int_4','repeat_interval','zh_CN','3','每周末',3)#
-insert into dictionary_data VALUES ('rep_int_5','repeat_interval','zh_CN','4','每月',4)#
-insert into dictionary_data VALUES ('rep_int_6','repeat_interval','zh_CN','5','每年',5)#
+insert into dictionary_data VALUES ('rep_int_1','repeat_interval','zh_CN','NONE','不重复',0)#
+insert into dictionary_data VALUES ('rep_int_2','repeat_interval','zh_CN','DAILY','每天',1)#
+insert into dictionary_data VALUES ('rep_int_3','repeat_interval','zh_CN','WEEKLY','每周',2)#
+insert into dictionary_data VALUES ('rep_int_5','repeat_interval','zh_CN','MONTHLY','每月',4)#
+insert into dictionary_data VALUES ('rep_int_6','repeat_interval','zh_CN','YEARLY','每年',5)#
 
 //事件类型
 insert into dictionary_data VALUES ('eve_t_1','e_type','zh_CN','PUBLIC','公开',0)#
@@ -49,3 +49,38 @@ insert into dictionary_data VALUES ('ts2','task_status','zh_CN','IN-PROCESS','�
 insert into dictionary_data VALUES ('ts3','task_status','zh_CN','NEEDS-ACTION','将处理',1)#
 insert into dictionary_data VALUES ('ts4','task_status','zh_CN','COMPLETED','完成',2)#
 insert into dictionary_data VALUES ('ts5','task_status','zh_CN','CANCELLED','取消',3)#
+
+//查询条件
+insert into dictionary_data (id, dict_type,local_str,code,dictdata_value,dict_order) VALUES ('tcon1','task_cond','zh_CN',
+'js: var comd="(tstatus in (''NOTSET'',''IN-PROCESS'', ''NEEDS-ACTION'') and (start_time is null or start_time>=";
+var dt = Java.type("org.ycalendar.util.UtilDateTime");
+var date = Java.type("java.util.Date");
+var t1=dt.getDayStart(new date());
+var t2=dt.getDayEnd(new date());
+comd=comd+t1+") and (end_time is null or end_time<="+t2+"))";'
+,'今天任务',1)#
+
+
+insert into dictionary_data VALUES ('tcon2','task_cond','zh_CN',
+'js: var comd="(tstatus in (''NOTSET'',''IN-PROCESS'', ''NEEDS-ACTION'') and (start_time is null or start_time>=";
+var dt = Java.type("org.ycalendar.util.UtilDateTime");
+var date = Java.type("java.util.Date");
+var t1=dt.getDayStart(new date());
+var t2=dt.getDayEnd(new date(),7);
+comd=comd+t1+") and (end_time is null or end_time<="+t2+"))";'
+,'七天任务',2)#
+
+insert into dictionary_data VALUES ('tcon3','task_cond','zh_CN','(tstatus=''NOTSET'')','未开始任务',3)#
+
+insert into dictionary_data VALUES ('tcon4','task_cond','zh_CN',
+'js: var comd="(tstatus in (''NOTSET'',''IN-PROCESS'', ''NEEDS-ACTION'') and (end_time<=";
+var sys = Java.type("java.lang.System");
+var t2=sys.currentTimeMillis();
+comd=comd+t2+"))";'
+,'过期任务',4)#
+
+
+insert into dictionary_data VALUES ('tcon5','task_cond','zh_CN','(tstatus=''COMPLETED'')','完成任务',5)#
+insert into dictionary_data VALUES ('tcon6','task_cond','zh_CN','(tstatus=''NOTSET'' or tstatus=''IN-PROCESS'' or tstatus=''NEEDS-ACTION'')','未完成任务',6)#
+insert into dictionary_data VALUES ('tcon7','task_cond','zh_CN','(tstatus=''CANCELLED'')','取消任务',7)#
+insert into dictionary_data VALUES ('tcon8','task_cond','zh_CN','(1=1)','所有任务',8)#
