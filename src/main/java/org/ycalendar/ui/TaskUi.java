@@ -402,9 +402,10 @@ public class TaskUi {
         // 设置表格排序，表格默认将所有值都作为字符串进行排序，  
         // 所以对于表格中已有字符型列可以不用自定义排序类  
         // 但需要对非字符串的列进行自定义排序  
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(taskDataModel);
-        sorter.setComparator(2, new Comparator<Float>() {
-            public int compare(Float o1, Float o2) {
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(taskDataModel);
+        sorter.setComparator(2, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
                 return o1.compareTo(o2);
             }
         });

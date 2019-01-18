@@ -213,14 +213,7 @@ public class EventPanel extends JPanel {
         eventJlist.setModel(listModel);
     }
 
-    private void delEvent(String id) {
-        es.delEvent(id);
-        MemMsg m = new MemMsg("EPeventChange");
-        m.setProperty("eventid", id);
-        m.setProperty("actionType", "del");
-        MessageFac.getMemoryMsg().sendMsg(m);
-        this.reload();
-    }
+
     private List<String> selectCan;
 
     public void setSelectCan(List<String> selectCan) {

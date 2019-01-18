@@ -45,7 +45,7 @@ import org.ycalendar.util.UtilValidate;
  */
 public class CalTaskUi extends JDialog {
 
-    public static final Logger log = LoggerFactory.getLogger(CalTaskUi.class);
+    private static final Logger log = LoggerFactory.getLogger(CalTaskUi.class);
     private JToolBar myJToolBar;
 
     private JTextField titleText;
