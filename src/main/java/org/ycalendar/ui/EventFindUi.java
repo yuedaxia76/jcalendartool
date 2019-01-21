@@ -180,7 +180,12 @@ public class EventFindUi extends JPanel {
             }
         });
 
-        return new JScrollPane(taskTable);
+        return new JScrollPane(taskTable) {
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(1300, 280);
+            }
+        };
     }
 
     class EventModel implements TableModel {

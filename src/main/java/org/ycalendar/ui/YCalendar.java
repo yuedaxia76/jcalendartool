@@ -31,6 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -99,7 +100,6 @@ import org.ycalendar.util.UtilValidate;
  */
 public class YCalendar {
 
-    
     private static final Logger log = LoggerFactory.getLogger(YCalendar.class);
     final JFrame f = new JFrame("日历");
 
@@ -125,12 +125,14 @@ public class YCalendar {
         JMenuItem taskMenu = new JMenuItem("任务");
         JMenuItem importMenu = new JMenuItem("导入...");
         JMenuItem exportMenu = new JMenuItem("导出...");
+        JCheckBoxMenuItem finde = new JCheckBoxMenuItem("查找事件");
         eventAndTask.add(newEventme);
         eventAndTask.add(newTaskMe);
         eventAndTask.add(calMenu);
         eventAndTask.add(taskMenu);
         eventAndTask.add(importMenu);
         eventAndTask.add(exportMenu);
+        eventAndTask.add(finde);
         // 这里是添加菜单
         f.setJMenuBar(jmb);
 
@@ -175,6 +177,17 @@ public class YCalendar {
                 exportToFile();
             }
         });
+        finde.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {// 只能检测到mousePressed事件
+                showFind();
+            }
+
+        });
+    }
+
+    private void showFind() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     void exportToFile() {
@@ -184,7 +197,7 @@ public class YCalendar {
         String calid = cui.getSelectCans();
         cui.dispose();
         if (UtilValidate.isEmpty(calid)) {
-            log.info( "没有选择");
+            log.info("没有选择");
             return;
         }
         try {
@@ -206,7 +219,7 @@ public class YCalendar {
             }
 
         } catch (Exception ex) {
-            log.error( "导出错误", ex);
+            log.error("导出错误", ex);
             JOptionPane.showMessageDialog(f, "错误:" + ex.toString(), "错误", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -245,7 +258,7 @@ public class YCalendar {
         jfc.showDialog(new JLabel(), "选择");
         File file = jfc.getSelectedFile();
         if (file == null) {
-            log.warn( "no select file");
+            log.warn("no select file");
             return;
         }
         if (file.isFile()) {
@@ -256,7 +269,7 @@ public class YCalendar {
             String calid = cui.getSelectCans();
             cui.dispose();
             if (UtilValidate.isEmpty(calid)) {
-                log.info( "没有选择");
+                log.info("没有选择");
                 return;
             }
             try {
@@ -277,7 +290,7 @@ public class YCalendar {
 
                 JOptionPane.showMessageDialog(f, "导入:" + importCount.e1 + "条事件," + importCount.e2 + "条任务", "导入成功", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception e) {
-                log.error( "importFile {} error{}", file.getName(), e.toString());
+                log.error("importFile {} error{}", file.getName(), e.toString());
                 JOptionPane.showMessageDialog(f, "错误:" + e.toString(), "错误", JOptionPane.ERROR_MESSAGE);
             }
 
@@ -348,7 +361,7 @@ public class YCalendar {
                     if (code != null) {
                         ev.setCategory(code);
                     } else {
-                        log.warn( "Category {} no code", catl);
+                        log.warn("Category {} no code", catl);
                         ev.setCategory("-1");
                     }
 
@@ -372,7 +385,7 @@ public class YCalendar {
                 if (value != null) {
                     ev.setEventRepeat(freValue);
                 } else {
-                    log.warn( "RRULE {} no value set none", errule);
+                    log.warn("RRULE {} no value set none", errule);
                     ev.setEventRepeat("NONE");
                 }
                 String utilDate = rulePropers.get("UNTIL");
@@ -486,7 +499,7 @@ public class YCalendar {
                     if (code != null) {
                         td.setCategory(code);
                     } else {
-                        log.warn( "Category {} no dic code", catl);
+                        log.warn("Category {} no dic code", catl);
                         td.setCategory("-1");
                     }
 
@@ -641,16 +654,16 @@ public class YCalendar {
                         valarm = new VAlarm(Duration.ofMinutes(0));
                         break;
                     case "5M":
-                        valarm = new VAlarm(Duration.ofMinutes( -5));
+                        valarm = new VAlarm(Duration.ofMinutes(-5));
                         break;
                     case "15M":
-                        valarm = new VAlarm(Duration.ofMinutes( -15));
+                        valarm = new VAlarm(Duration.ofMinutes(-15));
                         break;
                     case "1H":
-                        valarm = new VAlarm(Duration.ofHours( -1));
+                        valarm = new VAlarm(Duration.ofHours(-1));
                         break;
                     case "2H":
-                        valarm = new VAlarm(Duration.ofHours( -2));
+                        valarm = new VAlarm(Duration.ofHours(-2));
                         break;
                     case "1D":
                         valarm = new VAlarm(Duration.ofDays(-1));
@@ -717,16 +730,16 @@ public class YCalendar {
                         valarm = new VAlarm(Duration.ofMinutes(0));
                         break;
                     case "5M":
-                        valarm = new VAlarm(Duration.ofMinutes( -5));
+                        valarm = new VAlarm(Duration.ofMinutes(-5));
                         break;
                     case "15M":
-                        valarm = new VAlarm(Duration.ofMinutes( -15));
+                        valarm = new VAlarm(Duration.ofMinutes(-15));
                         break;
                     case "1H":
-                        valarm = new VAlarm(Duration.ofHours( -1));
+                        valarm = new VAlarm(Duration.ofHours(-1));
                         break;
                     case "2H":
-                        valarm = new VAlarm(Duration.ofHours( -2));
+                        valarm = new VAlarm(Duration.ofHours(-2));
                         break;
                     case "1D":
                         valarm = new VAlarm(Duration.ofDays(-1));
@@ -754,7 +767,7 @@ public class YCalendar {
         // 验证
         calendar.validate();
 
-        log.info( "export ics to {}", toSave.getAbsolutePath());
+        log.info("export ics to {}", toSave.getAbsolutePath());
         try (FileOutputStream fout = new FileOutputStream(toSave)) {
 
             CalendarOutputter outputter = new CalendarOutputter();
@@ -953,7 +966,7 @@ public class YCalendar {
         loadInitData();
 
         f.addWindowListener(new WindowAdapter() {
-             
+
             @Override
             public void windowClosing(WindowEvent e) {
                 mainExit();
