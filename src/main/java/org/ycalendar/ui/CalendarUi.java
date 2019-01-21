@@ -41,6 +41,8 @@ public class CalendarUi {
     //包含splitLeft
     JSplitPane splitright;
     JCalendarPanel jpce;
+    
+    EventFindUi eventFindPael;
     JList<ItemData<String, String>> calJlist;
     
     private final EventService es;
@@ -102,6 +104,13 @@ public class CalendarUi {
         // left.add(calJlist,BorderLayout.SOUTH);
         center = new JPanel(new BorderLayout());
         // center.add(new JButton("center"));
+        
+        //事件查询,默认隐藏
+        eventFindPael=new EventFindUi();
+        eventFindPael.setDicSer(dicSer);
+        eventFindPael.setEs(es);
+        eventFindPael.initUi();
+        center.add(eventFindPael,BorderLayout.NORTH);
         jpce = new JCalendarPanel(new CalendarModel(Calendar.getInstance()), getSelectCans(), es);
         jpce.setDicSer(dicSer);
         

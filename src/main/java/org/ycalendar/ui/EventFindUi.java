@@ -5,12 +5,13 @@
  */
 package org.ycalendar.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.LayoutManager;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -28,10 +29,10 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ycalendar.dbp.service.Dictionary;
+import org.ycalendar.dbp.service.EventService;
 import org.ycalendar.domain.EventData;
 import org.ycalendar.ui.jdatepicker.DatePicker;
 import org.ycalendar.ui.jdatepicker.JDatePanel;
@@ -49,7 +50,7 @@ public class EventFindUi extends JPanel {
 
     private static final Logger log = LoggerFactory.getLogger(EventFindUi.class);
     private final String[] columnHeaders = {"", "标题", "开始日期", "结束日期", "类别"};
-    JPanel condition;
+
     DatePicker<Date> startPicker;
 
     DatePicker<Date> endPicker;
@@ -69,21 +70,41 @@ public class EventFindUi extends JPanel {
     public void setDicSer(Dictionary dicSer) {
         this.dicSer = dicSer;
     }
+    private EventService es;
+
+    public EventService getEs() {
+        return es;
+    }
+
+    public void setEs(EventService es) {
+        this.es = es;
+    }
+
+    public EventFindUi(LayoutManager layout) {
+        super(layout);
+
+    }
 
     public EventFindUi() {
-        condition = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        this(new BorderLayout());
+
+    }
+
+    public void initUi() {
+        JPanel condition = new JPanel(new FlowLayout(FlowLayout.LEFT));
         condition.add(new JLabel("开始日期"));
         condition.add(getStartPicker());
         condition.add(new JLabel("结束日期"));
         condition.add(getEndPicker());
         condition.add(new JLabel("包含"));
         taskCondi = new JTextField();
-        taskCondi.setColumns(57);
+        taskCondi.setColumns(63);
         condition.add(taskCondi);
         JButton findButton = new JButton("查询");
         condition.add(findButton);
+        add(condition, BorderLayout.NORTH);
 
-        condition.add(createTable());
+        add(createTable(), BorderLayout.CENTER);
     }
 
     private JComponent getStartPicker() {
@@ -94,7 +115,7 @@ public class EventFindUi extends JPanel {
             startPicker.setShowYearButtons(true);
 
             Dimension preferredSize = ((JComponent) startPicker).getPreferredSize();
-            preferredSize.setSize(320, preferredSize.getHeight());
+            preferredSize.setSize(220, preferredSize.getHeight());
             ((JComponent) startPicker).setPreferredSize(preferredSize);
 
         }
@@ -110,7 +131,7 @@ public class EventFindUi extends JPanel {
             endPicker.setShowYearButtons(true);
 
             Dimension preferredSize = ((JComponent) endPicker).getPreferredSize();
-            preferredSize.setSize(320, preferredSize.getHeight());
+            preferredSize.setSize(220, preferredSize.getHeight());
             ((JComponent) endPicker).setPreferredSize(preferredSize);
 
         }
