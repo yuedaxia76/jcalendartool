@@ -52,6 +52,9 @@ public class CalendarUi {
         this.dicSer = dicSer;
         
     }
+    public void showEventFindUi(final boolean show){
+        eventFindPael.setVisible(show);
+    }
     
     private List<String> getSelectCans() {
         List<ItemData<String, String>> ses = calJlist.getSelectedValuesList();
@@ -110,6 +113,7 @@ public class CalendarUi {
         eventFindPael.setDicSer(dicSer);
         eventFindPael.setEs(es);
         eventFindPael.initUi();
+        eventFindPael.setVisible(false);
         center.add(eventFindPael,BorderLayout.NORTH);
         jpce = new JCalendarPanel(new CalendarModel(Calendar.getInstance()), getSelectCans(), es);
         jpce.setDicSer(dicSer);

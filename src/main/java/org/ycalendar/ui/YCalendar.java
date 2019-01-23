@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
@@ -125,7 +127,7 @@ public class YCalendar {
         JMenuItem taskMenu = new JMenuItem("任务");
         JMenuItem importMenu = new JMenuItem("导入...");
         JMenuItem exportMenu = new JMenuItem("导出...");
-        JCheckBoxMenuItem finde = new JCheckBoxMenuItem("查找事件");
+        JCheckBoxMenuItem finde = new JCheckBoxMenuItem("查找事件",false);
         eventAndTask.add(newEventme);
         eventAndTask.add(newTaskMe);
         eventAndTask.add(calMenu);
@@ -177,18 +179,19 @@ public class YCalendar {
                 exportToFile();
             }
         });
-        finde.addMouseListener(new MouseAdapter() {
+        finde.addActionListener(new ActionListener() {
             @Override
-            public void mousePressed(MouseEvent e) {// 只能检测到mousePressed事件
-                showFind();
+            public void actionPerformed(ActionEvent  e) {// 只能检测到mousePressed事件
+                JCheckBoxMenuItem mi=(JCheckBoxMenuItem)e.getSource();
+                final boolean old=mi.isSelected();
+                log.info("isSelected  :{} ",old);
+                caui.showEventFindUi(old);
             }
 
         });
     }
 
-    private void showFind() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+
 
     void exportToFile() {
         CalSelectUi cui = new CalSelectUi(f, true, 350, 550);
