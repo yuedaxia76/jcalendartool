@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collections;
@@ -42,7 +43,7 @@ import org.ycalendar.util.MiscUtil;
 import org.ycalendar.util.UtilDateTime;
 
 /**
- * 事件查询界面
+ * 事件查询界面 TODO:监听日历变化事件，来更新日历
  *
  * @author lenovo
  */
@@ -57,9 +58,9 @@ public class EventFindUi extends JPanel {
 
     JTextField taskCondi;
 
-    JTable taskTable;
+    JTable eventTable;
     //任务数据
-    private EventModel taskDataModel;
+    private EventModel eventDataModel;
 
     private Dictionary dicSer;
 
@@ -102,9 +103,37 @@ public class EventFindUi extends JPanel {
         condition.add(taskCondi);
         JButton findButton = new JButton("查询");
         condition.add(findButton);
+
+        findButton.addActionListener((ActionEvent e) -> {
+
+            queryEvent();
+        });
         add(condition, BorderLayout.NORTH);
 
         add(createTable(), BorderLayout.CENTER);
+    }
+    private List<String> calendarids;
+
+    private void queryEvent() {
+        Long s, e;
+        String word = taskCondi.getText();
+
+        Date st = startPicker.getModel().getValue();
+        if (st == null) {
+            s = null;
+        } else {
+            s = st.getTime();
+        }
+
+        Date et = endPicker.getModel().getValue();
+        if (st == null) {
+            e = null;
+        } else {
+            e = et.getTime();
+        }
+        List<EventData> events = es.readEvent(s, e, calendarids, word);
+
+        eventDataModel.setDatas(events);
     }
 
     private JComponent getStartPicker() {
@@ -141,36 +170,36 @@ public class EventFindUi extends JPanel {
     private JScrollPane createTable() {
         Class[] coluClass = {String.class, String.class, String.class, String.class, String.class};
 
-        taskDataModel = new EventModel(coluClass, Collections.emptyList());
-        taskTable = new JTable(taskDataModel);
-        taskTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 表格选择为单选  
-        taskTable.setRowHeight(25); // 设置行高  
-        taskTable.setShowVerticalLines(false);// 使表格的列线条不显示  
+        eventDataModel = new EventModel(coluClass, Collections.emptyList());
+        eventTable = new JTable(eventDataModel);
+        eventTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 表格选择为单选  
+        eventTable.setRowHeight(25); // 设置行高  
+        eventTable.setShowVerticalLines(false);// 使表格的列线条不显示  
 
         // 设置各列的呈现方式  
-        MiscUtil.HiddenColumn(taskTable, 0);
+        MiscUtil.HiddenColumn(eventTable, 0);
 
-        TableColumn tem = taskTable.getColumn("标题");
+        TableColumn tem = eventTable.getColumn("标题");
         LabelColumn lc = new LabelColumn();
         tem.setCellEditor(lc);
         tem.setCellRenderer(lc);
 
-        tem = taskTable.getColumn("开始日期");
+        tem = eventTable.getColumn("开始日期");
         LabelColumn dl = new LabelColumn(SwingConstants.LEFT);
         tem.setCellEditor(dl);
         tem.setCellRenderer(dl);
 
-        tem = taskTable.getColumn("结束日期");
+        tem = eventTable.getColumn("结束日期");
         LabelColumn del = new LabelColumn(SwingConstants.CENTER);
         tem.setCellEditor(del);
         tem.setCellRenderer(del);
 
-        tem = taskTable.getColumn("类别");
+        tem = eventTable.getColumn("类别");
         LabelColumn type = new LabelColumn(SwingConstants.CENTER);
         tem.setCellEditor(type);
         tem.setCellRenderer(type);
 
-        taskTable.addMouseListener(new MouseAdapter() {
+        eventTable.addMouseListener(new MouseAdapter() {
 
             public void mouseClicked(MouseEvent e) {
 
@@ -180,7 +209,7 @@ public class EventFindUi extends JPanel {
             }
         });
 
-        return new JScrollPane(taskTable) {
+        return new JScrollPane(eventTable) {
             @Override
             public Dimension getPreferredSize() {
                 return new Dimension(1300, 280);

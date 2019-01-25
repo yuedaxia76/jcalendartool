@@ -574,10 +574,10 @@ public class EventUi extends JDialog {
 
         data.setAllDay(allDay.isSelected());
 
-        Date st = (Date) startPicker.getModel().getValue();
+        Date st =   startPicker.getModel().getValue();
         data.setStartTime(st.getTime());
 
-        Date et = (Date) endPicker.getModel().getValue();
+        Date et = endPicker.getModel().getValue();
         data.setEndTime(et.getTime());
 
         ItemData<String, String> rep = repeatCom.getItemAt(repeatCom.getSelectedIndex());
