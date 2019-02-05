@@ -29,6 +29,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
@@ -45,6 +46,8 @@ import org.ycalendar.util.MiscUtil;
 import org.ycalendar.util.Tuple2;
 import org.ycalendar.util.UtilDateTime;
 import org.ycalendar.util.UtilValidate;
+import org.ycalendar.util.msg.MemMsg;
+import org.ycalendar.util.msg.MessageFac;
 
 /**
  * 任务界面
@@ -81,6 +84,15 @@ public class TaskUi {
             for (int i = 0; i < sm.size(); i++) {
                 calJlist.setSelectedIndex(i);
             }
+            //变化监听
+            calJlist.addListSelectionListener((ListSelectionEvent e) -> {
+                MemMsg m = new MemMsg("SelectCalChange");
+                m.setProperty("changeInfo", e);
+
+                List<ItemData<String, String>> ses = calJlist.getSelectedValuesList();
+                m.setProperty("selectedItem", ses);
+                MessageFac.getMemoryMsg().sendMsg(m);
+            });
         }
         return calJlist;
 
@@ -137,7 +149,7 @@ public class TaskUi {
         ValueRadioButton<String> vb = (ValueRadioButton<String>) e.getSource();
         String cond = MiscUtil.evaluateExpr(vb.getValue());
         String word = taskCondi.getText();
-        log.info( cond);
+        log.info(cond);
         List<TaskData> tasks = this.taskSer.queryTask(cond, getSelectCans(), word);
 
         taskDataModel.setDatas(tasks);
@@ -289,7 +301,7 @@ public class TaskUi {
                     return UtilDateTime.longToString(edt, UtilDateTime.defaultDatePattern);
 
             }
-            log.error( "error columnIndex {}", columnIndex);
+            log.error("error columnIndex {}", columnIndex);
             return null;
         }
 

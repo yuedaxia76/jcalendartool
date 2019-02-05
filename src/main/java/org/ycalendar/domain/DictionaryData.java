@@ -55,7 +55,10 @@ public class DictionaryData {
 	public void setId(String id) {
 		this.id = id;
 	}
-
+        /**
+         * 获取编码
+         * @return 
+         */
 	public String getCode() {
 		return this.code;
 	}
@@ -63,7 +66,10 @@ public class DictionaryData {
 	public void setCode(String code) {
 		this.code = code;
 	}
-
+        /**
+         * 获取显示
+         * @return 
+         */
 	public String getDictdataValue() {
 		return this.dictdataValue;
 	}

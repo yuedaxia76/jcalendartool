@@ -12,6 +12,7 @@ import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -26,6 +27,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
@@ -34,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ycalendar.dbp.service.Dictionary;
 import org.ycalendar.dbp.service.EventService;
+import org.ycalendar.domain.DictionaryData;
 import org.ycalendar.domain.EventData;
 import org.ycalendar.ui.jdatepicker.DatePicker;
 import org.ycalendar.ui.jdatepicker.JDatePanel;
@@ -41,6 +44,7 @@ import org.ycalendar.ui.jdatepicker.JDatePicker;
 import org.ycalendar.ui.jdatepicker.UtilDateModel;
 import org.ycalendar.util.MiscUtil;
 import org.ycalendar.util.UtilDateTime;
+import org.ycalendar.util.msg.MessageFac;
 
 /**
  * 事件查询界面 TODO:监听日历变化事件，来更新日历
@@ -111,7 +115,32 @@ public class EventFindUi extends JPanel {
         add(condition, BorderLayout.NORTH);
 
         add(createTable(), BorderLayout.CENTER);
+
+        loadCalendarlist();
+        //监听日历选择变化
+
+        MessageFac.getMemoryMsg().subMsg("SelectCalChange", (m) -> {
+            List<ItemData<String, String>> ses = (List<ItemData<String, String>>) m.getProperty("selectedItem");
+            calendarids.clear();
+            for (ItemData<String, String> e : ses) {
+                calendarids.add(e.e1);
+            }
+            log.info("reload  calendar :{}", calendarids);
+            
+            //重新装入数据，如果已经装入 
+        });
     }
+
+    private void loadCalendarlist() {
+
+        List<DictionaryData> calList = dicSer.getDictList("calendar");
+        calendarids = new ArrayList<>(calList.size());
+        for (DictionaryData da : calList) {
+            calendarids.add(da.getCode());
+        }
+        log.info("load calendar :{}", calendarids);
+    }
+
     private List<String> calendarids;
 
     private void queryEvent() {
