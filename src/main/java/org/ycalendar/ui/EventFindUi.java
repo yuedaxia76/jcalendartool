@@ -126,8 +126,11 @@ public class EventFindUi extends JPanel {
                 calendarids.add(e.e1);
             }
             log.info("reload  calendar :{}", calendarids);
-            
+
             //重新装入数据，如果已经装入 
+            if (dataLoad) {
+                queryEvent();
+            }
         });
     }
 
@@ -142,6 +145,7 @@ public class EventFindUi extends JPanel {
     }
 
     private List<String> calendarids;
+    private boolean dataLoad = false;
 
     private void queryEvent() {
         Long s, e;
@@ -155,7 +159,7 @@ public class EventFindUi extends JPanel {
         }
 
         Date et = endPicker.getModel().getValue();
-        if (st == null) {
+        if (et == null) {
             e = null;
         } else {
             e = et.getTime();
@@ -163,6 +167,7 @@ public class EventFindUi extends JPanel {
         List<EventData> events = es.readEvent(s, e, calendarids, word);
 
         eventDataModel.setDatas(events);
+        dataLoad = true;
     }
 
     private JComponent getStartPicker() {

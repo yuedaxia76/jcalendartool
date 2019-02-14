@@ -2,6 +2,8 @@ package org.ycalendar.dbp.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.ycalendar.dbp.dao.BeanListHandler;
 import org.ycalendar.dbp.dao.ExecuDbopention;
@@ -18,6 +20,7 @@ import org.ycalendar.util.UtilValidate;
  */
 public class EventService extends GenalService {
 
+    private static final Logger log = LoggerFactory.getLogger(EventService.class);
     private ConfigInfo conInfo;
 
     public ConfigInfo getConInfo() {
@@ -82,6 +85,7 @@ public class EventService extends GenalService {
 
         return result;
     }
+
     public Integer delEventByCalendarId(String cid) {
 
         Integer result = hd.exeTran(new ExecuDbopention<Integer>() {
@@ -92,6 +96,7 @@ public class EventService extends GenalService {
 
         return result;
     }
+
     /**
      * 修改事件
      *
@@ -141,7 +146,7 @@ public class EventService extends GenalService {
      * @param end
      * @return
      */
-    public List<EventData> readEvent(Long start, Long end, List<String> calendarids, String title) {
+    public List<EventData> readEvent(final Long start, final Long end, List<String> calendarids, final String title) {
 
         return hd.exeQuery(new ExecueQuery<List<EventData>>() {
             public List<EventData> exeDbAction() {
@@ -161,8 +166,16 @@ public class EventService extends GenalService {
                     gdao.in(sql, params, "", "calendarid", calendarids);
 
                 }
-
                 if (start == null && end == null) {
+                    log.debug("start and end is null");
+                } else if (end == null) {
+                    sql.append(" and (start_time>=? )  ");
+                    params.add(start);
+
+                } else if (start == null) {
+                    sql.append(" and (end_time<=? )  ");
+
+                    params.add(end);
 
                 } else {
                     sql.append(" and ((start_time>=? and start_time<?) or (end_time>? and end_time<=?  ))  ");
