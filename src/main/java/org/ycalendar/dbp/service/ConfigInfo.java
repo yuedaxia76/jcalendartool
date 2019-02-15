@@ -25,10 +25,10 @@ public class ConfigInfo {
         return ConfRef.cp == null ? "main" : ConfRef.cp.getProperty("DefaultCalId");
     }
 
-    //发布后改为false,因为数据库虽程序发布
+    //发布后改为false,因为数据库随程序发布
     public boolean isRunInitDb() {
 
-        return ConfRef.cp == null ? true : "true".equals(ConfRef.cp.getProperty("DefaultCalId"));
+        return ConfRef.cp == null ? true : "true".equals(ConfRef.cp.getProperty("RunInitDb"));
 
     }
 
