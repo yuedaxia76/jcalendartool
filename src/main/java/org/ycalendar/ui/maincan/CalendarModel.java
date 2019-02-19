@@ -54,7 +54,7 @@ public class CalendarModel implements MainDateModel {
         if (!setCurSelect(curDayInfo)) {
             x = 0;
             y = 0;
-            log.warn( "not set select day,date :{}", UtilDateTime.longToString(curDayInfo.getTimeInMillis()));
+            log.warn("not set select day,date :{}", UtilDateTime.longToString(curDayInfo.getTimeInMillis()));
         }
 
     }
@@ -168,6 +168,7 @@ public class CalendarModel implements MainDateModel {
         fireChangeEvent();
     }
 
+    @Override
     public void setSelected(int x, int y) {
         this.x = x;
         this.y = y;
@@ -239,7 +240,7 @@ public class CalendarModel implements MainDateModel {
 
             }
         } else {
-            log.warn( "calendarValue is null");
+            log.warn("calendarValue is null");
         }
 
         return new Tuple2<>(-1, -1);
@@ -251,6 +252,32 @@ public class CalendarModel implements MainDateModel {
             for (int j = 0; j < days[i].length; j++) {
                 days[i][j].setEventData(null);
             }
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        return curDayInfo.toString();
+    }
+
+    @Override
+    public void setDate(final int year, final int month) {
+        boolean changed = false;
+        if (curDayInfo.get(Calendar.YEAR) != year) {
+            curDayInfo.set(Calendar.YEAR, year);
+
+            changed = true;
+        }
+        if (changed || curDayInfo.get(Calendar.MONTH) != month) {
+            curDayInfo.set(Calendar.MONTH, month);
+        }
+
+        if (changed) {
+            this.initMonth(curDayInfo);
+
+            setCurSelect(curDayInfo);
+            fireChangeEvent();
         }
 
     }

@@ -3,6 +3,8 @@ package org.ycalendar;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import javax.swing.SwingUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.ycalendar.dbp.dao.GernDAO;
 import org.ycalendar.dbp.dao.H2Dao;
@@ -19,7 +21,7 @@ import org.ycalendar.util.MiscUtil;
  *
  */
 public class JCalendar {
-
+    private static final Logger log = LoggerFactory.getLogger(JCalendar.class);
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             YCalendar yc = new YCalendar();
@@ -34,6 +36,8 @@ public class JCalendar {
 
             if (conInfo.isRunInitDb()) {
                 hd.loadSql("initdata/init.sql");
+            }else{
+                log.debug("not load initdata/init.sql");
             }
 
             GernDAO dao = new GernDAO();
@@ -80,7 +84,8 @@ public class JCalendar {
 
             MiscUtil.writeString(out, StandardCharsets.UTF_8, tem.toString());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.info("",ex);
+            //ex.printStackTrace();
         }
     }
 }

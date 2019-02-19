@@ -27,7 +27,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
@@ -42,6 +41,7 @@ import org.ycalendar.ui.jdatepicker.DatePicker;
 import org.ycalendar.ui.jdatepicker.JDatePanel;
 import org.ycalendar.ui.jdatepicker.JDatePicker;
 import org.ycalendar.ui.jdatepicker.UtilDateModel;
+import org.ycalendar.ui.maincan.JCalendarPanel;
 import org.ycalendar.util.MiscUtil;
 import org.ycalendar.util.UtilDateTime;
 import org.ycalendar.util.msg.MessageFac;
@@ -54,7 +54,6 @@ import org.ycalendar.util.msg.MessageFac;
 public class EventFindUi extends JPanel {
 
     private static final Logger log = LoggerFactory.getLogger(EventFindUi.class);
-    private final String[] columnHeaders = {"", "标题", "开始日期", "结束日期", "类别"};
 
     DatePicker<Date> startPicker;
 
@@ -67,6 +66,17 @@ public class EventFindUi extends JPanel {
     private EventModel eventDataModel;
 
     private Dictionary dicSer;
+
+    //事件显示模板
+    private JCalendarPanel eventPanel;
+
+    public JCalendarPanel getEventPanel() {
+        return eventPanel;
+    }
+
+    public void setEventPanel(JCalendarPanel eventPanel) {
+        this.eventPanel = eventPanel;
+    }
 
     public Dictionary getDicSer() {
         return dicSer;
@@ -237,8 +247,12 @@ public class EventFindUi extends JPanel {
 
             public void mouseClicked(MouseEvent e) {
 
-                if (e.getClickCount() == 2) {//点击几次，这里是双击事件
-
+                if (e.getClickCount() == 1) {//点击几次 
+                    //单击选择
+                    oneClick();
+                } else if (e.getClickCount() == 2) {
+                    //双击编辑
+                    twoClick();
                 }
             }
         });
@@ -251,9 +265,20 @@ public class EventFindUi extends JPanel {
         };
     }
 
-    class EventModel implements TableModel {
-        //名称
+    private void oneClick() {
+        int row = eventTable.getSelectedRow();
+        String eventid = eventTable.getValueAt(row, 0).toString();  //得到所在行的第一个列的值为eventid
+    }
 
+    private void twoClick() {
+        int row = eventTable.getSelectedRow();
+        String eventid = eventTable.getValueAt(row, 0).toString();  //得到所在行的第一个列的值为eventid
+    }
+
+    class EventModel implements TableModel {
+
+        //名称
+        private final String[] columnHeaders = {"", "标题", "开始日期", "结束日期", "类别"};
         private final Class[] coluClass;
         //数据
         private List<EventData> datas;

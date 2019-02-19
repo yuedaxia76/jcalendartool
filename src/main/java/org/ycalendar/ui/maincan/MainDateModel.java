@@ -40,6 +40,9 @@ public interface MainDateModel  {
      * @param year year
      */
     void setYear(int year);
+    
+    
+    void setDate(int year,int month);
 
     /**
      * Getters and setters which represent a gregorian date.
@@ -97,9 +100,9 @@ public interface MainDateModel  {
  
 
     /**
-     * Set the value as selected.
+     * 选择一个位置
      *
-     * @param selected select this value?
+     * @param x 横轴索引
      */
     void setSelected(int x,int y);
     

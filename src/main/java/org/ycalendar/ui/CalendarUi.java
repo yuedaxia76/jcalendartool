@@ -132,6 +132,7 @@ public class CalendarUi {
         jpce.setDicSer(dicSer);
 
         center.add(jpce, BorderLayout.CENTER);
+        eventFindPael.setEventPanel(jpce);
 
         right = new EventPanel(es, dicSer);
         right.setSelectCan(getSelectCans());

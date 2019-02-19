@@ -142,6 +142,14 @@ public class JCalendarPanel extends JComponent {
         });
 
     }
+
+    public void setDataModel(final int year,final int month) {
+        //loadEvent(model, true);
+        
+        internalModel.getModel().setDate(year, month);
+        //internalModel.getModel().setMonth(model.getMonth());
+        log.info("change model year :{} month :{}",year,  month);
+    }
     private Dictionary dicSer;
 
     public Dictionary getDicSer() {
