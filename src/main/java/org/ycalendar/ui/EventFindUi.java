@@ -43,7 +43,10 @@ import org.ycalendar.ui.jdatepicker.JDatePicker;
 import org.ycalendar.ui.jdatepicker.UtilDateModel;
 import org.ycalendar.ui.maincan.JCalendarPanel;
 import org.ycalendar.util.MiscUtil;
+import org.ycalendar.util.Tuple2;
 import org.ycalendar.util.UtilDateTime;
+import org.ycalendar.util.UtilValidate;
+import org.ycalendar.util.msg.MemMsg;
 import org.ycalendar.util.msg.MessageFac;
 
 /**
@@ -138,6 +141,18 @@ public class EventFindUi extends JPanel {
             log.info("reload  calendar :{}", calendarids);
 
             //重新装入数据，如果已经装入 
+            if (dataLoad) {
+                queryEvent();
+            }
+        });
+
+        MessageFac.getMemoryMsg().subMsg("EUeventChange", (m) -> {
+            if (dataLoad) {
+                queryEvent();
+            }
+        });
+
+        MessageFac.getMemoryMsg().subMsg("JPeventChange", (m) -> {
             if (dataLoad) {
                 queryEvent();
             }
@@ -268,11 +283,57 @@ public class EventFindUi extends JPanel {
     private void oneClick() {
         int row = eventTable.getSelectedRow();
         String eventid = eventTable.getValueAt(row, 0).toString();  //得到所在行的第一个列的值为eventid
+        if (UtilValidate.isNotEmpty(eventid)) {
+            EventData ed = es.readEvent(eventid);
+        } else {
+            log.debug("no event select");
+        }
+
     }
 
     private void twoClick() {
         int row = eventTable.getSelectedRow();
-        String eventid = eventTable.getValueAt(row, 0).toString();  //得到所在行的第一个列的值为eventid
+        final String eventid = eventTable.getValueAt(row, 0).toString();  //得到所在行的第一个列的值为eventid
+        if (UtilValidate.isNotEmpty(eventid)) {
+            EventUi evu = new EventUi(MiscUtil.getComJFrame(this), true, 750, 850, eventid);
+            evu.setEvSe(es);
+            evu.setDicSer(dicSer);
+            evu.initEventUi(null);
+
+            Tuple2<EventData, Integer> newData = evu.getData();
+
+            switch (newData.e2) {
+
+                case 3:
+                    //取消
+                    break;
+                case 2:
+                    //删除,发消息
+                    MemMsg md = new MemMsg("EPeventChange");
+                    md.setProperty("eventid", eventid);
+                    md.setProperty("actionType", "del");
+                    MessageFac.getMemoryMsg().sendMsg(md);
+
+                    break;
+                case 0:
+                    //insert不可能
+                    break;
+                case 1:
+                    //update发消息
+                    MemMsg m = new MemMsg("EPeventChange");
+                    m.setProperty("eventid", eventid);
+                    m.setProperty("actionType", "update");
+                    MessageFac.getMemoryMsg().sendMsg(m);
+
+                    break;
+                default:
+                    log.warn("error type {}", newData.e2);
+            }
+
+            evu.dispose();
+        } else {
+            log.debug("no event select");
+        }
     }
 
     class EventModel implements TableModel {
