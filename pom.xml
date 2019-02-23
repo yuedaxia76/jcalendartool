@@ -21,7 +21,7 @@
         <resease.outputDirectory>C:/ework/yc/dist</resease.outputDirectory>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <commons-csv.version>1.6</commons-csv.version>
-        <H2.version>1.4.197</H2.version>
+        <H2.version>1.4.198</H2.version>
         <slf4j.version>1.7.25</slf4j.version>
         <jcache.version>1.1.0</jcache.version>
         <ehcache.version>3.6.1</ehcache.version>
