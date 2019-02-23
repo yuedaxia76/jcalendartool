@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -285,6 +286,11 @@ public class EventFindUi extends JPanel {
         String eventid = eventTable.getValueAt(row, 0).toString();  //得到所在行的第一个列的值为eventid
         if (UtilValidate.isNotEmpty(eventid)) {
             EventData ed = es.readEvent(eventid);
+            //按照开始时间显示
+           Calendar sd= Calendar.getInstance();
+           sd.setTimeInMillis(ed.getStartTime()); 
+           eventPanel.setDataModel(sd.get(Calendar.YEAR),sd.get(Calendar.MONTH));
+           eventPanel.selectByDay(sd);
         } else {
             log.debug("no event select");
         }
