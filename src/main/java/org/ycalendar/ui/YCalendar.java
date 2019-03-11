@@ -118,8 +118,10 @@ public class YCalendar {
         jmb = new JMenuBar();
 
         JMenu eventAndTask = new JMenu("事件与任务");
+        JMenu calendarMe = new JMenu("日历");
 
         jmb.add(eventAndTask);
+        jmb.add(calendarMe);
 
         JMenuItem newEventme = new JMenuItem("新事件");
         JMenuItem newTaskMe = new JMenuItem("新建任务");
@@ -135,6 +137,16 @@ public class YCalendar {
         eventAndTask.add(importMenu);
         eventAndTask.add(exportMenu);
         eventAndTask.add(finde);
+        
+        //日历菜单
+         JMenuItem newCal = new JMenuItem("新日历");
+        JMenuItem delCal = new JMenuItem("删除日历");     
+        JMenuItem editCal = new JMenuItem("编辑日历");
+        
+        calendarMe.add(newCal);
+        calendarMe.add(delCal);
+        calendarMe.add(editCal);
+        
         // 这里是添加菜单
         f.setJMenuBar(jmb);
 

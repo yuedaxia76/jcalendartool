@@ -51,7 +51,7 @@ import org.ycalendar.util.msg.MemMsg;
 import org.ycalendar.util.msg.MessageFac;
 
 /**
- * 事件查询界面 TODO:监听日历变化事件，来更新日历
+ * 事件查询界面 
  *
  * @author lenovo
  */
