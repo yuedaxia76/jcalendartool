@@ -139,13 +139,15 @@ public class YCalendar {
         eventAndTask.add(finde);
         
         //日历菜单
-         JMenuItem newCal = new JMenuItem("新日历");
+        JMenuItem newCal = new JMenuItem("新建日历");
         JMenuItem delCal = new JMenuItem("删除日历");     
         JMenuItem editCal = new JMenuItem("编辑日历");
+        JMenuItem showAllCal = new JMenuItem("显示所有");
         
         calendarMe.add(newCal);
         calendarMe.add(delCal);
         calendarMe.add(editCal);
+        calendarMe.add(showAllCal);
         
         // 这里是添加菜单
         f.setJMenuBar(jmb);
