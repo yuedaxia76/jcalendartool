@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import org.ycalendar.dbp.dao.GernDAO;
 import org.ycalendar.dbp.dao.H2Dao;
+import org.ycalendar.dbp.service.CalendarService;
 import org.ycalendar.dbp.service.ConfigInfo;
 import org.ycalendar.dbp.service.DicService;
 import org.ycalendar.dbp.service.EventService;
@@ -59,10 +60,19 @@ public class JCalendar {
             ts.setHd(hd);
             ts.setConInfo(conInfo);
 
+            CalendarService calServ=new CalendarService();
+            calServ.setDrs(dic);
+            calServ.setEser(es);
+            calServ.setGdao(dao);
+            calServ.setHd(hd);
+            calServ.setTse(ts);
+            
+            
             yc.setConInfo(conInfo);
             yc.setEvSe(es);
             yc.setDicSer(dic);
             yc.setTsSe(ts);
+            yc.setCalServ(calServ);
 
             yc.initMainUi();
         });

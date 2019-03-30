@@ -81,6 +81,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ycalendar.dbp.dao.H2Dao;
+import org.ycalendar.dbp.service.CalendarService;
 import org.ycalendar.dbp.service.ConfigInfo;
 
 import org.ycalendar.dbp.service.Dictionary;
@@ -129,7 +130,7 @@ public class YCalendar {
         JMenuItem taskMenu = new JMenuItem("任务");
         JMenuItem importMenu = new JMenuItem("导入...");
         JMenuItem exportMenu = new JMenuItem("导出...");
-        JCheckBoxMenuItem finde = new JCheckBoxMenuItem("查找事件",false);
+        JCheckBoxMenuItem finde = new JCheckBoxMenuItem("查找事件", false);
         eventAndTask.add(newEventme);
         eventAndTask.add(newTaskMe);
         eventAndTask.add(calMenu);
@@ -137,18 +138,26 @@ public class YCalendar {
         eventAndTask.add(importMenu);
         eventAndTask.add(exportMenu);
         eventAndTask.add(finde);
-        
+
         //日历菜单
         JMenuItem newCal = new JMenuItem("新建日历");
-        JMenuItem delCal = new JMenuItem("删除日历");     
+        JMenuItem delCal = new JMenuItem("删除日历");
         JMenuItem editCal = new JMenuItem("编辑日历");
         JMenuItem showAllCal = new JMenuItem("显示所有");
-        
+
         calendarMe.add(newCal);
         calendarMe.add(delCal);
         calendarMe.add(editCal);
         calendarMe.add(showAllCal);
-        
+
+        newCal.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {// 只能检测到mousePressed事件
+
+                newCal();
+            }
+
+        });
         // 这里是添加菜单
         f.setJMenuBar(jmb);
 
@@ -195,17 +204,30 @@ public class YCalendar {
         });
         finde.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent  e) {// 只能检测到mousePressed事件
-                JCheckBoxMenuItem mi=(JCheckBoxMenuItem)e.getSource();
-                final boolean old=mi.isSelected();
-                log.info("isSelected  :{} ",old);
+            public void actionPerformed(ActionEvent e) {// 只能检测到mousePressed事件
+                JCheckBoxMenuItem mi = (JCheckBoxMenuItem) e.getSource();
+                final boolean old = mi.isSelected();
+                log.info("isSelected  :{} ", old);
                 caui.showEventFindUi(old);
             }
 
         });
     }
+    private CalendarService calServ;
 
+    public CalendarService getCalServ() {
+        return calServ;
+    }
 
+    public void setCalServ(CalendarService calServ) {
+        this.calServ = calServ;
+    }
+    private void newCal() {
+        CalendarEdUi cau=new CalendarEdUi(f, true, 750, 850,null);
+        cau.setCalServ(calServ);
+        cau.iniUi();
+        
+    }
 
     void exportToFile() {
         CalSelectUi cui = new CalSelectUi(f, true, 350, 550);
