@@ -223,8 +223,9 @@ public class YCalendar {
         this.calServ = calServ;
     }
     private void newCal() {
-        CalendarEdUi cau=new CalendarEdUi(f, true, 750, 850,null);
+        CalendarEdUi cau=new CalendarEdUi(f, true, 450, 350,null);
         cau.setCalServ(calServ);
+        cau.setTitle("新建日历");
         cau.iniUi();
         
     }

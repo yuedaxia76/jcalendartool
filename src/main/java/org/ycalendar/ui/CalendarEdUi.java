@@ -5,12 +5,18 @@
  */
 package org.ycalendar.ui;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,23 +50,40 @@ public class CalendarEdUi extends JDialog {
     private JButton ok;
     private JButton cacele;
 
+    private JPanel topJPanel;
+    private JPanel bottomJPanel;
+
     public CalendarEdUi(Frame parent, boolean modal, int windowWidth, int windowHeight, String calId) {
         super(parent, modal);
         this.caldarid = calId;
-        setLayout(new GridLayout(3, 2));
-
+        //setLayout(new BorderLayout(3, 2));
+        topJPanel = new JPanel();
+        BoxLayout layout = new BoxLayout(topJPanel, BoxLayout.Y_AXIS);
+        topJPanel.setLayout(layout);
+        add(topJPanel, BorderLayout.NORTH);
+        bottomJPanel = new JPanel();
+        add(bottomJPanel, BorderLayout.SOUTH);
         setSize(windowWidth, windowHeight);
     }
 
     public void iniUi() {
-        add(new JLabel("名称："));
+
+        Box box1, box2, boxBase;
+        boxBase = Box.createHorizontalBox();
+        box1 = Box.createVerticalBox();
+
+        box1.add(Box.createVerticalStrut(10));
+        box1.add(new JLabel(" 名称："));
+        box1.add(Box.createVerticalStrut(8));
+        box1.add(new JLabel(" ID："));
+        box1.add(Box.createVerticalStrut(8));
+
+        box2 = Box.createVerticalBox();
 
         calShowName = new JTextField();
-        add(calShowName);
-        add(new JLabel("ID："));
-
         if (UtilValidate.isEmpty(caldarid)) {
             calId = new JTextField();
+
         } else {
 
             calId = new JTextField(caldarid);
@@ -72,24 +95,37 @@ public class CalendarEdUi extends JDialog {
                 log.warn("caldarid {} no data founed", caldarid);
             }
         }
+        box2.add(Box.createVerticalStrut(10));
+        box2.add(calId);
+        box2.add(Box.createVerticalStrut(8));
+        box2.add(calShowName);
+        box2.add(Box.createVerticalStrut(8));
 
-        add(calId);
+        boxBase.add(box1);
+        boxBase.add(Box.createHorizontalStrut(8));
+        boxBase.add(box2);
+        topJPanel.add(boxBase);
 
         ok = new JButton("确定");
 
-        add(ok);
+        bottomJPanel.add(ok);
         ok.addActionListener((ActionEvent e) -> {
 
             createOrSave();
         });
 
         cacele = new JButton("取消");
-        add(cacele);
+        bottomJPanel.add(cacele);
 
         cacele.addActionListener((ActionEvent e) -> {
 
             cancel();
         });
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); // 得到屏幕的尺寸
+        int screenWidth = screenSize.width;
+        int screenHeight = screenSize.height;
+        setLocation((screenWidth - this.getWidth()) / 2, (screenHeight - this.getHeight()) / 2);
         super.setVisible(true);
     }
 
