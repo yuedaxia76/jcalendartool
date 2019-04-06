@@ -33,7 +33,7 @@ public class MemoryMsgImpli implements MemoryMsg {
             public void run() {
                 List<DealMsg> events = getMsgHandle(m);
                 if (UtilValidate.isEmpty(events)) {
-                    log.debug( "mesage type {} no event ", m.getMsgType());
+                    log.debug( "message type {} no event ", m.getMsgType());
                     return;
                 }
                 events.forEach((h) -> {

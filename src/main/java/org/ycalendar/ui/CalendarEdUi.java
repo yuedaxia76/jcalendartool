@@ -8,7 +8,6 @@ package org.ycalendar.ui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import javax.swing.Box;
@@ -16,6 +15,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.slf4j.Logger;
@@ -132,9 +132,16 @@ public class CalendarEdUi extends JDialog {
     private void createOrSave() {
         MemMsg md;
         if (UtilValidate.isEmpty(caldarid)) {
-            caldarid = calId.getText();
-            calId.setEditable(false);
+            String temid = calId.getText();
+
             String name = calShowName.getText();
+            if (UtilValidate.isEmpty(temid) || UtilValidate.isEmpty(name)) {
+
+                JOptionPane.showMessageDialog(this, " 日历id名称不能为空", "缺少信息", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            caldarid = temid;
+            calId.setEditable(false);
             calServ.createCalendar(caldarid, name);
 
             md = new MemMsg("CalCreateNew");
@@ -142,6 +149,12 @@ public class CalendarEdUi extends JDialog {
             md.setProperty("name", name);
         } else {
             String name = calShowName.getText();
+            if (UtilValidate.isEmpty(name)) {
+
+                JOptionPane.showMessageDialog(this, " 日历名称不能为空", "缺少信息", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             calServ.renameCalendar(caldarid, name);
             md = new MemMsg("CalChange");
             md.setProperty("caldarid", caldarid);
@@ -149,6 +162,7 @@ public class CalendarEdUi extends JDialog {
         }
 
         MessageFac.getMemoryMsg().sendMsg(md);
+        super.setVisible(false);
     }
 
     private void cancel() {

@@ -75,13 +75,14 @@ public class CalendarUi {
 
     private JList<ItemData<String, String>> getCalJlist() {
         if (calJlist == null) {
-            DefaultListModel<ItemData<String, String>> sm = getCalendarlist();
+            Tuple2<DefaultListModel<ItemData<String, String>>, int[]> calsinfo = getCalendarlist();
+            DefaultListModel<ItemData<String, String>> sm = calsinfo.e1;
             calJlist = new JList<ItemData<String, String>>(sm);
             calJlist.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-            for (int i = 0; i < sm.size(); i++) {
-                calJlist.setSelectedIndex(i);
-            }
-            //变化监听
+
+            calJlist.setSelectedIndices(calsinfo.e2);
+
+            //变化发布事件
             calJlist.addListSelectionListener((ListSelectionEvent e) -> {
                 MemMsg m = new MemMsg("SelectCalChange");
                 m.setProperty("changeInfo", e);
@@ -166,13 +167,17 @@ public class CalendarUi {
         this.dicSer = dicSer;
     }
 
-    private DefaultListModel<ItemData<String, String>> getCalendarlist() {
+    private Tuple2<DefaultListModel<ItemData<String, String>>, int[]> getCalendarlist() {
         DefaultListModel<ItemData<String, String>> listModel = new DefaultListModel<ItemData<String, String>>();
         List<DictionaryData> calList = dicSer.getDictList("calendar");
-        for (DictionaryData da : calList) {
+        int[] index = new int[calList.size()];
+        for (int i = 0; i < calList.size(); i++) {
+            DictionaryData da = calList.get(i);
             listModel.addElement(new ItemData<String, String>(da.getCode(), da.getDictdataValue()));
+            index[i] = i;
         }
-        return listModel;
+
+        return new Tuple2(listModel, index);
     }
 
     public void restArea(Rectangle scbounds) {
