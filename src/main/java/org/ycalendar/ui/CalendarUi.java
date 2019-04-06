@@ -14,6 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.ycalendar.dbp.service.Dictionary;
 import org.ycalendar.dbp.service.EventService;
@@ -35,6 +37,7 @@ import org.ycalendar.util.msg.MessageFac;
  *
  */
 public class CalendarUi {
+    private static final Logger log = LoggerFactory.getLogger(CalendarUi.class);
     // JPanel left;
 
     // JPanel center;
@@ -86,9 +89,10 @@ public class CalendarUi {
             calJlist.addListSelectionListener((ListSelectionEvent e) -> {
                 MemMsg m = new MemMsg("SelectCalChange");
                 m.setProperty("changeInfo", e);
-
+                
                 List<ItemData<String, String>> ses = calJlist.getSelectedValuesList();
                 m.setProperty("selectedItem", ses);
+                log.info("select cal change to :{}",ses);
                 MessageFac.getMemoryMsg().sendMsg(m);
             });
         }

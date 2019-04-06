@@ -54,10 +54,22 @@ public class EventPanel extends JPanel {
         MessageFac.getMemoryMsg().subMsg("EUeventChange", (m) -> {
             this.reload();
         });
-        
+
         MessageFac.getMemoryMsg().subMsg("JPeventChange", (m) -> {
             this.reload();
-        });        
+        });
+
+        MessageFac.getMemoryMsg().subMsg("SelectCalChange", (m) -> {
+            List<ItemData<String, String>> ses = (List<ItemData<String, String>>) m.getProperty("selectedItem");
+            selectCan.clear();
+            for (ItemData<String, String> e : ses) {
+                selectCan.add(e.e1);
+            }
+            log.info("reload  calendar :{}", selectCan);
+
+            //重新装入数据 
+            this.reload();
+        });
     }
     private final Dictionary dicSer;
 
@@ -212,7 +224,6 @@ public class EventPanel extends JPanel {
         }
         eventJlist.setModel(listModel);
     }
-
 
     private List<String> selectCan;
 

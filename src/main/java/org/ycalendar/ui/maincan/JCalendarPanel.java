@@ -141,14 +141,25 @@ public class JCalendarPanel extends JComponent {
             this.reload();
         });
 
+        MessageFac.getMemoryMsg().subMsg("SelectCalChange", (m) -> {
+            List<ItemData<String, String>> ses = (List<ItemData<String, String>>) m.getProperty("selectedItem");
+            calendarids.clear();
+            for (ItemData<String, String> e : ses) {
+                calendarids.add(e.e1);
+            }
+            log.info("reload  calendar :{}", calendarids);
+
+            //重新装入数据 
+            this.reload();
+        });
     }
 
-    public void setDataModel(final int year,final int month) {
+    public void setDataModel(final int year, final int month) {
         //loadEvent(model, true);
-        
+
         internalModel.getModel().setDate(year, month);
         //internalModel.getModel().setMonth(model.getMonth());
-        log.info("change model year :{} month :{}",year,  month);
+        log.info("change model year :{} month :{}", year, month);
     }
     private Dictionary dicSer;
 
