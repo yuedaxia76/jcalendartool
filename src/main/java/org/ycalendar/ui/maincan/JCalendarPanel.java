@@ -143,11 +143,11 @@ public class JCalendarPanel extends JComponent {
 
         MessageFac.getMemoryMsg().subMsg("SelectCalChange", (m) -> {
             List<ItemData<String, String>> ses = (List<ItemData<String, String>>) m.getProperty("selectedItem");
-            calendarids.clear();
+            this.calendarids.clear();
             for (ItemData<String, String> e : ses) {
-                calendarids.add(e.e1);
+                this.calendarids .add(e.e1);
             }
-            log.info("reload  calendar :{}", calendarids);
+            log.info("reload  calendar :{}", this.calendarids );
 
             //重新装入数据 
             this.reload();
@@ -184,6 +184,7 @@ public class JCalendarPanel extends JComponent {
 
         }
         List<EventData> monthEvents = es.readEvent(s.getTimeInMillis(), e.getTimeInMillis(), calendarids, null);
+        log.info("event size:{}",monthEvents.size());
         for (EventData et : monthEvents) {
             model.addEvent(et);
         }
@@ -1247,8 +1248,9 @@ public class JCalendarPanel extends JComponent {
          */
         @Override
         public void stateChanged(ChangeEvent e) {
-            fireValueChanged();
+            
             loadEvent(internalModel.getModel(), true);
+            fireValueChanged();
         }
 
     }

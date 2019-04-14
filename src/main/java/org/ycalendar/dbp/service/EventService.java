@@ -191,7 +191,7 @@ public class EventService extends GenalService {
                     params.add('%' + title + '%');
                 }
                 sql.append("  order by start_time");
-
+                log.debug("sql :{} ,params :\n{}",sql,params);
                 return gdao.query(hd.getCurCnection(), sql.toString(), rsh, params);
 
             }
