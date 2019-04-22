@@ -141,7 +141,7 @@ public class YCalendar {
 
         //日历菜单
         JMenuItem newCal = new JMenuItem("新建日历");
-        JMenuItem delCal = new JMenuItem("删除日历");
+        JMenuItem delCal = new JMenuItem("删除选中日历");
         JMenuItem editCal = new JMenuItem("编辑日历");
         JMenuItem showAllCal = new JMenuItem("显示所有");
 
@@ -154,7 +154,15 @@ public class YCalendar {
             @Override
             public void mousePressed(MouseEvent e) {// 只能检测到mousePressed事件
 
-                newCal();
+                createCal();
+            }
+
+        });
+        delCal.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {// 只能检测到mousePressed事件
+
+                deleteCal();
             }
 
         });
@@ -222,12 +230,21 @@ public class YCalendar {
     public void setCalServ(CalendarService calServ) {
         this.calServ = calServ;
     }
-    private void newCal() {
-        CalendarEdUi cau=new CalendarEdUi(f, true, 450, 350,null);
+
+    private void createCal() {
+        CalendarEdUi cau = new CalendarEdUi(f, true, 450, 350, null);
         cau.setCalServ(calServ);
         cau.setTitle("新建日历");
         cau.iniUi();
-        
+
+    }
+
+    private void deleteCal() {
+        int useSelect = JOptionPane.showConfirmDialog(f, "是否删除选择日历", "确认", JOptionPane.YES_NO_OPTION);
+        if (useSelect == JOptionPane.YES_OPTION) {
+
+        }
+
     }
 
     void exportToFile() {

@@ -50,8 +50,8 @@ public class CalendarEdUi extends JDialog {
     private JButton ok;
     private JButton cacele;
 
-    private JPanel topJPanel;
-    private JPanel bottomJPanel;
+    private final JPanel topJPanel;
+    private final JPanel bottomJPanel;
 
     public CalendarEdUi(Frame parent, boolean modal, int windowWidth, int windowHeight, String calId) {
         super(parent, modal);
