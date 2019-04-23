@@ -2,34 +2,24 @@ package org.ycalendar.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Rectangle;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
-import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.ycalendar.dbp.service.Dictionary;
 import org.ycalendar.dbp.service.EventService;
-import org.ycalendar.domain.DictionaryData;
 import org.ycalendar.domain.EventData;
 import org.ycalendar.ui.jdatepicker.JDatePanel;
 import org.ycalendar.ui.maincan.CalendarModel;
 import org.ycalendar.ui.maincan.JCalendarPanel;
 import org.ycalendar.util.MiscUtil;
 import org.ycalendar.util.Tuple2;
-import org.ycalendar.util.UtilValidate;
-import org.ycalendar.util.msg.MemMsg;
-import org.ycalendar.util.msg.MessageFac;
 
 /**
  * 日历界面
@@ -38,7 +28,7 @@ import org.ycalendar.util.msg.MessageFac;
  *
  */
 public class CalendarUi {
-    
+
     private static final Logger log = LoggerFactory.getLogger(CalendarUi.class);
     // JPanel left;
 
@@ -49,91 +39,51 @@ public class CalendarUi {
     //包含splitLeft
     JSplitPane splitright;
     JCalendarPanel jpce;
-    
+
     EventFindUi eventFindPael;
-    JList<ItemData<String, String>> calJlist;
-    
+    CalList call;
+
     private final EventService es;
-    
+
     public CalendarUi(EventService es, Dictionary dicSer) {
         this.es = es;
         this.dicSer = dicSer;
-        
+
     }
-    
+
     public void showEventFindUi(final boolean show) {
         eventFindPael.setVisible(show);
     }
-    
-    private List<String> getSelectCans() {
-        List<ItemData<String, String>> ses = calJlist.getSelectedValuesList();
-        List<String> result = new ArrayList<>();
-        if (UtilValidate.isNotEmpty(ses)) {
-            for (ItemData<String, String> c : ses) {
-                result.add(c.e1);
-            }
-        }
-        
-        return result;
-    }
-    //private void select
 
-    private JList<ItemData<String, String>> getCalJlist(final boolean reloadData) {
-        if (calJlist == null) {
-            Tuple2<DefaultListModel<ItemData<String, String>>, int[]> calsinfo = getCalendarlist();
-            DefaultListModel<ItemData<String, String>> sm = calsinfo.e1;
-            calJlist = new JList<ItemData<String, String>>(sm);
-            calJlist.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-            
-            calJlist.setSelectedIndices(calsinfo.e2);
-
-            //变化发布事件
-            calJlist.addListSelectionListener((ListSelectionEvent e) -> {
-                MemMsg m = new MemMsg("SelectCalChange");
-                m.setProperty("changeInfo", e);
-                
-                List<ItemData<String, String>> ses = calJlist.getSelectedValuesList();
-                m.setProperty("selectedItem", ses);
-                log.info("select cal change to :{}", ses);
-                MessageFac.getMemoryMsg().sendMsg(m);
-            });
-            
-        } else if (reloadData) {
-            DefaultListModel<ItemData<String, String>> lm = (DefaultListModel<ItemData<String, String>>) calJlist.getModel();
-            lm.removeAllElements();
-            Tuple2<DefaultListModel<ItemData<String, String>>, int[]> calsinfo = getCalendarlist();
-            DefaultListModel<ItemData<String, String>> sm = calsinfo.e1;
-            for (int i = 0; i < sm.size(); i++) {
-                lm.add(i, sm.get(i));
-            }
-            calJlist.setSelectedIndices(calsinfo.e2);
-        }
-        return calJlist;
-        
-    }
     JPanel left;
     EventPanel right;
     JPanel center;
-    
+
     public void initUi(Rectangle scbounds) {
         left = new JPanel(new BorderLayout());
-        
+
         JDatePanel<Calendar> jp = new JDatePanel<>(JDatePanel.createModel(), false);
         jp.addActionListener((e) -> jpce.selectByDay(jp.getModel().getValue()));
-        
+
         jp.addTodayListener((e) -> jpce.selectByDay(Calendar.getInstance()));
         left.add(jp, BorderLayout.NORTH);
         // jp.setShowClear(false);
 
         JPanel leftList = new JPanel(new BorderLayout());
-        
-        left.add(leftList);
-        
+
+        left.add(leftList, BorderLayout.CENTER);
+
         JLabel calName = new JLabel("日历");
         leftList.add(calName, BorderLayout.NORTH);
-        
-        leftList.add(getCalJlist(false));
+        call = new CalList();
+        call.setDicSer(dicSer);
+        call.initCalList();
 
+        leftList.add(call.getCalCompont(), BorderLayout.CENTER);
+        //leftList.updateUI();
+
+        //leftList.repaint();
+        //leftList.setBorder(BorderFactory.createLineBorder(Color.BLACK ,5));
         // left.add(newcalJlist,BorderLayout.SOUTH);
         center = new JPanel(new BorderLayout());
         // center.add(new JButton("center"));
@@ -145,70 +95,56 @@ public class CalendarUi {
         eventFindPael.initUi();
         eventFindPael.setVisible(false);
         center.add(eventFindPael, BorderLayout.NORTH);
-        jpce = new JCalendarPanel(new CalendarModel(Calendar.getInstance()), getSelectCans(), es);
+        jpce = new JCalendarPanel(new CalendarModel(Calendar.getInstance()), call.getSelectCans(), es);
         jpce.setDicSer(dicSer);
-        
+
         center.add(jpce, BorderLayout.CENTER);
         eventFindPael.setEventPanel(jpce);
-        
+
         right = new EventPanel(es, dicSer);
-        right.setSelectCan(getSelectCans());
+        right.setSelectCan(call.getSelectCans());
         right.intData();
 
         // 最右区域距离左边距离
         int leftWidth = (int) (scbounds.width * 0.85);
-        
+
         splitLeft = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false, left, center);
-        
+
         int llWidth = (int) (leftWidth * 0.15);
         splitLeft.setDividerLocation(llWidth);
         splitLeft.setOneTouchExpandable(false);
         splitLeft.setDividerSize(3);// 设置分隔线宽度的大小，以pixel为计算单位。
 
         splitright = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false, splitLeft, right);
-        
+
         splitright.setDividerLocation(leftWidth);
         splitright.setOneTouchExpandable(true);
         splitright.setDividerSize(8);// 设置分隔线宽度的大小，以pixel为计算单位。
         jpce.selectByDay(Calendar.getInstance());
-        
-        MessageFac.getMemoryMsg().subMsg("CalCreateNew", (m) -> {
-            log.info("new cal create ,reload");
-            this.getCalJlist(true);
-        });
+
     }
-    
+
+    public List<String> getSelectCal() {
+        return call.getSelectCans();
+    }
     private Dictionary dicSer;
-    
+
     public Dictionary getDicSer() {
         return dicSer;
     }
-    
+
     public void setDicSer(Dictionary dicSer) {
         this.dicSer = dicSer;
     }
-    
-    private Tuple2<DefaultListModel<ItemData<String, String>>, int[]> getCalendarlist() {
-        DefaultListModel<ItemData<String, String>> listModel = new DefaultListModel<ItemData<String, String>>();
-        List<DictionaryData> calList = dicSer.getDictList("calendar");
-        int[] index = new int[calList.size()];
-        for (int i = 0; i < calList.size(); i++) {
-            DictionaryData da = calList.get(i);
-            listModel.addElement(new ItemData<String, String>(da.getCode(), da.getDictdataValue()));
-            index[i] = i;
-        }
-        
-        return new Tuple2(listModel, index);
-    }
-    
+
     public void restArea(Rectangle scbounds) {
         // 最右区域距离左边距离
         int leftWidth = (int) (scbounds.width * 0.85);
-        
+
         int llWidth = (int) (leftWidth * 0.15);
-        
+
         splitLeft.setDividerLocation(llWidth);
-        
+
         splitright.setDividerLocation(leftWidth);
     }
 
@@ -220,16 +156,16 @@ public class CalendarUi {
     public Calendar getSelectDate() {
         return jpce.getSelectData();
     }
-    
+
     public boolean deleteSelectEvent() {
         boolean result = jpce.delSelectEvent();
         if (!result) {
             JOptionPane.showMessageDialog(null, " 没有选择事件", "没有选择事件", JOptionPane.ERROR_MESSAGE);
-            
+
         }
         return result;
     }
-    
+
     public void editSelectEvent() {
         EventData ed = getSelectEventData();
         if (ed == null) {
@@ -239,26 +175,26 @@ public class CalendarUi {
         EventUi evu = new EventUi(MiscUtil.getComJFrame(jpce), true, 750, 850, ed.getEventid());
         evu.setEvSe(es);
         evu.setDicSer(dicSer);
-        
+
         evu.initEventUi();
-        
+
         Tuple2<EventData, Integer> newData = evu.getData();
-        
+
         refresh(newData);
-        
+
         evu.dispose();
     }
-    
+
     public EventData getSelectEventData() {
         return jpce.getSelectEventData();
     }
-    
+
     public void refresh(Tuple2<EventData, Integer> data) {
         jpce.refreshData(data);
     }
-    
+
     public void refresh() {
         jpce.reload();
     }
-    
+
 }

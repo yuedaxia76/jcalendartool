@@ -240,8 +240,22 @@ public class YCalendar {
     }
 
     private void deleteCal() {
-        int useSelect = JOptionPane.showConfirmDialog(f, "是否删除选择日历", "确认", JOptionPane.YES_NO_OPTION);
+        int useSelect = JOptionPane.showConfirmDialog(f, "是否删除选择日历", "确认", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (useSelect == JOptionPane.YES_OPTION) {
+            List<String> selectC;
+            if (areare.getSelectedIndex() == 0) {
+                selectC = caui.getSelectCal();
+            } else {
+                selectC = tasui.getSelectCal();
+            }
+
+            if (UtilValidate.isNotEmpty(selectC)) {
+                for (String id : selectC) {
+                    log.info("del calendar :{}", id);
+                    calServ.delCalendar(id);
+                }
+
+            }
 
         }
 

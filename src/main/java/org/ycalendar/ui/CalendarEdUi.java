@@ -130,7 +130,7 @@ public class CalendarEdUi extends JDialog {
     }
 
     private void createOrSave() {
-        MemMsg md;
+
         if (UtilValidate.isEmpty(caldarid)) {
             String temid = calId.getText();
 
@@ -144,9 +144,6 @@ public class CalendarEdUi extends JDialog {
             calId.setEditable(false);
             calServ.createCalendar(caldarid, name);
 
-            md = new MemMsg("CalCreateNew");
-            md.setProperty("caldarid", caldarid);
-            md.setProperty("name", name);
         } else {
             String name = calShowName.getText();
             if (UtilValidate.isEmpty(name)) {
@@ -156,12 +153,9 @@ public class CalendarEdUi extends JDialog {
             }
 
             calServ.renameCalendar(caldarid, name);
-            md = new MemMsg("CalChange");
-            md.setProperty("caldarid", caldarid);
-            md.setProperty("name", name);
+
         }
 
-        MessageFac.getMemoryMsg().sendMsg(md);
         super.setVisible(false);
     }
 

@@ -7,7 +7,6 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -19,7 +18,6 @@ import javax.swing.ButtonGroup;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -29,7 +27,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
@@ -46,8 +43,6 @@ import org.ycalendar.util.MiscUtil;
 import org.ycalendar.util.Tuple2;
 import org.ycalendar.util.UtilDateTime;
 import org.ycalendar.util.UtilValidate;
-import org.ycalendar.util.msg.MemMsg;
-import org.ycalendar.util.msg.MessageFac;
 
 /**
  * 任务界面
@@ -73,30 +68,8 @@ public class TaskUi {
     private JTable taskTable;
     //任务数据
     private TaskModel taskDataModel;
-    //日历选择
-    JList<ItemData<String, String>> calJlist;
 
-    private JList<ItemData<String, String>> getCalJlist() {
-        if (calJlist == null) {
-            DefaultListModel<ItemData<String, String>> sm = getCalendarlist();
-            calJlist = new JList<ItemData<String, String>>(sm);
-            calJlist.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-            for (int i = 0; i < sm.size(); i++) {
-                calJlist.setSelectedIndex(i);
-            }
-            //变化监听
-            calJlist.addListSelectionListener((ListSelectionEvent e) -> {
-                MemMsg m = new MemMsg("SelectCalChange");
-                m.setProperty("changeInfo", e);
-
-                List<ItemData<String, String>> ses = calJlist.getSelectedValuesList();
-                m.setProperty("selectedItem", ses);
-                MessageFac.getMemoryMsg().sendMsg(m);
-            });
-        }
-        return calJlist;
-
-    }
+    CalList call;
 
     private void createLeft() {
         left = new JPanel(new BorderLayout());
@@ -117,10 +90,13 @@ public class TaskUi {
         //左下tab
         JTabbedPane calenlistPa = new JTabbedPane(JTabbedPane.TOP);
 
-        JPanel jpanelcall = new JPanel();
-        jpanelcall.setLayout(new BorderLayout());
+        JPanel jpanelcall = new JPanel(new BorderLayout());
+        //jpanelcall.setLayout(new BorderLayout());
+        call = new CalList();
+        call.setDicSer(dicSer);
+        call.initCalList();
 
-        jpanelcall.add(getCalJlist());
+        jpanelcall.add(call.getCalCompont());
 
         Dimension dim = jpanelcall.getPreferredSize();
         jpanelcall.setPreferredSize(new java.awt.Dimension(dim.width, 120));
@@ -145,12 +121,16 @@ public class TaskUi {
 
     }
 
+    public List<String> getSelectCal() {
+        return call.getSelectCans();
+    }
+
     private void selectTask(ActionEvent e) {
         ValueRadioButton<String> vb = (ValueRadioButton<String>) e.getSource();
         String cond = MiscUtil.evaluateExpr(vb.getValue());
         String word = taskCondi.getText();
         log.info(cond);
-        List<TaskData> tasks = this.taskSer.queryTask(cond, getSelectCans(), word);
+        List<TaskData> tasks = this.taskSer.queryTask(cond, call.getSelectCans(), word);
 
         taskDataModel.setDatas(tasks);
     }
@@ -192,30 +172,13 @@ public class TaskUi {
      */
     public List<TaskData> queryTask(String word) {
         List<String> st = taskSer.getNotcompleteStatus();
-        List<TaskData> tasks = this.taskSer.queryTask(st, -1, -1, getSelectCans(), word, -1);
+        List<TaskData> tasks = this.taskSer.queryTask(st, -1, -1, call.getSelectCans(), word, -1);
         return tasks;
-    }
-
-    /**
-     * 获取选择的日历
-     *
-     * @return
-     */
-    private List<String> getSelectCans() {
-        List<ItemData<String, String>> ses = calJlist.getSelectedValuesList();
-        List<String> result = new ArrayList<>();
-        if (UtilValidate.isNotEmpty(ses)) {
-            for (ItemData<String, String> c : ses) {
-                result.add(c.e1);
-            }
-        }
-
-        return result;
     }
 
     private void createRight() {
         right = new EventPanel(es, dicSer);
-        right.setSelectCan(getSelectCans());
+        right.setSelectCan(call.getSelectCans());
         right.intData();
 
         //right.add(dataShow, BorderLayout.CENTER);
@@ -223,7 +186,7 @@ public class TaskUi {
 
     public void reload() {
         List<String> st = taskSer.getNotcompleteStatus();
-        List<TaskData> tasks = this.taskSer.queryTask(st, -1, -1, getSelectCans(), null, -1);
+        List<TaskData> tasks = this.taskSer.queryTask(st, -1, -1, call.getSelectCans(), null, -1);
         taskDataModel.setDatas(tasks);
     }
 
@@ -389,21 +352,10 @@ public class TaskUi {
         this.es = es;
     }
 
-    //日历 
-    private DefaultListModel<ItemData<String, String>> getCalendarlist() {
-
-        DefaultListModel<ItemData<String, String>> listModel = new DefaultListModel<ItemData<String, String>>();
-        List<DictionaryData> calList = dicSer.getDictList("calendar");
-        for (DictionaryData da : calList) {
-            listModel.addElement(new ItemData<String, String>(da.getCode(), da.getDictdataValue()));
-        }
-        return listModel;
-    }
-
     private JScrollPane createTable() {
         Class[] coluClass = {String.class, String.class, Integer.class, String.class, String.class, String.class};
         List<String> st = taskSer.getNotcompleteStatus();
-        List<TaskData> tasks = this.taskSer.queryTask(st, -1, -1, getSelectCans(), null, -1);
+        List<TaskData> tasks = this.taskSer.queryTask(st, -1, -1, call.getSelectCans(), null, -1);
         log.debug("任务数量{}", tasks.size());
         taskDataModel = new TaskModel(coluClass, tasks);
         taskTable = new JTable(taskDataModel);
