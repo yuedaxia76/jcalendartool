@@ -166,6 +166,14 @@ public class YCalendar {
             }
 
         });
+        editCal.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {// 只能检测到mousePressed事件
+
+                editCal();
+            }
+
+        });
         // 这里是添加菜单
         f.setJMenuBar(jmb);
 
@@ -236,6 +244,10 @@ public class YCalendar {
         cau.setCalServ(calServ);
         cau.setTitle("新建日历");
         cau.iniUi();
+
+    }
+
+    private void editCal() {
 
     }
 
