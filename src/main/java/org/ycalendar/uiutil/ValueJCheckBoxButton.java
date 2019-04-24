@@ -26,7 +26,8 @@ public class ValueJCheckBoxButton<V> extends JCheckBox {
     }
 
     /**
-     * * 取radioButton的值 * @return
+     * * ValueJCheckBoxButton * 
+     * @return V
      */
     public V getValue() {
         return this.value;

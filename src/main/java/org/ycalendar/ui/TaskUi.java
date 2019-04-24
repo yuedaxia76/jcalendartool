@@ -99,7 +99,7 @@ public class TaskUi {
         jpanelcall.add(call.getCalCompont());
 
         Dimension dim = jpanelcall.getPreferredSize();
-        jpanelcall.setPreferredSize(new java.awt.Dimension(dim.width, 120));
+        jpanelcall.setPreferredSize(new java.awt.Dimension(dim.width, 230));
 
         calenlistPa.addTab("日历", null, jpanelcall, "选择当前显示的日历");
         left.add(calenlistPa, BorderLayout.SOUTH);
@@ -124,7 +124,9 @@ public class TaskUi {
     public List<String> getSelectCal() {
         return call.getSelectCans();
     }
-
+    public List<String> getListSelectCal(final boolean checkb) {
+        return call.getSelectCans(checkb);
+    }
     private void selectTask(ActionEvent e) {
         ValueRadioButton<String> vb = (ValueRadioButton<String>) e.getSource();
         String cond = MiscUtil.evaluateExpr(vb.getValue());

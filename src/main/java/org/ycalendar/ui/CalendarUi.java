@@ -79,7 +79,7 @@ public class CalendarUi {
         call.setDicSer(dicSer);
         call.initCalList();
 
-        leftList.add(call.getCalCompont(), BorderLayout.CENTER);
+        leftList.add(call.getCalCompont());
         //leftList.updateUI();
 
         //leftList.repaint();
@@ -123,9 +123,15 @@ public class CalendarUi {
         jpce.selectByDay(Calendar.getInstance());
 
     }
-
+    
     public List<String> getSelectCal() {
         return call.getSelectCans();
+    }
+    
+    
+    
+    public List<String> getListSelectCal(final boolean checkb) {
+        return call.getSelectCans(checkb);
     }
     private Dictionary dicSer;
 

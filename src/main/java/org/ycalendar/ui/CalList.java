@@ -6,6 +6,8 @@
 package org.ycalendar.ui;
 
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -13,6 +15,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
+import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import org.slf4j.Logger;
@@ -64,12 +67,21 @@ public class CalList {
 
     JList<ValueJCheckBoxButton<ItemData<String, String>>> calJlist;
 
-    protected List<String> getSelectCans() {
+    /**
+     *
+     * @param checkSelect 是否检测checkbox选择状态
+     * @return 已经选择的日历
+     */
+    protected List<String> getSelectCans(final boolean checkSelect) {
         List<ValueJCheckBoxButton<ItemData<String, String>>> ses = calJlist.getSelectedValuesList();
         List<String> result = new ArrayList<>();
         if (UtilValidate.isNotEmpty(ses)) {
             for (ValueJCheckBoxButton<ItemData<String, String>> c : ses) {
-                if (c.isSelected()) {
+                if (checkSelect) {
+                    if (c.isSelected()) {
+                        result.add(c.getValue().e1);
+                    }
+                } else {
                     result.add(c.getValue().e1);
                 }
 
@@ -79,19 +91,46 @@ public class CalList {
         return result;
     }
 
-    protected List<ItemData<String, String>> getSelectCansItem() {
-        List<ValueJCheckBoxButton<ItemData<String, String>>> ses = calJlist.getSelectedValuesList();
-        List<ItemData<String, String>> result = new ArrayList<>();
-        if (UtilValidate.isNotEmpty(ses)) {
-            for (ValueJCheckBoxButton<ItemData<String, String>> c : ses) {
-                if (c.isSelected()) {
-                    result.add(c.getValue());
-                }
+    /**
+     * 获取选择日历，只要checkbox选中即可
+     *
+     * @return
+     */
+    protected List<String> getSelectCans() {
+        ListModel<ValueJCheckBoxButton<ItemData<String, String>>> ses = calJlist.getModel();
+        List<String> result = new ArrayList<>(ses.getSize());
 
+        for (int i = 0; i < ses.getSize(); i++) {
+            ValueJCheckBoxButton<ItemData<String, String>> c = ses.getElementAt(i);
+            if (c.isSelected()) {
+                result.add(c.getValue().e1);
             }
+
         }
 
         return result;
+    }
+
+    /**
+     * 获取目前选中日历，只要checkbox选中即可
+     *
+     * @return
+     */
+    protected List<ItemData<String, String>> getSelectCansItem() {
+
+        ListModel<ValueJCheckBoxButton<ItemData<String, String>>> ses = calJlist.getModel();
+        List<ItemData<String, String>> result = new ArrayList<>(ses.getSize());
+
+        for (int i = 0; i < ses.getSize(); i++) {
+            ValueJCheckBoxButton<ItemData<String, String>> c = ses.getElementAt(i);
+            if (c.isSelected()) {
+                result.add(c.getValue());
+            }
+
+        }
+
+        return result;
+
     }
 
     protected JComponent getCalCompont() {
@@ -110,6 +149,20 @@ public class CalList {
             calJlist.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
             calJlist.setSelectedIndices(calsinfo.e2);
+
+            calJlist.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent event) {
+                    //log.warn("com class :{}",event.getSource().getClass());
+                    JList list = (JList) event.getSource();
+                    int index = list.locationToIndex(event.getPoint());// Get index of item
+                    // clicked
+                    ValueJCheckBoxButton<ItemData<String, String>> item = (ValueJCheckBoxButton<ItemData<String, String>>) list.getModel()
+                            .getElementAt(index);
+                    item.setSelected(!item.isSelected()); // Toggle selected state
+                    list.repaint(list.getCellBounds(index, index));// Repaint cell
+                }
+            });
 
             //变化发布事件,TODO:修改
             calJlist.addListSelectionListener((ListSelectionEvent e) -> {
@@ -135,7 +188,10 @@ public class CalList {
         return calJlist;
 
     }
-
+    /**
+     * 在数据库读取日历，应考虑通过CalendarService读取
+     * @return 
+     */
     private Tuple2<DefaultListModel<ValueJCheckBoxButton<ItemData<String, String>>>, int[]> getCalendarlist() {
         DefaultListModel<ValueJCheckBoxButton<ItemData<String, String>>> listModel = new DefaultListModel<>();
         List<DictionaryData> calListdr = dicSer.getDictList("calendar");
@@ -159,12 +215,13 @@ public class CalList {
             JCheckBox checkbox = value;
 
             //Drawing checkbox, change the appearance here
-            checkbox.setBackground(isSelected ? list.getSelectionBackground()  : list.getBackground());
-            checkbox.setForeground(isSelected ? list.getSelectionForeground()  : list.getForeground());
-            //checkbox.setEnabled(isEnabled());
+            checkbox.setBackground(isSelected ? list.getSelectionBackground() : list.getBackground());
+            checkbox.setForeground(isSelected ? list.getSelectionForeground() : list.getForeground());
+            checkbox.setEnabled(list.isEnabled());
             checkbox.setFont(list.getFont());
             checkbox.setFocusPainted(false);
             checkbox.setBorderPainted(true);
+            //checkbox.setSelected(isSelected);
 //            checkbox.setBorder(isSelected ? UIManager
 //                    .getBorder("List.focusCellHighlightBorder") : noFocusBorder);
 //            String x = checkbox.toString();
