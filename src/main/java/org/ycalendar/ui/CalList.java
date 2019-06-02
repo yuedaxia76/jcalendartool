@@ -6,6 +6,8 @@
 package org.ycalendar.ui;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -14,6 +16,8 @@ import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
@@ -47,8 +51,34 @@ public class CalList {
     public void setDicSer(Dictionary dicSer) {
         this.dicSer = dicSer;
     }
+    private JPopupMenu calPopupMenu;
 
     public CalList() {
+    }
+
+    private JPopupMenu getMonthPopupMenu() {
+        if (calPopupMenu == null) {
+            calPopupMenu = new javax.swing.JPopupMenu();
+            JMenuItem mAll = new JMenuItem("显示所有");
+            calPopupMenu.add(mAll);
+            JMenuItem newCal = new JMenuItem("新建日历");
+            calPopupMenu.add(newCal);
+            JMenuItem delCal = new JMenuItem("删除日历");
+            calPopupMenu.add(delCal);
+            JMenuItem expCal = new JMenuItem("导出日历");
+            calPopupMenu.add(expCal);
+            JMenuItem calProp = new JMenuItem("日历属性");
+            calPopupMenu.add(calProp);
+
+            mAll.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("点击了显示所有菜单");
+                }
+            });
+
+        }
+        return calPopupMenu;
     }
 
     public void initCalList() {
@@ -153,14 +183,18 @@ public class CalList {
             calJlist.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent event) {
-                    //log.warn("com class :{}",event.getSource().getClass());
-                    JList list = (JList) event.getSource();
-                    int index = list.locationToIndex(event.getPoint());// Get index of item
-                    // clicked
-                    ValueJCheckBoxButton<ItemData<String, String>> item = (ValueJCheckBoxButton<ItemData<String, String>>) list.getModel()
-                            .getElementAt(index);
-                    item.setSelected(!item.isSelected()); // Toggle selected state
-                    list.repaint(list.getCellBounds(index, index));// Repaint cell
+                    if (event.getButton() == MouseEvent.BUTTON3) {
+                        getMonthPopupMenu().show(calJlist, event.getX(), event.getY());
+                    } else {
+                        JList list = (JList) event.getSource();
+                        int index = list.locationToIndex(event.getPoint());// Get index of item
+                        // clicked
+                        ValueJCheckBoxButton<ItemData<String, String>> item = (ValueJCheckBoxButton<ItemData<String, String>>) list.getModel()
+                                .getElementAt(index);
+                        item.setSelected(!item.isSelected()); // Toggle selected state
+                        list.repaint(list.getCellBounds(index, index));// Repaint cell                                        
+                    }
+
                 }
             });
 
@@ -188,9 +222,11 @@ public class CalList {
         return calJlist;
 
     }
+
     /**
      * 在数据库读取日历，应考虑通过CalendarService读取
-     * @return 
+     *
+     * @return
      */
     private Tuple2<DefaultListModel<ValueJCheckBoxButton<ItemData<String, String>>>, int[]> getCalendarlist() {
         DefaultListModel<ValueJCheckBoxButton<ItemData<String, String>>> listModel = new DefaultListModel<>();
