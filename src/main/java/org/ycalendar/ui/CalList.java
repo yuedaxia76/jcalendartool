@@ -73,7 +73,10 @@ public class CalList {
             mAll.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    System.out.println("点击了显示所有菜单");
+                   List<ItemData<String, String>> showCal= selectAllCansItem();
+                   log.debug("show {}  \n size :{}",showCal,showCal.size());
+                   calJlist.repaint();
+                    
                 }
             });
 
@@ -140,6 +143,9 @@ public class CalList {
 
         return result;
     }
+    
+    
+    
 
     /**
      * 获取目前选中日历，只要checkbox选中即可
@@ -156,6 +162,31 @@ public class CalList {
             if (c.isSelected()) {
                 result.add(c.getValue());
             }
+
+        }
+
+        return result;
+
+    }
+    
+    
+       /**
+     * 选中所有日历，checkbox选中
+     *
+     * @return
+     */
+    protected List<ItemData<String, String>> selectAllCansItem() {
+
+        ListModel<ValueJCheckBoxButton<ItemData<String, String>>> ses = calJlist.getModel();
+        List<ItemData<String, String>> result = new ArrayList<>(ses.getSize());
+
+        for (int i = 0; i < ses.getSize(); i++) {
+            ValueJCheckBoxButton<ItemData<String, String>> c = ses.getElementAt(i);
+            result.add(c.getValue());
+            if (!c.isSelected()) {
+                c.setSelected(true);
+                //log.info("item {} set select",c.getValue());
+            } 
 
         }
 
