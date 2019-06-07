@@ -73,10 +73,9 @@ public class CalList {
             mAll.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                   List<ItemData<String, String>> showCal= selectAllCansItem();
-                   log.debug("show {}  \n size :{}",showCal,showCal.size());
-                   calJlist.repaint();
-                    
+                    List<ItemData<String, String>> showCal = selectAllCansItem();
+                    log.debug("show {}  \n size :{}", showCal, showCal.size());
+
                 }
             });
 
@@ -143,9 +142,6 @@ public class CalList {
 
         return result;
     }
-    
-    
-    
 
     /**
      * 获取目前选中日历，只要checkbox选中即可
@@ -168,9 +164,8 @@ public class CalList {
         return result;
 
     }
-    
-    
-       /**
+
+    /**
      * 选中所有日历，checkbox选中
      *
      * @return
@@ -186,10 +181,10 @@ public class CalList {
             if (!c.isSelected()) {
                 c.setSelected(true);
                 //log.info("item {} set select",c.getValue());
-            } 
+            }
 
         }
-
+        calJlist.repaint();
         return result;
 
     }
