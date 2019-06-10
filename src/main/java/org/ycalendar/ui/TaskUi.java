@@ -32,6 +32,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import org.ycalendar.dbp.service.CalendarService;
 import org.ycalendar.dbp.service.Dictionary;
 import org.ycalendar.dbp.service.EventService;
 import org.ycalendar.dbp.service.TaskService;
@@ -94,6 +95,7 @@ public class TaskUi {
         //jpanelcall.setLayout(new BorderLayout());
         call = new CalList();
         call.setDicSer(dicSer);
+        call.setCalServ(calServ);
         call.initCalList();
 
         jpanelcall.add(call.getCalCompont());
@@ -136,7 +138,9 @@ public class TaskUi {
 
         taskDataModel.setDatas(tasks);
     }
-
+    public void delSelectCal() {
+        call.deleteCal();
+    }
     private void createCenter() {
         center = new JPanel(new BorderLayout());
 
@@ -344,6 +348,15 @@ public class TaskUi {
     public void setDicSer(Dictionary dicSer) {
         this.dicSer = dicSer;
     }
+    private CalendarService calServ;
+
+    public CalendarService getCalServ() {
+        return calServ;
+    }
+
+    public void setCalServ(CalendarService calServ) {
+        this.calServ = calServ;
+    }    
     private EventService es;
 
     public EventService getEs() {

@@ -252,26 +252,11 @@ public class YCalendar {
     }
 
     private void deleteCal() {
-        int useSelect = JOptionPane.showConfirmDialog(f, "是否删除选择日历", "确认", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        if (useSelect == JOptionPane.YES_OPTION) {
-            List<String> selectC;
-            //只要list选择就删除
-            if (areare.getSelectedIndex() == 0) {
-                selectC = caui.getListSelectCal(false);
-            } else {
-                selectC = tasui.getListSelectCal(false);
-            }
 
-            if (UtilValidate.isNotEmpty(selectC)) {
-                for (String id : selectC) {
-                    log.info("del calendar :{}", id);
-                    calServ.delCalendar(id);
-                }
-
-            } else {
-                JOptionPane.showMessageDialog(f, "没有选择日历", "错误", JOptionPane.ERROR_MESSAGE);
-            }
-
+        if (areare.getSelectedIndex() == 0) {
+            caui.delSelectCal();
+        } else {
+            tasui.delSelectCal();
         }
 
     }
@@ -979,6 +964,7 @@ public class YCalendar {
     private void initFistFuncArea(Rectangle scbounds, JPanel pare) {
 
         caui = new CalendarUi(evSe, dicSer);
+        caui.setCalServ(calServ);
         caui.initUi(scbounds);
 
         pare.add(caui.splitright, BorderLayout.CENTER);
@@ -989,7 +975,7 @@ public class YCalendar {
         tasui.setDicSer(dicSer);
         tasui.setTaskSer(tsSe);
         tasui.setEs(evSe);
-
+        caui.setCalServ(calServ);
         tasui.initUi(scbounds);
 
         pare.add(tasui.splitright, BorderLayout.CENTER);

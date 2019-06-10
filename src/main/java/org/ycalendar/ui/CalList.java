@@ -17,6 +17,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
@@ -24,9 +25,11 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.ycalendar.dbp.service.CalendarService;
 import org.ycalendar.dbp.service.Dictionary;
 import org.ycalendar.domain.DictionaryData;
 import org.ycalendar.uiutil.ValueJCheckBoxButton;
+import org.ycalendar.util.MiscUtil;
 import org.ycalendar.util.Tuple2;
 import org.ycalendar.util.UtilValidate;
 import org.ycalendar.util.msg.MemMsg;
@@ -79,8 +82,45 @@ public class CalList {
                 }
             });
 
+            delCal.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    deleteCal();
+                }
+            });
+
         }
         return calPopupMenu;
+    }
+    private CalendarService calServ;
+
+    public CalendarService getCalServ() {
+        return calServ;
+    }
+
+    public void setCalServ(CalendarService calServ) {
+        this.calServ = calServ;
+    }
+
+    protected void deleteCal() {
+
+        //只要list选择就删除
+        List<String> selectC = getSelectCans(false);
+
+        Component f = MiscUtil.getComJFrame(getCalCompont());
+        if (UtilValidate.isNotEmpty(selectC)) {
+            int useSelect = JOptionPane.showConfirmDialog(f, "是否删除选择日历", "确认", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            if (useSelect == JOptionPane.YES_OPTION) {
+                for (String id : selectC) {
+                    log.info("del calendar :{}", id);
+                    calServ.delCalendar(id);
+                }
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(f, "没有选择日历", "错误", JOptionPane.ERROR_MESSAGE);
+        }
+
     }
 
     public void initCalList() {

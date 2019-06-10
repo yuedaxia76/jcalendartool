@@ -11,6 +11,7 @@ import javax.swing.JSplitPane;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.ycalendar.dbp.service.CalendarService;
 
 import org.ycalendar.dbp.service.Dictionary;
 import org.ycalendar.dbp.service.EventService;
@@ -50,6 +51,15 @@ public class CalendarUi {
         this.dicSer = dicSer;
 
     }
+    private CalendarService calServ;
+
+    public CalendarService getCalServ() {
+        return calServ;
+    }
+
+    public void setCalServ(CalendarService calServ) {
+        this.calServ = calServ;
+    }
 
     public void showEventFindUi(final boolean show) {
         eventFindPael.setVisible(show);
@@ -76,6 +86,7 @@ public class CalendarUi {
         JLabel calName = new JLabel("日历");
         leftList.add(calName, BorderLayout.NORTH);
         call = new CalList();
+        call.setCalServ(calServ);
         call.setDicSer(dicSer);
         call.initCalList();
 
@@ -123,15 +134,17 @@ public class CalendarUi {
         jpce.selectByDay(Calendar.getInstance());
 
     }
-    
+
     public List<String> getSelectCal() {
         return call.getSelectCans();
     }
-    
-    
-    
+
     public List<String> getListSelectCal(final boolean checkb) {
         return call.getSelectCans(checkb);
+    }
+
+    public void delSelectCal() {
+        call.deleteCal();
     }
     private Dictionary dicSer;
 
