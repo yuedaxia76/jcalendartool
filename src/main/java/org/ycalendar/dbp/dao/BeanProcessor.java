@@ -199,14 +199,12 @@ public class BeanProcessor {
 
 	private <T> T newInstance(Class<T> c) throws SQLException {
 		try {
-			return c.newInstance();
+			return c.getConstructor().newInstance();
 
-		} catch (InstantiationException e) {
+		} catch (Exception e) {
 			throw new SQLException("Cannot create " + c.getName() + ": " + e.getMessage());
 
-		} catch (IllegalAccessException e) {
-			throw new SQLException("Cannot create " + c.getName() + ": " + e.getMessage());
-		}
+		}  
 	}
 
 	private PropertyDescriptor[] propertyDescriptors(Class<?> c) throws SQLException {

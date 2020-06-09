@@ -20,14 +20,14 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <resease.outputDirectory>C:/ework/yc/dist</resease.outputDirectory>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <commons-csv.version>1.7</commons-csv.version>
-        <H2.version>1.4.199</H2.version>
-        <slf4j.version>1.7.26</slf4j.version>
+        <commons-csv.version>1.8</commons-csv.version>
+        <H2.version>1.4.200</H2.version>
+        <slf4j.version>1.7.30</slf4j.version>
         <jcache.version>1.1.0</jcache.version>
         <ehcache.version>3.6.1</ehcache.version>
         <ical4j.version>3.0.7</ical4j.version>
-        <log4j2.version>2.12.0</log4j2.version>
-        <testng.version>7.0.0-beta7</testng.version>
+        <log4j2.version>2.13.3</log4j2.version>
+        <testng.version>7.1.0</testng.version>
     </properties>
 
     <dependencies>
